@@ -20,7 +20,7 @@ export class AuthService {
   http = inject(HttpClient);
 
   login(email: string, password: string) {
-    this.http.post<AuthResponse>(
+    return this.http.post<AuthResponse>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.APIKey}`,
       {
         email,
