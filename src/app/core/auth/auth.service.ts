@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+import { environment } from '../../../environments/environment';
 
 export interface AuthResponse {
   idToken: string;
@@ -18,10 +19,12 @@ export interface AuthResponse {
 export class AuthService {
   private APIKey = environment.firebaseConfig.apiKey;
 
-  http = inject(HttpClient);
+  private httpBackend = inject(HttpBackend);
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
+    const ignoreInterceptorHttp = new HttpClient(this.httpBackend);
+
+    return ignoreInterceptorHttp.post<AuthResponse>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.APIKey}`,
       {
         email,
