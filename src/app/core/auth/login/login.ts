@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthResponse, AuthService } from '../auth.service';
-import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
+
+import { finalize } from 'rxjs';
+
+import { AuthResponse, AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +16,9 @@ export class Login {
   isLoginFailed = signal(false);
   isLoading = signal(false);
 
-  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+
+  private fb = inject(FormBuilder);
   private router = inject(Router);
 
   loginForm = this.fb.group({
