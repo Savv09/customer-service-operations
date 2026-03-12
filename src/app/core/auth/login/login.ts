@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { AuthResponse, AuthService } from '../auth.service';
 import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -35,7 +35,7 @@ export class Login {
         .login(email, password)
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
-          next: (res) => this.setActiveUser(),
+          next: (res) => this.setActiveUser(res),
           error: (err) => this.handleLoginError(err),
         });
     }
@@ -46,7 +46,8 @@ export class Login {
     this.isLoginFailed.set(true);
   }
 
-  setActiveUser() {
+  setActiveUser(res: AuthResponse) {
+    this.authService.setActiveUser(res);
     this.router.navigate(['/', 'dashboard']);
   }
 }

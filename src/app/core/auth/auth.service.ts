@@ -31,7 +31,7 @@ export class AuthService {
     );
   }
 
-  setActiveUId(loggedUser: AuthResponse) {
-    localStorage.setItem('UId', JSON.stringify(loggedUser.localId));
+  setActiveUser(loggedUser: AuthResponse) {
+    localStorage.setItem('token', loggedUser.idToken);
   }
 }
