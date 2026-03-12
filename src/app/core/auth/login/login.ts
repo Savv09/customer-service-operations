@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthResponse, AuthService } from '../auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class Login {
   isLoading = signal(false);
 
   private authService = inject(AuthService);
+  private userService = inject(UserService);
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -49,7 +51,10 @@ export class Login {
   }
 
   setActiveUser(res: AuthResponse) {
-    this.authService.setActiveUser(res);
+    this.authService.setAuthenticatedUser(res);
+
+    this.userService.getUser(res.localId);
+
     this.router.navigate(['/', 'dashboard']);
   }
 }

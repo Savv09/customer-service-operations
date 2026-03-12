@@ -1,5 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
+
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -17,6 +18,8 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
+  authenticatedUser = signal<AuthResponse | null>(null);
+
   private APIKey = environment.firebaseConfig.apiKey;
 
   private httpBackend = inject(HttpBackend);
@@ -34,7 +37,17 @@ export class AuthService {
     );
   }
 
-  setActiveUser(loggedUser: AuthResponse) {
+  logout() {
+    this.authenticatedUser.set(null);
+    localStorage.removeItem('token');
+  }
+
+  setAuthenticatedUser(loggedUser: AuthResponse) {
+    this.authenticatedUser.set(loggedUser);
     localStorage.setItem('token', loggedUser.idToken);
+  }
+
+  isUserAuthenticated() {
+    return this.authenticatedUser() !== null;
   }
 }

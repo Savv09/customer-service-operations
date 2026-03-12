@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 
 import { formatUserFromFirestore } from '../utils/api-formatter';
 import { UserFromApi } from '../models/responses-from-api.model';
@@ -12,6 +12,8 @@ import { BASE_URL } from '../contsants/base.const';
   providedIn: 'root',
 })
 export class UserService {
+  user = signal<User | null>(null);
+
   private http = inject(HttpClient);
 
   private getUsersUrl(userId: string | null) {
@@ -26,9 +28,12 @@ export class UserService {
 
   getUserList() {}
 
-  getUser(userId: string): Observable<User> {
+  getUser(userId: string) {
     const url = this.getUsersUrl(userId);
 
-    return this.http.get<UserFromApi>(url).pipe(map((res) => formatUserFromFirestore(res)));
+    this.http
+      .get<UserFromApi>(url)
+      .pipe(map((res) => formatUserFromFirestore(res)))
+      .subscribe((user) => this.user.set(user));
   }
 }
