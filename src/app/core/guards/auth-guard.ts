@@ -11,7 +11,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  router.navigate(['/', 'dashboard']);
+  router.navigate(['/', 'login']);
 
   return false;
 };
