@@ -1,0 +1,22 @@
+<header class="w-full">
+  <section class="w-full h-full flex items-center justify-end">
+    <button
+      #trigger="matMenuTrigger"
+      [matMenuTriggerFor]="menu"
+      [class.bg-[#d9dae2]]="trigger.menuOpen"
+      class="flex p-2 cursor-pointer hover:bg-[#d9dae2]"
+    >
+      <span class="mx-4 text-right">
+        <p class="text-lg font-semibold text-[#193f83]">{{ getFullName() }}</p>
+        <p class="font-base">{{ user()?.role | role }}</p>
+      </span>
+      <div class="inline-block h-14 w-14 rounded-full bg-[#193f83]"></div>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item mat->
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </section>
+</header>
