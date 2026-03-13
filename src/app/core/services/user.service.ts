@@ -36,4 +36,8 @@ export class UserService {
       .pipe(map((res) => formatUserFromFirestore(res)))
       .subscribe((user) => this.user.set(user));
   }
+
+  clearUser() {
+    this.user.set(null);
+  }
 }
