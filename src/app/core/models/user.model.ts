@@ -2,6 +2,6 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  password: string;
-  role: number;
+  role: 0 | 1;
+  createdAt: Date;
 }
