@@ -2,7 +2,13 @@
   <section class="h-full w-1/5">
     <app-sidebar></app-sidebar>
   </section>
-  <section class="w-4/5 h-1/8 p-8 flex flex-col justify-center">
-    <app-header></app-header>
-  </section>
+
+  <main class="w-4/5 h-full flex flex-col justify-center px-8 pt-8">
+    <section class="w-full h-1/8">
+      <app-header></app-header>
+    </section>
+    <section class="w-full h-7/8 bg-[#ffffff] drop-shadow-sm rounded-t-sm">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
 </div>
