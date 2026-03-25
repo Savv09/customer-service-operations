@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 import { Sidebar } from '../../shared/sidebar/sidebar';
 import { Header } from '../../shared/header/header';
-import { RouterOutlet } from '../../../../node_modules/@angular/router/types/_router_module-chunk';
 
 @Component({
   selector: 'app-dashborad-layout',
