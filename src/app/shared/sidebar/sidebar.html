@@ -1,1 +1,43 @@
-<aside class="h-full w-full bg-[#193f83]"></aside>
+<aside class="h-full w-full flex flex-col items-center bg-[#193f83]">
+  <div class="px-8 pt-10 h-1/8 w-full flex items-center justify-center">
+    <h2 class="text-3xl text-[#ffffff] font-semibold">CSO</h2>
+  </div>
+  <ul class="w-full mt-20">
+    <li>
+      <button
+        class="w-full h-16 text-xl text-[#ffffff] cursor-pointer transition-colors duration-200"
+        [ngClass]="{
+          'bg-white/20': activePage() === 'users',
+          'hover:bg-white/10': activePage() !== 'users',
+        }"
+        (click)="navigateToSelectedPage('users')"
+      >
+        Users
+      </button>
+    </li>
+    <li>
+      <button
+        class="w-full h-16 text-xl text-[#ffffff] cursor-pointer transition-colors duration-200"
+        [ngClass]="{
+          'bg-white/20': activePage() === 'customers',
+          'hover:bg-white/10': activePage() !== 'customers',
+        }"
+        (click)="navigateToSelectedPage('customers')"
+      >
+        Customers
+      </button>
+    </li>
+    <li>
+      <button
+        class="w-full h-16 text-xl text-[#ffffff] cursor-pointer transition-colors duration-200"
+        [ngClass]="{
+          'bg-white/20': activePage() === 'tickets',
+          'hover:bg-white/10': activePage() !== 'tickets',
+        }"
+        (click)="navigateToSelectedPage('tickets')"
+      >
+        Tickets
+      </button>
+    </li>
+  </ul>
+</aside>
