@@ -1,14 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { UserService } from '../../core/services/user.service';
+import { TitleService } from '../../core/services/title.service';
 
 import { RolePipe } from '../pipes/role-pipe';
-import { AuthService } from '../../core/auth/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -20,6 +21,9 @@ export class Header {
   private auhtService = inject(AuthService);
   private userService = inject(UserService);
   private router = inject(Router);
+  private titleService = inject(TitleService);
+
+  title = this.titleService.title;
 
   user = this.userService.user;
 
