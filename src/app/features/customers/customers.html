@@ -1,1 +1,34 @@
-<p>customers works!</p>
+<table
+  mat-table
+  [dataSource]="customerList()"
+  class="mat-column-company mat-column-edit customers-list"
+>
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let element">
+      {{ getFullName(element.firstName, element.lastName) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="company">
+    <th mat-header-cell *matHeaderCellDef>Company</th>
+    <td mat-cell *matCellDef="let element">{{ element.company }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="edit">
+    <th mat-header-cell *matHeaderCellDef>Edit</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button class="edit-button">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnToDisplay"></tr>
+</table>

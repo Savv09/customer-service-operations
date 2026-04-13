@@ -1,0 +1,15 @@
+.customers-list {
+  width: 100%;
+  table-layout: fixed;
+  background-color: #ffffff;
+  border: none;
+}
+
+.mat-column-company,
+.mat-column-edit {
+  text-align: center;
+}
+
+.edit-button {
+  color: #193f83;
+}
