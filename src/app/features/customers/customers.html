@@ -4,24 +4,24 @@
   class="mat-column-company mat-column-edit customers-list"
 >
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let element">
+    <th mat-header-cell *matHeaderCellDef>NAME</th>
+    <td mat-cell class="name-cell" *matCellDef="let element">
       {{ getFullName(element.firstName, element.lastName) }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <th mat-header-cell *matHeaderCellDef>EMAIL</th>
     <td mat-cell *matCellDef="let element">{{ element.email }}</td>
   </ng-container>
 
   <ng-container matColumnDef="company">
-    <th mat-header-cell *matHeaderCellDef>Company</th>
+    <th mat-header-cell *matHeaderCellDef>COMPANY</th>
     <td mat-cell *matCellDef="let element">{{ element.company }}</td>
   </ng-container>
 
   <ng-container matColumnDef="edit">
-    <th mat-header-cell *matHeaderCellDef>Edit</th>
+    <th mat-header-cell *matHeaderCellDef>EDIT</th>
     <td mat-cell *matCellDef="let element">
       <button mat-icon-button class="edit-button">
         <mat-icon>edit</mat-icon>

@@ -10,6 +10,22 @@
   text-align: center;
 }
 
+th {
+  font-weight: bold;
+  color: #636872;
+  font-size: small;
+}
+
+td {
+  color: #78859c;
+}
+
+.name-cell {
+  font-weight: 500;
+  color: #5e8fea;
+  font-size: small;
+}
+
 .edit-button {
-  color: #193f83;
+  color: #5e8fea;
 }
