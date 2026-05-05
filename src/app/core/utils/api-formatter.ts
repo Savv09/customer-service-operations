@@ -2,6 +2,14 @@ import { Customer } from '../models/customer.model';
 import { CustomerFromApi, UserFromApi } from '../models/responses-from-api.model';
 import { User } from '../models/user.model';
 
+function extractIdFromName(name: string) {
+  const nameParts = name.split('/');
+
+  const id = nameParts.pop();
+
+  return id as string;
+}
+
 export function formatUserFromFirestore(userFromApi: UserFromApi): User {
   return {
     email: userFromApi.fields.email?.stringValue || '',
@@ -14,10 +22,11 @@ export function formatUserFromFirestore(userFromApi: UserFromApi): User {
 
 export function formatCustomerFromFirestore(customerFromApi: CustomerFromApi): Customer {
   return {
+    id: extractIdFromName(customerFromApi.name),
     firstName: customerFromApi.fields.firstName.stringValue,
     lastName: customerFromApi.fields.lastName.stringValue,
     email: customerFromApi.fields.email.stringValue,
-    company: customerFromApi.fields.company?.stringValue || undefined,
+    company: customerFromApi.fields.company?.stringValue,
     phone: customerFromApi.fields.phone?.stringValue || undefined,
     createdBy: customerFromApi.fields.createdBy.stringValue,
     createdAt: new Date(customerFromApi.createTime),
