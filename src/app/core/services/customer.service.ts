@@ -5,7 +5,7 @@ import { map, Observable } from 'rxjs';
 import { formatCustomerFromFirestore } from '../utils/api-formatter';
 
 import { Customer } from '../models/customer.model';
-import { CustomerListFromApi } from '../models/responses-from-api.model';
+import { CustomerFromApi, CustomerListFromApi } from '../models/responses-from-api.model';
 
 import { BASE_URL } from '../contsants/base.const';
 
@@ -35,5 +35,11 @@ export class CustomerService {
           res.documents.map((costumerFromApi) => formatCustomerFromFirestore(costumerFromApi)),
         ),
       );
+  }
+
+  getCustomer(customerId: string): Observable<Customer> {
+    const url = this.getCustomersUrl(customerId);
+
+    return this.http.get<CustomerFromApi>(url).pipe(map((res) => formatCustomerFromFirestore(res)));
   }
 }
