@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { Sidebar } from '../../shared/sidebar/sidebar';
-import { Header } from '../../shared/header/header';
+import { Sidebar } from '../../shared/components/sidebar/sidebar';
+import { Header } from '../../shared/components/header/header';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
