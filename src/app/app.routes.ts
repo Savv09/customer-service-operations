@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './core/auth/login/login';
 import { authGuard } from './core/guards/auth-guard';
 import { DashboradLayout } from './layout/dashboard-layout/dashboard-layout';
+import { CrudMode } from './shared/enums/crud.enum';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -19,11 +20,28 @@ export const routes: Routes = [
             loadComponent: () => import('./features/customers/customers').then((c) => c.Customers),
           },
           {
-            path: ':id',
+            path: 'new',
             loadComponent: () =>
               import('./features/customers/customer-detail/customer-detail').then(
                 (c) => c.CustomerDetail,
               ),
+            data: { mode: CrudMode.CREATE },
+          },
+          {
+            path: ':customerId/edit',
+            loadComponent: () =>
+              import('./features/customers/customer-detail/customer-detail').then(
+                (c) => c.CustomerDetail,
+              ),
+            data: { mode: CrudMode.EDIT },
+          },
+          {
+            path: ':customerId',
+            loadComponent: () =>
+              import('./features/customers/customer-detail/customer-detail').then(
+                (c) => c.CustomerDetail,
+              ),
+            data: { mode: CrudMode.READ },
           },
         ],
       },
@@ -35,7 +53,7 @@ export const routes: Routes = [
             loadComponent: () => import('./features/tickets/tickets').then((c) => c.Tickets),
           },
           {
-            path: ':id',
+            path: ':ticketId',
             loadComponent: () =>
               import('./features/tickets/ticket-detail/ticket-detail').then((c) => c.TicketDetail),
           },
@@ -49,7 +67,7 @@ export const routes: Routes = [
             loadComponent: () => import('./features/users/users').then((c) => c.Users),
           },
           {
-            path: ':id',
+            path: ':userId',
             loadComponent: () =>
               import('./features/users/user-detail/user-detail').then((c) => c.UserDetail),
           },
