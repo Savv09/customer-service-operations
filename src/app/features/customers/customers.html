@@ -5,7 +5,7 @@
 >
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>NAME</th>
-    <td mat-cell class="name-cell" *matCellDef="let element">
+    <td mat-cell class="name-cell" *matCellDef="let element" (click)="navigateToDetails(element)">
       {{ getFullName(element.firstName, element.lastName) }}
     </td>
   </ng-container>
@@ -23,12 +23,12 @@
   <ng-container matColumnDef="edit">
     <th mat-header-cell *matHeaderCellDef>EDIT</th>
     <td mat-cell *matCellDef="let element">
-      <button mat-icon-button class="edit-button">
+      <button mat-icon-button class="edit-button" (click)="navigateToEditCustomer(element)">
         <mat-icon>edit</mat-icon>
       </button>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columnToDisplay"></tr>
-  <tr mat-row *matRowDef="let row; columns: columnToDisplay"></tr>
+  <tr mat-row class="element-row" *matRowDef="let row; columns: columnToDisplay"></tr>
 </table>

@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { Customer } from '../../core/models/customer.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customers',
@@ -21,9 +22,11 @@ export class Customers implements OnInit {
 
   private titleService = inject(TitleService);
   private customerService = inject(CustomerService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.titleService.setTitle('Customers');
+    this.titleService.setHasBackButton(false);
     this.getCustomers();
   }
 
@@ -33,5 +36,13 @@ export class Customers implements OnInit {
 
   getFullName(firstName: string, lastName: string) {
     return `${firstName} ${lastName}`;
+  }
+
+  navigateToDetails(customer: Customer) {
+    this.router.navigate(['/', 'customers', customer.id]);
+  }
+
+  navigateToEditCustomer(customer: Customer) {
+    this.router.navigate(['/', 'customers', customer.id, 'edit']);
   }
 }
