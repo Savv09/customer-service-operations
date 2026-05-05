@@ -1,15 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { AuthService } from '../../core/auth/auth.service';
-import { UserService } from '../../core/services/user.service';
-import { TitleService } from '../../core/services/title.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { UserService } from '../../../core/services/user.service';
+import { TitleService } from '../../../core/services/title.service';
 
-import { RolePipe } from '../pipes/role-pipe';
+import { RolePipe } from '../../pipes/role-pipe';
 
 @Component({
   selector: 'app-header',
@@ -20,15 +20,21 @@ import { RolePipe } from '../pipes/role-pipe';
 export class Header {
   private auhtService = inject(AuthService);
   private userService = inject(UserService);
-  private router = inject(Router);
   private titleService = inject(TitleService);
+  private router = inject(Router);
 
-  title = this.titleService.title;
+  title = this.titleService.getTitle();
+  hasBackButton = this.titleService.getHasBackButton();
 
   user = this.userService.user;
 
   getFullName() {
     return `${this.user()?.firstName} ${this.user()?.lastName}`;
+  }
+
+  navigateBack() {
+    const backUrl = this.titleService.getBackButtonUrl();
+    this.router.navigate(backUrl());
   }
 
   logout() {
