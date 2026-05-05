@@ -1,1 +1,69 @@
-<p>customer-detail works!</p>
+<section></section>
+
+<form [formGroup]="detailsForm" class="w-full grid grid-cols-2 gap-x-6 gap-y-8 mt-8">
+  <div class="w-full">
+    <label for="firstName" class="block mb-2 text-base font-medium text-[#78859c]">
+      First Name
+    </label>
+    <input
+      type="text"
+      id="firstName"
+      formControlName="firstName"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      placeholder="First Name"
+      required
+    />
+  </div>
+
+  <div class="w-full">
+    <label for="lastName" class="block mb-2 text-base font-medium text-[#78859c]">
+      Last Name
+    </label>
+    <input
+      type="text"
+      id="lastName"
+      formControlName="lastName"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      placeholder="Last Name"
+      required
+    />
+  </div>
+
+  <div class="w-full">
+    <label for="email" class="block mb-2 text-base font-medium text-[#78859c]"> Email </label>
+    <input
+      type="email"
+      id="email"
+      formControlName="email"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      placeholder="Email"
+      required
+    />
+  </div>
+
+  <div class="w-full">
+    <label for="company" class="block mb-2 text-base font-medium text-[#78859c]"> Company </label>
+    <input
+      type="text"
+      id="company"
+      formControlName="company"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      placeholder="Company"
+      required
+    />
+  </div>
+
+  <div class="w-full">
+    <label for="phone" class="block mb-2 text-base font-medium text-[#78859c]">Phone Number</label>
+    <input
+      id="phone"
+      formControlName="phone"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      placeholder="+3 ..."
+    />
+  </div>
+</form>
+
+<section>
+  <button>Delete customer</button>
+</section>
