@@ -16,7 +16,7 @@ export interface CustomerFromApi {
     firstName: { stringValue: string };
     lastName: { stringValue: string };
     email: { stringValue: string };
-    company?: { stringValue: string };
+    company: { stringValue: string };
     phone?: { stringValue: string };
     createdBy: { stringValue: string };
   };
