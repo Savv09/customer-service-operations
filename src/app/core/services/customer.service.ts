@@ -42,4 +42,26 @@ export class CustomerService {
 
     return this.http.get<CustomerFromApi>(url).pipe(map((res) => formatCustomerFromFirestore(res)));
   }
+
+  updateCustomer(editedCustomer: Customer) {
+    const url = this.getCustomersUrl(editedCustomer.id);
+    const body = this.getCustomerApiBody(editedCustomer);
+
+    return this.http.patch(url, body);
+  }
+
+  private getCustomerApiBody(customer: Customer) {
+    const { firstName, lastName, email, company, phone, createdBy } = customer;
+
+    return {
+      fields: {
+        firstName: { stringValue: firstName },
+        lastName: { stringValue: lastName },
+        email: { stringValue: email },
+        company: { stringValue: company },
+        createdBy: { stringValue: createdBy },
+        phone: { stringValue: !!phone ? phone : '' },
+      },
+    };
+  }
 }
