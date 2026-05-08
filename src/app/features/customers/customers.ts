@@ -8,10 +8,12 @@ import { Customer } from '../../core/models/customer.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-customers',
-  imports: [MatTableModule, MatIcon, MatButtonModule],
+  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })
@@ -44,5 +46,9 @@ export class Customers implements OnInit {
 
   navigateToEditCustomer(customer: Customer) {
     this.router.navigate(['/', 'customers', customer.id, 'edit']);
+  }
+
+  navigateToCreateCustomer() {
+    this.router.navigate(['/', 'customers', 'new']);
   }
 }
