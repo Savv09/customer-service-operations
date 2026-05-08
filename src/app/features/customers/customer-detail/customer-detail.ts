@@ -86,7 +86,14 @@ export class CustomerDetail implements OnInit {
   }
 
   navigateToReadDetails() {
-    this.router.navigate(['/', 'customers', this.selectedCustomer?.id]);
+    if (this.selectedCustomer) {
+      if (this.crudMode === CrudMode.EDIT) {
+        this.router.navigate(['/', 'customers', this.selectedCustomer?.id]);
+      }
+    }
+    if (this.crudMode === CrudMode.CREATE) {
+      this.router.navigate(['/', 'customers']);
+    }
   }
 
   saveCustomerForm() {
