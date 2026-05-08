@@ -28,13 +28,12 @@ export class CustomerService {
   getCustomerList(): Observable<Customer[]> {
     const url = this.getCustomersUrl(null);
 
-    return this.http
-      .get<CustomerListFromApi>(url)
-      .pipe(
-        map((res) =>
-          res.documents.map((costumerFromApi) => formatCustomerFromFirestore(costumerFromApi)),
-        ),
-      );
+    return this.http.get<CustomerListFromApi>(url).pipe(
+      map((res) =>
+        res.documents.map((costumerFromApi) => formatCustomerFromFirestore(costumerFromApi)),
+      ),
+      map((customers) => customers.sort((a, b) => a.firstName.localeCompare(b.firstName))),
+    );
   }
 
   getCustomer(customerId: string): Observable<Customer> {
@@ -43,24 +42,37 @@ export class CustomerService {
     return this.http.get<CustomerFromApi>(url).pipe(map((res) => formatCustomerFromFirestore(res)));
   }
 
+  createCustomer(newCustomer: Partial<Customer>) {
+    const url = this.getCustomersUrl(null);
+    const body = this.createCustomerApiBody(newCustomer);
+
+    return this.http.post(url, body);
+  }
+
   updateCustomer(editedCustomer: Customer) {
     const url = this.getCustomersUrl(editedCustomer.id);
-    const body = this.getCustomerApiBody(editedCustomer);
+    const body = this.createCustomerApiBody(editedCustomer);
 
     return this.http.patch(url, body);
   }
 
-  private getCustomerApiBody(customer: Customer) {
+  deleteCustomer(customerId: string) {
+    const url = this.getCustomersUrl(customerId);
+
+    return this.http.delete(url);
+  }
+
+  private createCustomerApiBody(customer: Partial<Customer>) {
     const { firstName, lastName, email, company, phone, createdBy } = customer;
 
     return {
       fields: {
-        firstName: { stringValue: firstName },
-        lastName: { stringValue: lastName },
-        email: { stringValue: email },
-        company: { stringValue: company },
-        createdBy: { stringValue: createdBy },
-        phone: { stringValue: !!phone ? phone : '' },
+        firstName: { stringValue: firstName || '' },
+        lastName: { stringValue: lastName || '' },
+        email: { stringValue: email || '' },
+        company: { stringValue: company || '' },
+        createdBy: { stringValue: createdBy || '' },
+        phone: { stringValue: phone || '' },
       },
     };
   }
