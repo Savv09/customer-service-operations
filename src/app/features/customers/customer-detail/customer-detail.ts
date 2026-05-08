@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { Customer } from '../../../core/models/customer.model';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-customer-detail',
@@ -26,8 +28,9 @@ export class CustomerDetail implements OnInit {
   private customerService = inject(CustomerService);
   private titleService = inject(TitleService);
   private fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
 
-  detailsForm = this.fb.group({
+  detailsForm = this.fb.nonNullable.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     email: ['', Validators.required],
@@ -89,25 +92,54 @@ export class CustomerDetail implements OnInit {
   saveCustomerForm() {
     if (!this.detailsForm.valid) return;
 
-    const formValue = this.detailsForm.value;
+    const formValue = this.detailsForm.getRawValue();
 
     if (this.crudMode === CrudMode.CREATE) {
-      return;
-    } else {
-      if (!!this.selectedCustomer) {
-        const editedCustomer: Customer = {
-          ...this.selectedCustomer,
-          firstName: !!formValue.firstName ? formValue.firstName : '',
-          lastName: !!formValue.lastName ? formValue.lastName : '',
-          email: !!formValue.email ? formValue.email : '',
-          company: !!formValue.company ? formValue.company : '',
-          phone: !!formValue.phone ? formValue.phone : '',
-        };
-        this.customerService
-          .updateCustomer(editedCustomer)
-          .pipe(finalize(() => this.navigateToReadDetails()))
-          .subscribe((res) => console.log(res));
-      }
+      const activeUserId = localStorage.getItem('uId');
+
+      const newCustomer: Partial<Customer> = {
+        ...formValue,
+        createdBy: activeUserId ?? '',
+      };
+
+      this.customerService
+        .createCustomer(newCustomer)
+        .pipe(finalize(() => this.router.navigate(['/', 'customers'])))
+        .subscribe((res) => console.log(res));
+    } else if (this.selectedCustomer) {
+      const editedCustomer: Customer = {
+        ...this.selectedCustomer,
+        ...formValue,
+      };
+
+      this.customerService
+        .updateCustomer(editedCustomer)
+        .pipe(finalize(() => this.navigateToReadDetails()))
+        .subscribe((res) => console.log(res));
     }
+  }
+
+  deleteCustomer() {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Delete customer',
+        message: 'Are you sure you want to delete this customer?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (this.selectedCustomer)
+          this.customerService
+            .deleteCustomer(this.selectedCustomer?.id)
+            .subscribe((res) => this.router.navigate(['/', 'customers']));
+      }
+    });
   }
 }

@@ -111,18 +111,22 @@
             'bg-[#78859c2c]': crudMode === CrudMode.READ,
             'border-0': crudMode === CrudMode.READ,
           }"
-          [placeholder]="crudMode === CrudMode.READ ? '' : '+3 ...'"
+          [placeholder]="crudMode === CrudMode.READ ? '' : '+...'"
         />
       </div>
     </form>
 
     <section
       class="w-full flex items-center pt-6"
-      [ngClass]="{ 'justify-between': crudMode === CrudMode.EDIT || crudMode === CrudMode.READ }"
+      [ngClass]="{
+        'justify-between': crudMode === CrudMode.EDIT || crudMode === CrudMode.READ,
+        'justify-end': crudMode === CrudMode.CREATE,
+      }"
     >
       @if (crudMode === CrudMode.EDIT || crudMode === CrudMode.READ) {
         <button
           class="w-28 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#c0392b] rounded-md cursor-pointer hover:bg-[#ab3326] focus:outline-none"
+          (click)="deleteCustomer()"
         >
           <mat-icon class="mr-2">delete</mat-icon>
           Delete
@@ -131,7 +135,7 @@
       @if (crudMode === CrudMode.CREATE || crudMode === CrudMode.EDIT) {
         <div class="flex items-center">
           <button
-            class="w-28 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#2459b5] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
+            class="w-28 h-9 font-medium text-lg flex items-center justify-center text-[#2459b5cd] outline-1 outline-[#2459b5cd] rounded-md cursor-pointer hover:bg-[#2459b5cd] hover:text-white focus:outline-none"
             (click)="navigateToReadDetails()"
           >
             <mat-icon class="mr-2">cancel</mat-icon>
