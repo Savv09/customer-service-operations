@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { SnackbarService } from '../../../core/services/snackbar.service';
+import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 
 @Component({
   selector: 'app-customer-detail',
@@ -29,6 +31,7 @@ export class CustomerDetail implements OnInit {
   private titleService = inject(TitleService);
   private fb = inject(FormBuilder);
   private dialog = inject(MatDialog);
+  private snackbarService = inject(SnackbarService);
 
   detailsForm = this.fb.nonNullable.group({
     firstName: ['', Validators.required],
@@ -112,7 +115,9 @@ export class CustomerDetail implements OnInit {
       this.customerService
         .createCustomer(newCustomer)
         .pipe(finalize(() => this.router.navigate(['/', 'customers'])))
-        .subscribe((res) => console.log(res));
+        .subscribe((res) =>
+          this.snackbarService.showSnackbar('Customer created succesfully!', SnackbarMode.SUCCESS),
+        );
     } else if (this.selectedCustomer) {
       const editedCustomer: Customer = {
         ...this.selectedCustomer,
@@ -122,7 +127,9 @@ export class CustomerDetail implements OnInit {
       this.customerService
         .updateCustomer(editedCustomer)
         .pipe(finalize(() => this.navigateToReadDetails()))
-        .subscribe((res) => console.log(res));
+        .subscribe((res) =>
+          this.snackbarService.showSnackbar('Customer updated succesfully!', SnackbarMode.SUCCESS),
+        );
     }
   }
 
@@ -143,9 +150,13 @@ export class CustomerDetail implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (this.selectedCustomer)
-          this.customerService
-            .deleteCustomer(this.selectedCustomer?.id)
-            .subscribe((res) => this.router.navigate(['/', 'customers']));
+          this.customerService.deleteCustomer(this.selectedCustomer?.id).subscribe((res) => {
+            this.snackbarService.showSnackbar(
+              'Customer deleted succesfully!',
+              SnackbarMode.SUCCESS,
+            );
+            this.router.navigate(['/', 'customers']);
+          });
       }
     });
   }
