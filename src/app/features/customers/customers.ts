@@ -1,15 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { TitleService } from '../../core/services/title.service';
 import { CustomerService } from '../../core/services/customer.service';
 
-import { MatTableModule } from '@angular/material/table';
 import { Customer } from '../../core/models/customer.model';
-import { MatIcon } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-customers',
@@ -19,6 +20,19 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 })
 export class Customers implements OnInit {
   customerList = signal<Customer[]>([]);
+
+  filter = signal<string>('');
+  filteredData = computed(() => {
+    const filter = this.filter().trim().toLowerCase();
+
+    if (!filter) return this.customerList();
+
+    return this.customerList().filter(
+      (customer) =>
+        customer.firstName.toLowerCase().includes(filter) ||
+        customer.lastName.toLowerCase().includes(filter),
+    );
+  });
 
   columnToDisplay = ['name', 'email', 'company', 'edit'];
 
@@ -50,5 +64,10 @@ export class Customers implements OnInit {
 
   navigateToCreateCustomer() {
     this.router.navigate(['/', 'customers', 'new']);
+  }
+
+  searchCustomers(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.filter.set(searchValue);
   }
 }

@@ -1,7 +1,17 @@
 <div class="flex flex-col h-full">
-  <section class="w-full flex items-center mb-4">
+  <section class="flex items-center justify-between w-full mb-4">
+    <div class="flex items-center pt-0.5">
+      <label class="mr-2 font-medium text-base text-[#78859c]">Search: </label>
+      <input
+        type="text"
+        class="w-40 h-6 p-2 border rounded-md border-[#78859c] focus:outline-1 focus:outline-[#78859c] focus:bg-[#fcfcfa]"
+        matInput
+        (keyup)="searchCustomers($event)"
+      />
+    </div>
+
     <button
-      class="w-36 h-8 font-medium ml-2 text-base flex items-center justify-center text-[#5e8fea] outline-1 outline-[#5e8fea] rounded-md hover:bg-[#5e8fea] hover:text-white hover:cursor-pointer focus:outline-none"
+      class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
       (click)="navigateToCreateCustomer()"
     >
       <mat-icon>add</mat-icon>
@@ -17,7 +27,7 @@
   >
     <table
       mat-table
-      [dataSource]="customerList()"
+      [dataSource]="filteredData()"
       class="mat-column-company mat-column-edit customers-list"
     >
       <ng-container matColumnDef="name">
