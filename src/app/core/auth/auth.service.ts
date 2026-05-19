@@ -1,28 +1,21 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { parseToken } from '../utils/token-parser';
 import { CustomerService } from '../services/customer.service';
-
-export interface AuthResponse {
-  idToken: string;
-  email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
-  registered?: boolean;
-}
+import { FirebaseSigninResponse, FirebaseSignupResponse } from './auth-response.model';
+import { Customer } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  authenticatedUser = signal<AuthResponse | null>(null);
+  authenticatedUser = signal<FirebaseSigninResponse | null>(null);
 
   private APIKey = environment.firebaseConfig.apiKey;
 
@@ -51,10 +44,10 @@ export class AuthService {
     this.router.navigate(['/', 'dashboard']);
   }
 
-  login(email: string, password: string): Observable<AuthResponse> {
+  login(email: string, password: string): Observable<FirebaseSigninResponse> {
     const ignoreInterceptorHttp = new HttpClient(this.httpBackend);
 
-    return ignoreInterceptorHttp.post<AuthResponse>(
+    return ignoreInterceptorHttp.post<FirebaseSigninResponse>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.APIKey}`,
       {
         email,
@@ -64,6 +57,29 @@ export class AuthService {
     );
   }
 
+  registerUser(newUser: Partial<Customer>) {
+    const ignoreInterceptorHttp = new HttpClient(this.httpBackend);
+
+    const password = `${newUser.firstName?.toLowerCase()}.${newUser.lastName?.toLowerCase()}`;
+    const body = {
+      email: newUser.email,
+      password: password,
+    };
+
+    return ignoreInterceptorHttp
+      .post<FirebaseSignupResponse>(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.APIKey}`,
+        body,
+      )
+      .pipe(
+        switchMap((res) => {
+          const id = res.localId;
+
+          return this.customerService.createCustomer(newUser, id);
+        }),
+      );
+  }
+
   logout() {
     this.authenticatedUser.set(null);
     localStorage.removeItem('token');
@@ -71,7 +87,7 @@ export class AuthService {
     this.userService.clearUser();
   }
 
-  setAuthenticatedUser(loggedUser: AuthResponse) {
+  setAuthenticatedUser(loggedUser: FirebaseSigninResponse) {
     this.authenticatedUser.set(loggedUser);
     localStorage.setItem('token', loggedUser.idToken);
   }

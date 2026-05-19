@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 
 import { finalize } from 'rxjs';
 
-import { AuthResponse, AuthService } from '../auth.service';
+import { AuthService } from '../auth.service';
 import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
+import { FirebaseSigninResponse } from '../auth-response.model';
 
 @Component({
   selector: 'app-login',
@@ -51,7 +52,7 @@ export class Login {
     this.isLoginFailed.set(true);
   }
 
-  setActiveUser(res: AuthResponse) {
+  setActiveUser(res: FirebaseSigninResponse) {
     this.authService.setAuthenticatedUser(res);
 
     this.userService.getUser(res.localId);

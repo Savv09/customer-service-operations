@@ -5,13 +5,14 @@ import { TitleService } from '../../../core/services/title.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CrudMode } from '../../../shared/enums/crud.enum';
 import { MatIconModule } from '@angular/material/icon';
-import { Customer } from '../../../core/models/customer.model';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Customer } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-customer-detail',
@@ -32,6 +33,7 @@ export class CustomerDetail implements OnInit {
   private fb = inject(FormBuilder);
   private dialog = inject(MatDialog);
   private snackbarService = inject(SnackbarService);
+  private authService = inject(AuthService);
 
   detailsForm = this.fb.nonNullable.group({
     firstName: ['', Validators.required],
@@ -112,8 +114,8 @@ export class CustomerDetail implements OnInit {
         createdBy: activeUserId ?? '',
       };
 
-      this.customerService
-        .createCustomer(newCustomer)
+      this.authService
+        .registerUser(newCustomer)
         .pipe(finalize(() => this.router.navigate(['/', 'customers'])))
         .subscribe((res) =>
           this.snackbarService.showSnackbar('Customer created succesfully!', SnackbarMode.SUCCESS),
