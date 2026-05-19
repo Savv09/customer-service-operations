@@ -6,10 +6,11 @@ import { finalize } from 'rxjs';
 
 import { AuthResponse, AuthService } from '../auth.service';
 import { UserService } from '../../services/user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

@@ -1,7 +1,7 @@
 <div class="flex items-center justify-center w-full h-screen bg-[#193f83]">
   <main class="flex flex-col items-center w-1/3 h-3/5 p-8 bg-white rounded-lg">
     <header class="mt-8 text-center">
-      <h1 class="text-2xl font-bold text-[#183d7e]">Customer Service Operations</h1>
+      <h1 class="text-2xl font-bold text-[#636872]">Customer Service Operations</h1>
     </header>
 
     @if (!isLoading()) {
@@ -12,16 +12,21 @@
           class="max-w-sm mx-auto"
           aria-label="Login form"
         >
-          <h2 class="my-4 text-xl font-medium text-[#183d7e]">Reserved Area</h2>
+          <h2 class="my-4 text-xl font-medium text-[#636872]">Reserved Area</h2>
 
           <div class="mb-5">
             <!-- Todo: createing a input field component -->
-            <label for="email" class="block mb-2 text-sm font-medium text-[#183d7e]"> Email </label>
+            <label for="email" class="block mb-2 text-sm font-medium text-[#78859c]"> Email </label>
             <input
               type="email"
               id="email"
               formControlName="email"
-              class="block w-full h-12 px-3 py-2 text-sm border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#183d7e] focus:bg-[#ededee]"
+              class="block w-full h-12 px-3 py-2 text-sm border rounded-lg shadow focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] focus:bg-[#fcfcfa]"
+              [ngClass]="{
+                'border-[#c0392b] ring-1 ring-[#c0392b] focus:ring-[#c0392b] focus:border-[#c0392b]':
+                  (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) ||
+                  isLoginFailed(),
+              }"
               placeholder="Email"
               required
               aria-required="true"
@@ -30,14 +35,19 @@
 
           <div class="mb-5">
             <!-- Todo: createing a input field component -->
-            <label for="password" class="block mb-2 text-sm font-medium text-[#183d7e]">
+            <label for="password" class="block mb-2 text-sm font-medium text-[#78859c]">
               Password
             </label>
             <input
               type="password"
               id="password"
               formControlName="password"
-              class="block w-full h-12 px-3 py-2 text-sm border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#183d7e] focus:bg-[#e3e8f4]"
+              class="block w-full h-12 px-3 py-2 text-sm border rounded-lg shadow focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] focus:bg-[#fcfcfa]"
+              [ngClass]="{
+                'border-[#c0392b] ring-1 ring-[#c0392b] focus:ring-[#c0392b] focus:border-[#c0392b]':
+                  (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) ||
+                  isLoginFailed(),
+              }"
               placeholder="••••••••"
               required
               aria-required="true"
@@ -45,8 +55,13 @@
           </div>
 
           <button
+            [disabled]="!loginForm.valid"
             type="submit"
-            class="w-full h-12 mt-4 font-medium text-white bg-[#2459b5] rounded-lg cursor-pointer hover:bg-[#183d7e] focus:outline-none"
+            class="w-full h-12 mt-4 font-medium text-white bg-[#5e8fea] rounded-lg cursor-pointer focus:outline-none"
+            [ngClass]="{
+              'bg-[#5e8feaaf] hover:bg-[#5e8feaaf] hover:cursor-not-allowed': !loginForm.valid,
+              'bg-[#5e8fea] hover:bg-[#5183e0] hover:cursor-pointer': loginForm.valid,
+            }"
           >
             LOGIN
           </button>
