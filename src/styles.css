@@ -9,7 +9,6 @@
 .mdc-snackbar__surface {
   background-color: white !important;
   border-bottom: 0.3rem solid #78859c;
-  margin-left: 55%;
   margin-top: 1rem;
   border-radius: 0.25rem;
 }
@@ -27,8 +26,18 @@
   border-bottom: 0.3rem solid #30a21e;
 }
 
+.snackbar-error .mdc-snackbar__label {
+  color: #78859c !important;
+  font-weight: 500 !important;
+}
+
 .snackbar-error .mdc-snackbar__surface {
   border-bottom: 0.3rem solid #c0392b;
+}
+
+.snackbar-info .mdc-snackbar__label {
+  color: #78859c !important;
+  font-weight: 500 !important;
 }
 
 .snackbar-info .mdc-snackbar__surface {
