@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { parseToken } from '../utils/token-parser';
+import { CustomerService } from '../services/customer.service';
 
 export interface AuthResponse {
   idToken: string;
@@ -27,6 +28,7 @@ export class AuthService {
 
   private httpBackend = inject(HttpBackend);
   private userService = inject(UserService);
+  private customerService = inject(CustomerService);
   private router = inject(Router);
 
   autoLogin() {
@@ -65,6 +67,7 @@ export class AuthService {
   logout() {
     this.authenticatedUser.set(null);
     localStorage.removeItem('token');
+    this.customerService.setIsCustomerListLoaded(false);
     this.userService.clearUser();
   }
 

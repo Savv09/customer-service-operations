@@ -11,6 +11,7 @@ import { TitleService } from '../../core/services/title.service';
 import { CustomerService } from '../../core/services/customer.service';
 
 import { Customer } from '../../core/models/customer.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-customers',
@@ -47,7 +48,8 @@ export class Customers implements OnInit {
   }
 
   getCustomers() {
-    this.customerService.getCustomerList().subscribe((res) => this.customerList.set(res));
+    this.customerService.getCustomerList();
+    this.customerList = this.customerService.getCustomerList$();
   }
 
   getFullName(firstName: string, lastName: string) {
