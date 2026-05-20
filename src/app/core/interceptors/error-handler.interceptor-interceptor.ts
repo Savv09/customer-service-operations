@@ -1,7 +1,10 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { SnackbarService } from '../services/snackbar.service';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+
 import { catchError, throwError } from 'rxjs';
+
+import { SnackbarService } from '../services/snackbar.service';
+
 import { SnackbarMode } from '../../shared/enums/snackbarMode.enum';
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {

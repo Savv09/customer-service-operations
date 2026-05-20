@@ -9,6 +9,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { TitleService } from '../../core/services/title.service';
 import { CustomerService } from '../../core/services/customer.service';
+
 import { Customer } from '../../core/models/user.model';
 
 @Component({

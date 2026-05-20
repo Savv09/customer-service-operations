@@ -1,18 +1,24 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { finalize } from 'rxjs';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+
+import { AuthService } from '../../../core/auth/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { TitleService } from '../../../core/services/title.service';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CrudMode } from '../../../shared/enums/crud.enum';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { finalize } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { SnackbarService } from '../../../core/services/snackbar.service';
-import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
-import { AuthService } from '../../../core/auth/auth.service';
+
+import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
+
 import { Customer } from '../../../core/models/user.model';
+
+import { CrudMode } from '../../../shared/enums/crud.enum';
+import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 
 @Component({
   selector: 'app-customer-detail',

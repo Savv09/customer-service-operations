@@ -1,10 +1,13 @@
 import { Component, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserRole } from '../../enums/user-roles.enum';
-import { User } from '../../../core/models/user.model';
+
 import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+
+import { User } from '../../../core/models/user.model';
+
+import { UserRole } from '../../enums/user-roles.enum';
 
 @Component({
   selector: 'app-sidebar',

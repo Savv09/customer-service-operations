@@ -1,13 +1,15 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Observable, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { UserService } from '../services/user.service';
-import { Router } from '@angular/router';
 import { parseToken } from '../utils/token-parser';
+
+import { UserService } from '../services/user.service';
 import { CustomerService } from '../services/customer.service';
+
 import { FirebaseSigninResponse, FirebaseSignupResponse } from './auth-response.model';
 import { Customer } from '../models/user.model';
 

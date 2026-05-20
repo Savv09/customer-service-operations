@@ -2,10 +2,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { map } from 'rxjs';
+
+import { formatUserFromApi } from '../utils/api-formatter';
+
 import { UserFromApi } from '../models/responses-from-api.model';
-import { BASE_URL } from '../contsants/base.const';
 import { User } from '../models/user.model';
-import { mapUserToDomain } from '../utils/api-formatter';
+
+import { BASE_URL } from '../contsants/base.const';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +35,7 @@ export class UserService {
 
     this.http
       .get<UserFromApi>(url)
-      .pipe(map((res) => mapUserToDomain(res)))
+      .pipe(map((res) => formatUserFromApi(res)))
       .subscribe((user) => this.user.set(user));
   }
 

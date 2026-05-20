@@ -9,8 +9,10 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { TitleService } from '../../../core/services/title.service';
 
 import { RolePipe } from '../../pipes/role-pipe';
-import { UserRole } from '../../enums/user-roles.enum';
+
 import { Customer, User } from '../../../core/models/user.model';
+
+import { UserRole } from '../../enums/user-roles.enum';
 
 @Component({
   selector: 'app-header',

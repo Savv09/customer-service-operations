@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -6,7 +7,7 @@ import { finalize } from 'rxjs';
 
 import { AuthService } from '../auth.service';
 import { UserService } from '../../services/user.service';
-import { CommonModule } from '@angular/common';
+
 import { FirebaseSigninResponse } from '../auth-response.model';
 
 @Component({

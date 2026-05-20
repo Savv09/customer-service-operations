@@ -1,6 +1,7 @@
-import { UserRole } from '../../shared/enums/user-roles.enum';
 import { UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
+
+import { UserRole } from '../../shared/enums/user-roles.enum';
 
 function extractIdFromName(name: string) {
   const nameParts = name.split('/');
@@ -10,7 +11,7 @@ function extractIdFromName(name: string) {
   return id as string;
 }
 
-export function mapUserToDomain(user: UserFromApi): BaseUser | Admin | Customer | Manager {
+export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Customer | Manager {
   const role = Number(user.fields.role?.integerValue);
 
   const base: BaseUser = {
