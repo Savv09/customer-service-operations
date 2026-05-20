@@ -1,13 +1,20 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { UserRole } from '../enums/user-roles.enum';
 
 @Pipe({
   name: 'role',
 })
 export class RolePipe implements PipeTransform {
   transform(value: unknown, ...args: unknown[]): unknown {
-    if (value === 0) {
-      return 'Administrator';
+    switch (value) {
+      case UserRole.ADMIN:
+        return 'Administrator';
+      case UserRole.MANAGER:
+        return 'Manager';
+      case UserRole.CUSTOMER:
+        return 'Client';
     }
+
     return null;
   }
 }
