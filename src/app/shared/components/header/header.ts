@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, input, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '../../../core/auth/auth.service';
-import { UserService } from '../../../core/services/user.service';
 import { TitleService } from '../../../core/services/title.service';
 
 import { RolePipe } from '../../pipes/role-pipe';
+import { UserRole } from '../../enums/user-roles.enum';
+import { Customer, User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-header',
@@ -18,18 +19,33 @@ import { RolePipe } from '../../pipes/role-pipe';
   styleUrl: './header.css',
 })
 export class Header {
-  private auhtService = inject(AuthService);
-  private userService = inject(UserService);
+  currentUser = input<User | null>(null);
+
+  userRole = UserRole;
+
+  private authService = inject(AuthService);
   private titleService = inject(TitleService);
   private router = inject(Router);
 
   title = this.titleService.getTitle();
   hasBackButton = this.titleService.getHasBackButton();
 
-  user = this.userService.user;
+  get fullName() {
+    return `${this.currentUser()?.firstName} ${this.currentUser()?.lastName}`;
+  }
 
-  getFullName() {
-    return `${this.user()?.firstName} ${this.user()?.lastName}`;
+  get customerCompany(): string | null {
+    const user = this.currentUser();
+
+    if (this.isCustomer(user)) {
+      return user.company;
+    }
+
+    return null;
+  }
+
+  isCustomer(user: User | null): user is Customer {
+    return user?.role === UserRole.CUSTOMER;
   }
 
   navigateBack() {
@@ -38,7 +54,7 @@ export class Header {
   }
 
   logout() {
-    this.auhtService.logout();
+    this.authService.logout();
     this.router.navigate(['/', 'login']);
   }
 }
