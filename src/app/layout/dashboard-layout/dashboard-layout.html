@@ -1,22 +1,12 @@
 <div class="w-full h-full flex bg-[#fcfcfa]">
   <section class="h-full w-1/5">
-    <app-sidebar></app-sidebar>
+    <app-sidebar [currentUser]="user()"></app-sidebar>
   </section>
 
   <main class="w-4/5 h-full flex flex-col justify-center px-8 pt-8">
     <section class="w-full h-1/8">
-      <app-header></app-header>
+      <app-header [currentUser]="user()"></app-header>
     </section>
-    <!-- <section class="w-full mt-6 flex items-center justify-end">
-      <div class="w-44">
-        <button
-          class="w-full h-9 mt-4 font-medium text-lg flex items-center justify-center text-white bg-[#2459b5] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
-        >
-          <mat-icon>add</mat-icon>
-          Add customer
-        </button>
-      </div>
-    </section> -->
     <section class="w-full h-full mt-6 p-6 bg-[#ffffff] drop-shadow-sm rounded-t-sm">
       <router-outlet></router-outlet>
     </section>
