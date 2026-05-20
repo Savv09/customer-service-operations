@@ -25,3 +25,5 @@ export interface Customer extends BaseUser {
   createdBy: string;
   company: string;
 }
+
+export type User = BaseUser | Admin | Manager | Customer;

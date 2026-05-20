@@ -4,14 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { UserFromApi } from '../models/responses-from-api.model';
 import { BASE_URL } from '../contsants/base.const';
-import { BaseUser } from '../models/user.model';
+import { User } from '../models/user.model';
 import { mapUserToDomain } from '../utils/api-formatter';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  user = signal<BaseUser | null>(null);
+  user = signal<User | null>(null);
 
   private http = inject(HttpClient);
 
