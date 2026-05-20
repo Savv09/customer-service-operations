@@ -3,6 +3,9 @@ import { Login } from './core/auth/login/login';
 import { authGuard } from './core/guards/auth-guard';
 import { DashboradLayout } from './layout/dashboard-layout/dashboard-layout';
 import { CrudMode } from './shared/enums/crud.enum';
+import { roleGuard } from './core/guards/role-guard';
+import { UserRole } from './shared/enums/user-roles.enum';
+import { redirectGuard } from './core/guards/redirect-guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -11,9 +14,13 @@ export const routes: Routes = [
     component: DashboradLayout,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'customers', pathMatch: 'full' },
+      { path: '', canActivate: [redirectGuard], children: [] },
       {
         path: 'customers',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.ADMIN, UserRole.MANAGER],
+        },
         children: [
           {
             path: '',
@@ -47,6 +54,10 @@ export const routes: Routes = [
       },
       {
         path: 'tickets',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.CUSTOMER],
+        },
         children: [
           {
             path: '',
@@ -60,16 +71,22 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'users',
+        path: 'managers',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.ADMIN],
+        },
         children: [
           {
             path: '',
-            loadComponent: () => import('./features/users/users').then((c) => c.Users),
+            loadComponent: () => import('./features/managers/managers').then((c) => c.Managers),
           },
           {
             path: ':userId',
             loadComponent: () =>
-              import('./features/users/user-detail/user-detail').then((c) => c.UserDetail),
+              import('./features/managers/manager-detail/manager-detail').then(
+                (c) => c.ManagerDetail,
+              ),
           },
         ],
       },
