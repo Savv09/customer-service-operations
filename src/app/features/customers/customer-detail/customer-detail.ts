@@ -19,6 +19,7 @@ import { Customer } from '../../../core/models/user.model';
 
 import { CrudMode } from '../../../shared/enums/crud.enum';
 import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
+import { UserRole } from '../../../shared/enums/user-roles.enum';
 
 @Component({
   selector: 'app-customer-detail',
@@ -121,7 +122,7 @@ export class CustomerDetail implements OnInit {
       };
 
       this.authService
-        .registerUser(newCustomer)
+        .registerUser(newCustomer, UserRole.CUSTOMER)
         .pipe(finalize(() => this.router.navigate(['/', 'customers'])))
         .subscribe((res) =>
           this.snackbarService.showSnackbar('Customer created succesfully!', SnackbarMode.SUCCESS),
