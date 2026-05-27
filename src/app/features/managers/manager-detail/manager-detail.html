@@ -85,18 +85,23 @@
         <label for="department" class="block mb-2 text-base font-medium text-[#78859c]">
           Department
         </label>
-        <input
-          type="text"
+        <select
           id="department"
           formControlName="department"
           class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
           [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
+            'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
+              crudMode === CrudMode.READ,
           }"
-          placeholder="Department"
-          required
-        />
+        >
+          <option value="" disabled>Select department</option>
+
+          @for (department of departmentOptions; track department) {
+            <option [value]="department">
+              {{ department }}
+            </option>
+          }
+        </select>
       </div>
 
       <div class="w-full">

@@ -15,6 +15,7 @@ import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { UserRole } from '../../../shared/enums/user-roles.enum';
 import { RolePipe } from '../../../shared/pipes/role-pipe';
+import { Department } from '../../../shared/enums/department.enum';
 
 @Component({
   selector: 'app-manager-detail',
@@ -24,6 +25,10 @@ import { RolePipe } from '../../../shared/pipes/role-pipe';
 })
 export class ManagerDetail {
   isLoading = signal<boolean>(false);
+
+  Department = Department;
+  departmentOptions = Object.values(Department);
+
   crudMode: CrudMode = CrudMode.READ;
   CrudMode = CrudMode;
   selectedManager: Manager | null = null;
@@ -41,7 +46,7 @@ export class ManagerDetail {
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     email: ['', Validators.required],
-    department: ['', Validators.required],
+    department: [Department.CUSTOMER_SUPPORT, Validators.required],
     phone: [''],
   });
 
