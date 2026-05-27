@@ -1,17 +1,73 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
 import { TitleService } from '../../core/services/title.service';
+import { Manager } from '../../core/models/user.model';
+import { ManagerService } from '../../core/services/manager.service';
+import { Router } from '@angular/router';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-managers',
-  imports: [],
+  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule],
   templateUrl: './managers.html',
   styleUrl: './managers.css',
 })
 export class Managers {
+  managerList = signal<Manager[]>([]);
+
+  filter = signal<string>('');
+  filteredData = computed(() => {
+    const filter = this.filter().trim().toLowerCase();
+
+    if (!filter) return this.managerList();
+
+    return this.managerList().filter(
+      (manager) =>
+        manager.firstName.toLowerCase().includes(filter) ||
+        manager.lastName.toLowerCase().includes(filter),
+    );
+  });
+
+  columnToDisplay = ['name', 'email', 'department', 'edit'];
+
   private titleService = inject(TitleService);
+  private managerService = inject(ManagerService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.titleService.setTitle('Managers');
+    this.titleService.setHasBackButton(false);
+    this.getManagers();
+  }
+
+  getManagers() {
+    this.managerService.getManagerList();
+    this.managerList = this.managerService.getManagerList$();
+  }
+
+  getFullName(firstName: string, lastName: string) {
+    return `${firstName} ${lastName}`;
+  }
+
+  navigateToDetails(manager: Manager) {
+    this.router.navigate(['/', 'managers', manager.id]);
+  }
+
+  navigateToEditManager(manager: Manager) {
+    this.router.navigate(['/', 'managers', manager.id, 'edit']);
+  }
+
+  navigateToCreateManager() {
+    this.router.navigate(['/', 'managers', 'new']);
+  }
+
+  searchManagers(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.filter.set(searchValue);
   }
 }
