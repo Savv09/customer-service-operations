@@ -2,6 +2,7 @@ import { UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 
 import { UserRole } from '../../shared/enums/user-roles.enum';
+import { Department } from '../../shared/enums/department.enum';
 
 function extractIdFromName(name: string) {
   const nameParts = name.split('/');
@@ -34,10 +35,14 @@ export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Custome
       };
 
     case UserRole.MANAGER:
+      const departmentValue = user.fields.department?.stringValue;
+
       return {
         ...base,
         role: UserRole.MANAGER,
-        department: user.fields.department?.stringValue || '',
+        department: Object.values(Department).includes(departmentValue as Department)
+          ? (departmentValue as Department)
+          : Department.CUSTOMER_SUPPORT,
         createdBy: user.fields.createdBy?.stringValue || '',
       };
 

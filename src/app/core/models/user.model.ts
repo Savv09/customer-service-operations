@@ -1,3 +1,4 @@
+import { Department } from '../../shared/enums/department.enum';
 import { UserRole } from '../../shared/enums/user-roles.enum';
 
 export interface BaseUser {
@@ -17,7 +18,7 @@ export interface Admin extends BaseUser {
 export interface Manager extends BaseUser {
   role: UserRole.MANAGER;
   createdBy: string;
-  department: string;
+  department: Department;
 }
 
 export interface Customer extends BaseUser {
