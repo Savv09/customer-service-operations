@@ -1,14 +1,14 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { mapRunQuery } from '../firebase/api.adapters';
-
 import { filter, finalize, map, Observable, tap } from 'rxjs';
+
+import { mapRunQuery } from '../firebase/api.adapters';
 
 import { formatUserFromApi } from '../utils/api-formatter';
 
 import { UserFromApi } from '../models/responses-from-api.model';
-import { BaseUser, Customer, Manager } from '../models/user.model';
+import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 
 import { BASE_URL } from '../contsants/base.const';
 
@@ -133,7 +133,7 @@ export class CustomerService {
     this.isCustomerListLoaded = updatedState;
   }
 
-  isCustomer(user: BaseUser | Customer | Manager): user is Customer {
+  isCustomer(user: BaseUser | Customer | Manager | Admin): user is Customer {
     return user.role === UserRole.CUSTOMER;
   }
 }
