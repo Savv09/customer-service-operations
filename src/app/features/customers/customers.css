@@ -37,3 +37,9 @@ td {
 .edit-button {
   color: #5e8fea;
 }
+
+.mat-mdc-no-data-row .mat-mdc-cell {
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+}

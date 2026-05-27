@@ -63,6 +63,9 @@
 
       <tr mat-header-row *matHeaderRowDef="columnToDisplay; sticky: true"></tr>
       <tr mat-row class="element-row" *matRowDef="let row; columns: columnToDisplay"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columnToDisplay.length">No data available.</td>
+      </tr>
     </table>
   </cdk-virtual-scroll-viewport>
 </div>
