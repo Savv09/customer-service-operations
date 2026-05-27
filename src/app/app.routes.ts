@@ -16,6 +16,35 @@ export const routes: Routes = [
     children: [
       { path: '', canActivate: [redirectGuard], children: [] },
       {
+        path: 'managers',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.ADMIN],
+        },
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/managers/managers').then((c) => c.Managers),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/managers/manager-detail/manager-detail').then(
+                (c) => c.ManagerDetail,
+              ),
+            data: { mode: CrudMode.EDIT },
+          },
+          {
+            path: ':managerId',
+            loadComponent: () =>
+              import('./features/managers/manager-detail/manager-detail').then(
+                (c) => c.ManagerDetail,
+              ),
+            data: { mode: CrudMode.READ },
+          },
+        ],
+      },
+      {
         path: 'customers',
         canActivate: [roleGuard],
         data: {
@@ -67,26 +96,6 @@ export const routes: Routes = [
             path: ':ticketId',
             loadComponent: () =>
               import('./features/tickets/ticket-detail/ticket-detail').then((c) => c.TicketDetail),
-          },
-        ],
-      },
-      {
-        path: 'managers',
-        canActivate: [roleGuard],
-        data: {
-          roles: [UserRole.ADMIN],
-        },
-        children: [
-          {
-            path: '',
-            loadComponent: () => import('./features/managers/managers').then((c) => c.Managers),
-          },
-          {
-            path: ':userId',
-            loadComponent: () =>
-              import('./features/managers/manager-detail/manager-detail').then(
-                (c) => c.ManagerDetail,
-              ),
           },
         ],
       },
