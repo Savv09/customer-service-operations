@@ -18,7 +18,13 @@
         <p class="text-xl font-semibold text-[#193f83]">{{ fullName }}</p>
 
         <p class="text-lg text-[#636872] font-base">
-          {{ customerCompany ? customerCompany : (currentUser()?.role | role) }}
+          {{
+            customerCompany
+              ? customerCompany
+              : managerDepartment
+                ? managerDepartment
+                : (currentUser()?.role | role)
+          }}
         </p>
       </span>
       <div class="h-18 w-18 rounded-full bg-[#193f83]"></div>

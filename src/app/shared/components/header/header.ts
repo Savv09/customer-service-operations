@@ -10,7 +10,7 @@ import { TitleService } from '../../../core/services/title.service';
 
 import { RolePipe } from '../../pipes/role-pipe';
 
-import { Customer, User } from '../../../core/models/user.model';
+import { Customer, Manager, User } from '../../../core/models/user.model';
 
 import { UserRole } from '../../enums/user-roles.enum';
 
@@ -36,6 +36,16 @@ export class Header {
     return `${this.currentUser()?.firstName} ${this.currentUser()?.lastName}`;
   }
 
+  get managerDepartment(): string | null {
+    const user = this.currentUser();
+
+    if (this.isManager(user)) {
+      return user.department;
+    }
+
+    return null;
+  }
+
   get customerCompany(): string | null {
     const user = this.currentUser();
 
@@ -48,6 +58,10 @@ export class Header {
 
   isCustomer(user: User | null): user is Customer {
     return user?.role === UserRole.CUSTOMER;
+  }
+
+  isManager(user: User | null): user is Manager {
+    return user?.role === UserRole.MANAGER;
   }
 
   navigateBack() {
