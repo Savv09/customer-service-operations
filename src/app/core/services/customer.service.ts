@@ -106,7 +106,7 @@ export class CustomerService {
 
     return {
       fields: {
-        role: { integerValue: 2 },
+        role: { integerValue: UserRole.CUSTOMER },
         firstName: { stringValue: firstName || '' },
         lastName: { stringValue: lastName || '' },
         email: { stringValue: email || '' },

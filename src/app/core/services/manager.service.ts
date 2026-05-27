@@ -126,7 +126,7 @@ export class ManagerService {
 
     return {
       fields: {
-        role: { integerValue: 1 },
+        role: { integerValue: UserRole.MANAGER },
         firstName: { stringValue: firstName || '' },
         lastName: { stringValue: lastName || '' },
         email: { stringValue: email || '' },
