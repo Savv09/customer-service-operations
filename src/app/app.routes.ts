@@ -32,6 +32,14 @@ export const routes: Routes = [
               import('./features/managers/manager-detail/manager-detail').then(
                 (c) => c.ManagerDetail,
               ),
+            data: { mode: CrudMode.CREATE },
+          },
+          {
+            path: ':managerId/edit',
+            loadComponent: () =>
+              import('./features/managers/manager-detail/manager-detail').then(
+                (c) => c.ManagerDetail,
+              ),
             data: { mode: CrudMode.EDIT },
           },
           {
