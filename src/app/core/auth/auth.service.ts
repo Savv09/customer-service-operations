@@ -11,7 +11,9 @@ import { UserService } from '../services/user.service';
 import { CustomerService } from '../services/customer.service';
 
 import { FirebaseSigninResponse, FirebaseSignupResponse } from './auth-response.model';
-import { Customer } from '../models/user.model';
+import { Customer, Manager } from '../models/user.model';
+import { UserRole } from '../../shared/enums/user-roles.enum';
+import { ManagerService } from '../services/manager.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +26,7 @@ export class AuthService {
   private httpBackend = inject(HttpBackend);
   private userService = inject(UserService);
   private customerService = inject(CustomerService);
+  private managerService = inject(ManagerService);
   private router = inject(Router);
 
   autoLogin() {
@@ -59,7 +62,7 @@ export class AuthService {
     );
   }
 
-  registerUser(newUser: Partial<Customer>) {
+  registerUser(newUser: Partial<Customer | Manager>, userRole: UserRole) {
     const ignoreInterceptorHttp = new HttpClient(this.httpBackend);
 
     const password = `${newUser.firstName?.toLowerCase()}.${newUser.lastName?.toLowerCase()}`;
@@ -77,7 +80,11 @@ export class AuthService {
         switchMap((res) => {
           const id = res.localId;
 
-          return this.customerService.createCustomer(newUser, id);
+          if (userRole === UserRole.MANAGER) {
+            return this.managerService.createManager(newUser as Manager, id);
+          }
+
+          return this.customerService.createCustomer(newUser as Customer, id);
         }),
       );
   }
