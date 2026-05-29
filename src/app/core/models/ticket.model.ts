@@ -1,11 +1,14 @@
+import { Department } from '../../shared/enums/department.enum';
+import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
+
 export interface Ticket {
+  id: string;
   title: string;
   description: string;
-  status: 0 | 1 | 2;
-  priority: 0 | 1 | 2;
   customerId: string;
-  assignedTo?: string;
+  assignedManagerId?: string;
+  department: Department;
+  priority: TicketPriority;
+  status: TicketStatus;
   createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
 }
