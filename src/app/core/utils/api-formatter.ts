@@ -1,8 +1,10 @@
-import { UserFromApi } from '../models/responses-from-api.model';
+import { TicketFromApi, UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { Department } from '../../shared/enums/department.enum';
+import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
+import { Ticket } from '../models/ticket.model';
 
 function extractIdFromName(name: string) {
   const nameParts = name.split('/');
@@ -57,80 +59,23 @@ export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Custome
   }
 }
 
-// export function formatBaseUser(response: UserFromApi): BaseUser {
-//   const user = response.document;
+export function formatTicketFromApi(ticket: TicketFromApi): Ticket {
+  const departmentValue = ticket.fields.department?.stringValue;
 
-//   return {
-//     id: extractIdFromName(user.name),
+  return {
+    id: extractIdFromName(ticket.name),
+    title: ticket.fields.title?.stringValue || '',
+    description: ticket.fields.description?.stringValue || '',
+    customerId: ticket.fields.customerId?.stringValue || '',
+    assignedManagerId: ticket.fields.assignedManagerId?.stringValue || undefined,
+    department: isDepartment(departmentValue) ? departmentValue : Department.CUSTOMER_SUPPORT,
+    priority: Number(ticket.fields.priority?.integerValue || 0) as TicketPriority,
+    status: Number(ticket.fields.status?.integerValue || 0) as TicketStatus,
+    closedAt: ticket.fields.closedAt.stringValue || '',
+    createdAt: new Date(ticket.createTime),
+  };
+}
 
-//     email: user.fields.email?.stringValue || '',
-
-//     firstName: user.fields.firstName?.stringValue || '',
-
-//     lastName: user.fields.lastName?.stringValue || '',
-
-//     phone: user.fields.phone?.stringValue,
-
-//     role: Number(user.fields.role?.integerValue || 0) as UserRole,
-
-//     createdAt: new Date(user.createTime),
-//   };
-// }
-
-// export function formatAdminFromFirestore(response: UserFromApi): Admin {
-//   const base = formatBaseUser(response);
-
-//   return {
-//     ...base,
-
-//     role: UserRole.ADMIN,
-//   };
-// }
-
-// export function formatManagerFromFirestore(response: UserFromApi): Manager {
-//   const base = formatBaseUser(response);
-//   const user = response.document;
-
-//   return {
-//     ...base,
-
-//     role: UserRole.MANAGER,
-
-//     department: user.fields.department?.stringValue || '',
-
-//     createdBy: user.fields.createdBy?.stringValue || '',
-//   };
-// }
-
-// export function formatCustomerFromFirestore(response: UserFromApi): Customer {
-//   const base = formatBaseUser(response);
-//   const user = response.document;
-
-//   return {
-//     ...base,
-
-//     role: UserRole.CUSTOMER,
-
-//     company: user.fields.company?.stringValue || '',
-
-//     createdBy: user.fields.createdBy?.stringValue || '',
-//   };
-// }
-
-// export function formatUser(response: UserFromApi) {
-//   const role = Number(response.document.fields.role?.integerValue);
-
-//   switch (role) {
-//     case UserRole.ADMIN:
-//       return formatAdminFromFirestore(response);
-
-//     case UserRole.CUSTOMER:
-//       return formatCustomerFromFirestore(response);
-
-//     case UserRole.MANAGER:
-//       return formatManagerFromFirestore(response);
-
-//     default:
-//       return formatBaseUser(response);
-//   }
-// }
+function isDepartment(value: any): value is Department {
+  return Object.values(Department).includes(value);
+}
