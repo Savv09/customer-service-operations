@@ -136,4 +136,9 @@ export class ManagerService {
       },
     };
   }
+
+  logoutFromApp() {
+    this.setIsManagerListLoaded(false);
+    this.clearManagerList$();
+  }
 }

@@ -14,6 +14,7 @@ import { FirebaseSigninResponse, FirebaseSignupResponse } from './auth-response.
 import { Customer, Manager } from '../models/user.model';
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { ManagerService } from '../services/manager.service';
+import { TicketService } from '../services/ticket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class AuthService {
   private userService = inject(UserService);
   private customerService = inject(CustomerService);
   private managerService = inject(ManagerService);
+  private ticketService = inject(TicketService);
   private router = inject(Router);
 
   autoLogin() {
@@ -92,7 +94,11 @@ export class AuthService {
   logout() {
     this.authenticatedUser.set(null);
     localStorage.removeItem('token');
-    this.customerService.setIsCustomerListLoaded(false);
+
+    this.customerService.logoutFromApp();
+    this.managerService.logoutFromApp();
+    this.ticketService.logoutFromApp();
+
     this.userService.clearUser();
   }
 

@@ -136,4 +136,9 @@ export class CustomerService {
   isCustomer(user: BaseUser | Customer | Manager | Admin): user is Customer {
     return user.role === UserRole.CUSTOMER;
   }
+
+  logoutFromApp() {
+    this.setIsCustomerListLoaded(false);
+    this.clearCustomerList$();
+  }
 }
