@@ -10,5 +10,6 @@ export interface Ticket {
   department: Department;
   priority: TicketPriority;
   status: TicketStatus;
+  closedAt?: string;
   createdAt: Date;
 }
