@@ -17,3 +17,23 @@ export interface UserFromApi {
 export interface UserListFromApi {
   document: UserFromApi;
 }
+
+export interface TicketFromApi {
+  name: string;
+  fields: {
+    title: { stringValue: string };
+    description: { stringValue: string };
+    customerId: { stringValue: string };
+    assignedManagerId: { stringValue: string };
+    department: { stringValue: string };
+    priority: { integerValue: number };
+    status: { integerValue: number };
+    closedAt: { stringValue: string };
+  };
+  createTime: string;
+  updateTime: string;
+}
+
+export interface TicketListFromApi {
+  documents: TicketFromApi[];
+}
