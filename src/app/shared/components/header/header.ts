@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
@@ -25,11 +25,32 @@ export class Header {
 
   userRole = UserRole;
 
-  private authService = inject(AuthService);
   private titleService = inject(TitleService);
   private router = inject(Router);
 
   title = this.titleService.getTitle();
+  private readonly titleIcons: Record<string, string> = {
+    Dashboard: 'dashboard',
+
+    Managers: 'manage_accounts',
+    'Manager Details': 'manage_accounts',
+
+    Customers: 'groups',
+    'Customer Details': 'groups',
+
+    'Edit Manager': 'edit',
+    'Edit Customer': 'edit',
+
+    'New Manager': 'add',
+    'New Customer': 'add',
+
+    Tickets: 'assignment',
+  };
+
+  titleIcon = computed(() => {
+    return this.titleIcons[this.title()] ?? 'dashboard';
+  });
+
   hasBackButton = this.titleService.getHasBackButton();
 
   get fullName() {
@@ -67,10 +88,5 @@ export class Header {
   navigateBack() {
     const backUrl = this.titleService.getBackButtonUrl();
     this.router.navigate(backUrl());
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/', 'login']);
   }
 }

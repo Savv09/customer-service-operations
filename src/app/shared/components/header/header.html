@@ -6,16 +6,12 @@
           <mat-icon>navigate_before</mat-icon>
         </button>
       }
+      <mat-icon class="mr-2 title-icon">{{ titleIcon() }}</mat-icon>
       <h2 class="text-2xl font-bold text-[#78859c]">{{ title() }}</h2>
     </div>
-    <button
-      #trigger="matMenuTrigger"
-      [matMenuTriggerFor]="menu"
-      [class.bg-[#d9dae2]]="trigger.menuOpen"
-      class="flex items-center p-2 cursor-pointer hover:bg-[#d9dae2]"
-    >
+    <div class="flex items-center">
       <span class="mx-4 text-right">
-        <p class="text-xl font-semibold text-[#193f83]">{{ fullName }}</p>
+        <p class="text-xl font-bold text-[#78859c]">{{ fullName }}</p>
 
         <p class="text-lg text-[#636872] font-base">
           {{
@@ -27,13 +23,11 @@
           }}
         </p>
       </span>
-      <div class="h-18 w-18 rounded-full bg-[#193f83]"></div>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
+      <div class="h-18 w-18 flex items-center justify-center rounded-full bg-[#193f83]">
+        <span class="text-3xl font-medium text-[#ffffff]">{{
+          currentUser()?.firstName?.charAt(0) + '' + currentUser()?.lastName?.charAt(0)
+        }}</span>
+      </div>
+    </div>
   </section>
 </header>

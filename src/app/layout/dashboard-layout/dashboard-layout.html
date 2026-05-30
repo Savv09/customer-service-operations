@@ -1,9 +1,9 @@
 <div class="w-full h-full flex bg-[#fcfcfa]">
-  <section class="h-full w-1/5">
-    <app-sidebar [currentUser]="user()"></app-sidebar>
+  <section class="h-full w-1/6">
+    <app-sidebar [currentUser]="user()" (logoutClicked)="onLogout()"></app-sidebar>
   </section>
 
-  <main class="w-4/5 h-full flex flex-col justify-center px-8 pt-8">
+  <main class="w-5/6 h-full flex flex-col justify-center px-8 pt-8">
     <section class="w-full h-1/8">
       <app-header [currentUser]="user()"></app-header>
     </section>
