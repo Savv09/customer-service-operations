@@ -59,14 +59,14 @@ export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Custome
   }
 }
 
-export function formatTicketFromApi(ticket: TicketFromApi): Ticket {
+export function formatTicketFromApi(ticket: TicketFromApi, customer: Customer): Ticket {
   const departmentValue = ticket.fields.department?.stringValue;
 
   return {
     id: extractIdFromName(ticket.name),
     title: ticket.fields.title?.stringValue || '',
     description: ticket.fields.description?.stringValue || '',
-    customerId: ticket.fields.customerId?.stringValue || '',
+    createdBy: customer,
     assignedManagerId: ticket.fields.assignedManagerId?.stringValue || undefined,
     department: isDepartment(departmentValue) ? departmentValue : Department.CUSTOMER_SUPPORT,
     priority: Number(ticket.fields.priority?.integerValue || 0) as TicketPriority,

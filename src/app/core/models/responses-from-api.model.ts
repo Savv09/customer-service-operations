@@ -23,7 +23,7 @@ export interface TicketFromApi {
   fields: {
     title: { stringValue: string };
     description: { stringValue: string };
-    customerId: { stringValue: string };
+    createdBy: { stringValue: string };
     assignedManagerId: { stringValue: string };
     department: { stringValue: string };
     priority: { integerValue: number };

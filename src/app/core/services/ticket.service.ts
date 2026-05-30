@@ -2,10 +2,11 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Ticket } from '../models/ticket.model';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
-import { finalize, map, Observable, tap } from 'rxjs';
+import { finalize, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
 import { formatTicketFromApi } from '../utils/api-formatter';
 import { TicketStatus } from '../../shared/enums/tickets.enum';
+import { CustomerService } from './customer.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class TicketService {
   private isTicketListLoaded = false;
 
   private http = inject(HttpClient);
+  private customerService = inject(CustomerService);
 
   private getTicketUrl(ticketId: string | null) {
     let ticketsUrl = `${BASE_URL}/tickets`;
@@ -51,17 +53,34 @@ export class TicketService {
     this.http
       .get<TicketListFromApi>(url)
       .pipe(
-        map((res) => res.documents.map((ticketFromApi) => formatTicketFromApi(ticketFromApi))),
+        switchMap((res) =>
+          forkJoin(
+            res.documents.map((ticketFromApi) =>
+              this.customerService
+                .getCustomer(ticketFromApi.fields.createdBy.stringValue)
+                .pipe(map((customer) => formatTicketFromApi(ticketFromApi, customer))),
+            ),
+          ),
+        ),
         tap((tickets) => this.updateTicketList$(tickets)),
         finalize(() => this.setisTicketListLoaded(true)),
       )
+
       .subscribe();
   }
 
   getTicket(ticketId: string): Observable<Ticket> {
     const url = this.getTicketUrl(ticketId);
 
-    return this.http.get<TicketFromApi>(url).pipe(map((res) => formatTicketFromApi(res)));
+    return this.http
+      .get<TicketFromApi>(url)
+      .pipe(
+        switchMap((ticketFromApi) =>
+          this.customerService
+            .getCustomer(ticketFromApi.fields.createdBy.stringValue)
+            .pipe(map((customer) => formatTicketFromApi(ticketFromApi, customer))),
+        ),
+      );
   }
 
   createTicket(newTicket: Partial<Ticket>) {
@@ -82,7 +101,7 @@ export class TicketService {
     const {
       title,
       description,
-      customerId,
+      createdBy,
       department,
       assignedManagerId,
       priority,
@@ -94,7 +113,7 @@ export class TicketService {
       fields: {
         title: { stringValue: title || '' },
         description: { stringValue: description || '' },
-        customerId: { stringValue: customerId || '' },
+        createdBy: { stringValue: createdBy?.id || '' },
         department: { stringValue: department || '' },
         assignedManagerId: { stringValue: assignedManagerId || '' },
         priority: { integerValue: priority || 0 },
