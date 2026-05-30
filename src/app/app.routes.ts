@@ -5,7 +5,6 @@ import { DashboradLayout } from './layout/dashboard-layout/dashboard-layout';
 import { CrudMode } from './shared/enums/crud.enum';
 import { roleGuard } from './core/guards/role-guard';
 import { UserRole } from './shared/enums/user-roles.enum';
-import { redirectGuard } from './core/guards/redirect-guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -14,7 +13,10 @@ export const routes: Routes = [
     component: DashboradLayout,
     canActivate: [authGuard],
     children: [
-      { path: '', canActivate: [redirectGuard], children: [] },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard').then((c) => c.Dashboard),
+      },
       {
         path: 'managers',
         canActivate: [roleGuard],
