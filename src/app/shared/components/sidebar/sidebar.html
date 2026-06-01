@@ -132,7 +132,7 @@
         (click)="navigateToSelectedPage('tickets')"
       >
         <mat-icon class="mr-3">assignment</mat-icon>
-        <span>Tickets</span>
+        <span>{{ currentUser()?.role === userRole.CUSTOMER ? 'My Tickets' : 'Tickets' }}</span>
       </button>
     </li>
 

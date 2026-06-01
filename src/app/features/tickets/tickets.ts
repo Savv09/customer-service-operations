@@ -2,6 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 
 import { TitleService } from '../../core/services/title.service';
 import { Ticket } from '../../core/models/ticket.model';
+import { UserService } from '../../core/services/user.service';
+import { UserRole } from '../../shared/enums/user-roles.enum';
 
 @Component({
   selector: 'app-tickets',
@@ -10,6 +12,11 @@ import { Ticket } from '../../core/models/ticket.model';
   styleUrl: './tickets.css',
 })
 export class Tickets {
+  private userService = inject(UserService);
+  private titleService = inject(TitleService);
+
+  user = this.userService.user;
+
   ticketList = signal<Ticket[]>([]);
 
   filter = signal<string>('');
@@ -23,9 +30,12 @@ export class Tickets {
 
   columnToDisplay = ['title', 'createdBy', 'department', 'edit'];
 
-  private titleService = inject(TitleService);
-
   ngOnInit(): void {
-    this.titleService.setTitle('Tickets');
+    this.setTitleByUser();
+  }
+
+  setTitleByUser() {
+    const userRole = this.user()?.role;
+    this.titleService.setTitle(userRole === UserRole.CUSTOMER ? 'My Tickets' : 'Tickets');
   }
 }

@@ -45,6 +45,7 @@ export class Header {
     'New Customer': 'add',
 
     Tickets: 'assignment',
+    'My Tickets': 'assignment',
   };
 
   titleIcon = computed(() => {
