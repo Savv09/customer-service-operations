@@ -6,9 +6,12 @@ import { catchError, throwError } from 'rxjs';
 import { SnackbarService } from '../services/snackbar.service';
 
 import { SnackbarMode } from '../../shared/enums/snackbarMode.enum';
+import { Router } from '@angular/router';
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
   const snackbarService = inject(SnackbarService);
+  const router = inject(Router);
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'An error occurred. Please try again.';
@@ -23,7 +26,8 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
           break;
 
         case 401:
-          errorMessage = 'Session expired. Please sign in again';
+          errorMessage = 'Session expired. Please sign in again.';
+          router.navigate(['/', 'login']);
           break;
 
         case 403:
@@ -35,7 +39,7 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
           break;
 
         case 500:
-          errorMessage = 'Internal server error. Please try again later';
+          errorMessage = 'Internal server error. Please try again later.';
           break;
       }
 
