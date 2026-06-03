@@ -1,1 +1,119 @@
-<p>ticket-detail works!</p>
+<form [formGroup]="detailsForm" class="w-full h-3/5 grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
+  @if (currentUser()?.role === UserRole.ADMIN) {
+    <div>
+      <label for="createdBy" class="block mb-2 text-lg font-medium text-[#78859c]">
+        Create for
+      </label>
+      <select
+        id="createdBy"
+        formControlName="createdBy"
+        class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+        [ngClass]="{
+          'bg-[#78859c2c] pointer-events-none border-0 appearance-none': crudMode === CrudMode.READ,
+        }"
+      >
+        <option value="" disabled>Select customer</option>
+
+        @for (customer of customerList(); track customer.id) {
+          <option [value]="customer.id">
+            {{ customer.firstName + ' ' + customer.lastName }}
+          </option>
+        }
+      </select>
+    </div>
+    <div>
+      <label for="assignedManagerId" class="block mb-2 text-lg font-medium text-[#78859c]">
+        Assign To
+      </label>
+      <select
+        id="assignedManagerId"
+        formControlName="assignedManagerId"
+        class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+        [ngClass]="{
+          'bg-[#78859c2c] pointer-events-none border-0 appearance-none': crudMode === CrudMode.READ,
+        }"
+      >
+        <option value="" disabled>Select manager</option>
+        <option value="">None</option>
+
+        @for (manager of managersRelatedToSelectedDepartment(); track manager.id) {
+          <option [value]="manager.id">
+            {{ manager.firstName + ' ' + manager.lastName }}
+          </option>
+        }
+      </select>
+    </div>
+  }
+  <div class="w-full">
+    <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]"> Title </label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      [ngClass]="{
+        'bg-[#78859c2c]': crudMode === CrudMode.READ,
+        'border-0': crudMode === CrudMode.READ,
+      }"
+      placeholder="Title"
+      required
+    />
+  </div>
+  <div class="w-full">
+    <label for="department" class="block mb-2 text-lg font-medium text-[#78859c]">
+      Department
+    </label>
+    <select
+      id="department"
+      formControlName="department"
+      class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      [ngClass]="{
+        'bg-[#78859c2c] pointer-events-none border-0 appearance-none': crudMode === CrudMode.READ,
+      }"
+      (change)="onDepartmentChange($event)"
+    >
+      <option value="" disabled>Select department</option>
+
+      @for (department of departmentOptions; track department) {
+        <option [value]="department">
+          {{ department }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <div class="w-full">
+    <label for="description" class="block mb-2 text-lg font-medium text-[#78859c]">
+      Description
+    </label>
+    <textarea
+      id="description"
+      formControlName="description"
+      class="block w-full h-60 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+      [ngClass]="{
+        'bg-[#78859c2c]': crudMode === CrudMode.READ,
+        'border-0': crudMode === CrudMode.READ,
+      }"
+      placeholder="Enter a description"
+      required
+    >
+    </textarea>
+  </div>
+
+  <div class="w-full h-full">
+    <label class="block mb-2 text-lg font-medium text-[#78859c]"> Priority </label>
+
+    <div class="h-60 flex flex-col justify-between">
+      @for (priority of priorityOptions; track priority) {
+        <button
+          type="button"
+          class="px-4 py-2 w-1/5 rounded-md border hover:cursor-pointer"
+          [ngClass]="{ 'bg-[#5e8fea] text-white': detailsForm.value.priority === priority }"
+          (click)="detailsForm.controls.priority.setValue(priority)"
+        >
+          {{ priority | ticketPriorityPipe }}
+        </button>
+      }
+    </div>
+  </div>
+</form>
