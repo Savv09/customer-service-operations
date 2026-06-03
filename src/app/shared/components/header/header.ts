@@ -40,12 +40,15 @@ export class Header {
 
     'Edit Manager': 'edit',
     'Edit Customer': 'edit',
+    'Update Ticket': 'edit',
 
     'New Manager': 'add',
     'New Customer': 'add',
+    'New Ticket': 'add',
 
     Tickets: 'assignment',
     'My Tickets': 'assignment',
+    'Ticket Details': 'assignment',
   };
 
   titleIcon = computed(() => {
