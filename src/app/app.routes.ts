@@ -103,9 +103,22 @@ export const routes: Routes = [
             loadComponent: () => import('./features/tickets/tickets').then((c) => c.Tickets),
           },
           {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/tickets/ticket-detail/ticket-detail').then((c) => c.TicketDetail),
+            data: { mode: CrudMode.CREATE },
+          },
+          {
+            path: ':ticketId/edit',
+            loadComponent: () =>
+              import('./features/tickets/ticket-detail/ticket-detail').then((c) => c.TicketDetail),
+            data: { mode: CrudMode.EDIT },
+          },
+          {
             path: ':ticketId',
             loadComponent: () =>
               import('./features/tickets/ticket-detail/ticket-detail').then((c) => c.TicketDetail),
+            data: { mode: CrudMode.READ },
           },
         ],
       },
