@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { map } from 'rxjs';
 
-import { formatUserFromApi } from '../utils/api-formatter';
+import { mapUserFromApi } from '../utils/api-formatter';
 
 import { UserFromApi } from '../models/responses-from-api.model';
 import { User } from '../models/user.model';
@@ -35,7 +35,7 @@ export class UserService {
 
     this.http
       .get<UserFromApi>(url)
-      .pipe(map((res) => formatUserFromApi(res)))
+      .pipe(map((res) => mapUserFromApi(res)))
       .subscribe((user) => this.user.set(user));
   }
 

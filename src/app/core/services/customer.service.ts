@@ -5,7 +5,7 @@ import { filter, finalize, map, Observable, tap } from 'rxjs';
 
 import { mapRunQuery } from '../firebase/api.adapters';
 
-import { formatUserFromApi } from '../utils/api-formatter';
+import { mapUserFromApi } from '../utils/api-formatter';
 
 import { UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
@@ -63,7 +63,7 @@ export class CustomerService {
       .post<UserFromApi[]>(url, body)
       .pipe(
         map((res) => mapRunQuery(res)),
-        map((users) => users.map(formatUserFromApi)),
+        map((users) => users.map(mapUserFromApi)),
         map((users) => users.filter(this.isCustomer)),
         map((users) => users.sort((a, b) => a.firstName.localeCompare(b.firstName))),
         tap((list) => this.updateCustomerList$(list)),
@@ -76,7 +76,7 @@ export class CustomerService {
     const url = this.getCustomersUrl(customerId);
 
     return this.http.get<UserFromApi>(url).pipe(
-      map((res) => formatUserFromApi(res)),
+      map((res) => mapUserFromApi(res)),
       filter((user): user is Customer => user.role === UserRole.CUSTOMER),
     );
   }

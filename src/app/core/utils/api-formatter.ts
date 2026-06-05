@@ -14,7 +14,7 @@ function extractIdFromName(name: string) {
   return id as string;
 }
 
-export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Customer | Manager {
+export function mapUserFromApi(user: UserFromApi): BaseUser | Admin | Customer | Manager {
   const role = Number(user.fields.role?.integerValue);
 
   const base: BaseUser = {
@@ -59,14 +59,14 @@ export function formatUserFromApi(user: UserFromApi): BaseUser | Admin | Custome
   }
 }
 
-export function formatTicketFromApi(ticket: TicketFromApi, customer: Customer): Ticket {
+export function mapTicketFromApi(ticket: TicketFromApi): Ticket {
   const departmentValue = ticket.fields.department?.stringValue;
 
   return {
     id: extractIdFromName(ticket.name),
     title: ticket.fields.title?.stringValue || '',
     description: ticket.fields.description?.stringValue || '',
-    createdBy: customer,
+    customerId: ticket.fields.customerId.stringValue || '',
     assignedManagerId: ticket.fields.assignedManagerId?.stringValue || undefined,
     department: isDepartment(departmentValue) ? departmentValue : Department.CUSTOMER_SUPPORT,
     priority: Number(ticket.fields.priority?.integerValue || 0) as TicketPriority,
