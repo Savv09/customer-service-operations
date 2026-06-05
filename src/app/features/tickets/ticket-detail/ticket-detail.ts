@@ -12,10 +12,11 @@ import { UserRole } from '../../../shared/enums/user-roles.enum';
 import { ManagerService } from '../../../core/services/manager.service';
 import { Customer, Manager } from '../../../core/models/user.model';
 import { CustomerService } from '../../../core/services/customer.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-ticket-detail',
-  imports: [ReactiveFormsModule, CommonModule, TicketPriorityPipe],
+  imports: [ReactiveFormsModule, CommonModule, TicketPriorityPipe, MatIconModule],
   templateUrl: './ticket-detail.html',
   styleUrl: './ticket-detail.css',
 })
@@ -53,7 +54,7 @@ export class TicketDetail implements OnInit {
     description: ['', Validators.required],
     priority: [TicketPriority.LOW, Validators.required],
     department: [Department.CUSTOMER_SUPPORT, Validators.required],
-    assignedTo: ['', Validators.required],
+    assignedTo: [''],
     status: [TicketStatus.OPEN],
     createdBy: ['', Validators.required],
     assignedManagerId: [''],
