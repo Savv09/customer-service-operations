@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
 import { finalize, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
-import { formatTicketFromApi } from '../utils/api-formatter';
+import { mapTicketFromApi } from '../utils/api-formatter';
 import { TicketStatus } from '../../shared/enums/tickets.enum';
 import { CustomerService } from './customer.service';
 
@@ -53,14 +53,8 @@ export class TicketService {
     this.http
       .get<TicketListFromApi>(url)
       .pipe(
-        switchMap((res) =>
-          forkJoin(
-            res.documents.map((ticketFromApi) =>
-              this.customerService
-                .getCustomer(ticketFromApi.fields.createdBy.stringValue)
-                .pipe(map((customer) => formatTicketFromApi(ticketFromApi, customer))),
-            ),
-          ),
+        map((ticketListFromApi) =>
+          ticketListFromApi.documents.map((ticketFromApi) => mapTicketFromApi(ticketFromApi)),
         ),
         tap((tickets) => this.updateTicketList$(tickets)),
         finalize(() => this.setisTicketListLoaded(true)),
@@ -74,13 +68,7 @@ export class TicketService {
 
     return this.http
       .get<TicketFromApi>(url)
-      .pipe(
-        switchMap((ticketFromApi) =>
-          this.customerService
-            .getCustomer(ticketFromApi.fields.createdBy.stringValue)
-            .pipe(map((customer) => formatTicketFromApi(ticketFromApi, customer))),
-        ),
-      );
+      .pipe(map((ticketFromApi) => mapTicketFromApi(ticketFromApi)));
   }
 
   createTicket(newTicket: Partial<Ticket>) {
@@ -101,7 +89,7 @@ export class TicketService {
     const {
       title,
       description,
-      createdBy,
+      customerId,
       department,
       assignedManagerId,
       priority,
@@ -113,7 +101,7 @@ export class TicketService {
       fields: {
         title: { stringValue: title || '' },
         description: { stringValue: description || '' },
-        createdBy: { stringValue: createdBy?.id || '' },
+        customerId: { stringValue: customerId || '' },
         department: { stringValue: department || '' },
         assignedManagerId: { stringValue: assignedManagerId || '' },
         priority: { integerValue: priority || 0 },

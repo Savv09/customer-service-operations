@@ -6,7 +6,7 @@ export interface Ticket {
   id: string;
   title: string;
   description: string;
-  createdBy: Customer;
+  customerId: string;
   assignedManagerId?: string;
   department: Department;
   priority: TicketPriority;

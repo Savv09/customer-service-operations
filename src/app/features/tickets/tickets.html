@@ -112,7 +112,7 @@
     >
       <table
         mat-table
-        [dataSource]="filteredData().filter((item) => item.createdBy.id === currentUser()?.id)"
+        [dataSource]="filteredData().filter((item) => item.customerId === currentUser()?.id)"
         class="mat-column-company mat-column-edit customers-list"
       >
         <ng-container matColumnDef="code">

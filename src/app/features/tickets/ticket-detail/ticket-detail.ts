@@ -56,7 +56,7 @@ export class TicketDetail implements OnInit {
     department: [Department.CUSTOMER_SUPPORT, Validators.required],
     assignedTo: [''],
     status: [TicketStatus.OPEN],
-    createdBy: ['', Validators.required],
+    customerId: ['', Validators.required],
     assignedManagerId: [''],
   });
 
