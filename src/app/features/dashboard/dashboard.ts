@@ -12,7 +12,7 @@ export class Dashboard implements OnInit {
   private titleService = inject(TitleService);
   private userService = inject(UserService);
 
-  currentUser = this.userService.user;
+  currentUser = this.userService.getCurrentUser$();
 
   ngOnInit(): void {
     this.titleService.setTitle('Dashboard');

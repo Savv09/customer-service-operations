@@ -99,7 +99,7 @@ export class AuthService {
     this.managerService.logoutFromApp();
     this.ticketService.logoutFromApp();
 
-    this.userService.clearUser();
+    this.userService.clearCurrentUser$();
   }
 
   setAuthenticatedUser(loggedUser: FirebaseSigninResponse) {

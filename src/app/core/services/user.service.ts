@@ -14,7 +14,7 @@ import { BASE_URL } from '../contsants/base.const';
   providedIn: 'root',
 })
 export class UserService {
-  user = signal<User | null>(null);
+  private currentUser$ = signal<User | null>(null);
 
   private http = inject(HttpClient);
 
@@ -28,18 +28,24 @@ export class UserService {
     return usersUrl;
   }
 
-  getUserList() {}
-
   getUser(userId: string) {
     const url = this.getUsersUrl(userId);
 
     this.http
       .get<UserFromApi>(url)
       .pipe(map((res) => mapUserFromApi(res)))
-      .subscribe((user) => this.user.set(user));
+      .subscribe((user) => this.updateCurrentUser$(user));
   }
 
-  clearUser() {
-    this.user.set(null);
+  getCurrentUser$() {
+    return this.currentUser$;
+  }
+
+  updateCurrentUser$(user: User) {
+    this.currentUser$.set(user);
+  }
+
+  clearCurrentUser$() {
+    this.currentUser$.set(null);
   }
 }
