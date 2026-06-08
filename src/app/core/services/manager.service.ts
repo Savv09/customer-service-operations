@@ -20,7 +20,7 @@ import { UserRole } from '../../shared/enums/user-roles.enum';
 export class ManagerService {
   private managerList$ = signal<Manager[]>([]);
 
-  private isManagerListLoaded = false;
+  private isManagerListLoaded = signal<boolean>(false);
 
   private http = inject(HttpClient);
 
@@ -38,8 +38,12 @@ export class ManagerService {
     return user.role === UserRole.MANAGER;
   }
 
+  getIsManagerListLoaded() {
+    return this.isManagerListLoaded;
+  }
+
   setIsManagerListLoaded(updatedState: boolean) {
-    this.isManagerListLoaded = updatedState;
+    this.isManagerListLoaded.set(updatedState);
   }
 
   getManagerList$() {
@@ -54,9 +58,7 @@ export class ManagerService {
     this.managerList$.set([]);
   }
 
-  getManagerList(): void {
-    if (this.isManagerListLoaded) return;
-
+  getManagerList(): Observable<Manager[]> {
     const url = `${BASE_URL}:runQuery`;
     const body = {
       structuredQuery: {
@@ -79,17 +81,13 @@ export class ManagerService {
       },
     };
 
-    this.http
-      .post<UserFromApi[]>(url, body)
-      .pipe(
-        map((res) => mapRunQuery(res)),
-        map((users) => users.map(mapUserFromApi)),
-        map((users) => users.filter(this.isManager)),
-        map((users) => users.sort((a, b) => a.firstName.localeCompare(b.firstName))),
-        tap((list) => this.updateManagerList$(list)),
-        finalize(() => this.setIsManagerListLoaded(true)),
-      )
-      .subscribe();
+    return this.http.post<UserFromApi[]>(url, body).pipe(
+      map((res) => mapRunQuery(res)),
+      map((users) => users.map(mapUserFromApi)),
+      map((users) => users.filter(this.isManager)),
+      map((users) => users.sort((a, b) => a.firstName.localeCompare(b.firstName))),
+      finalize(() => this.setIsManagerListLoaded(true)),
+    );
   }
 
   getManager(managerId: string): Observable<Manager> {

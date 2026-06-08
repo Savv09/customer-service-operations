@@ -5,8 +5,6 @@ import { BASE_URL } from '../contsants/base.const';
 import { finalize, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
 import { mapTicketFromApi } from '../utils/api-formatter';
-import { TicketStatus } from '../../shared/enums/tickets.enum';
-import { CustomerService } from './customer.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +12,9 @@ import { CustomerService } from './customer.service';
 export class TicketService {
   private ticketList$ = signal<Ticket[]>([]);
 
-  private isTicketListLoaded = false;
+  private isTicketListLoaded = signal<boolean>(true);
 
   private http = inject(HttpClient);
-  private customerService = inject(CustomerService);
 
   private getTicketUrl(ticketId: string | null) {
     let ticketsUrl = `${BASE_URL}/tickets`;
@@ -41,26 +38,23 @@ export class TicketService {
     this.ticketList$.set([]);
   }
 
-  setisTicketListLoaded(updatedStatus: boolean) {
-    this.isTicketListLoaded = updatedStatus;
+  getIsTicketListLoaded() {
+    return this.isTicketListLoaded;
   }
 
-  getTicketList(): void {
-    if (this.isTicketListLoaded) return;
+  setIsTicketListLoaded(updatedStatus: boolean) {
+    this.isTicketListLoaded.set(updatedStatus);
+  }
 
+  getTicketList(): Observable<Ticket[]> {
     const url = this.getTicketUrl(null);
 
-    this.http
-      .get<TicketListFromApi>(url)
-      .pipe(
-        map((ticketListFromApi) =>
-          ticketListFromApi.documents.map((ticketFromApi) => mapTicketFromApi(ticketFromApi)),
-        ),
-        tap((tickets) => this.updateTicketList$(tickets)),
-        finalize(() => this.setisTicketListLoaded(true)),
-      )
-
-      .subscribe();
+    return this.http.get<TicketListFromApi>(url).pipe(
+      map((ticketListFromApi) =>
+        ticketListFromApi.documents.map((ticketFromApi) => mapTicketFromApi(ticketFromApi)),
+      ),
+      finalize(() => this.setIsTicketListLoaded(true)),
+    );
   }
 
   getTicket(ticketId: string): Observable<Ticket> {
@@ -75,14 +69,14 @@ export class TicketService {
     const url = this.getTicketUrl(null);
     const body = this.createTicketApiBody(newTicket);
 
-    return this.http.post(url, body).pipe(finalize(() => this.setisTicketListLoaded(false)));
+    return this.http.post(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)));
   }
 
   updateTicket(ticket: Partial<Ticket>, ticketId: string) {
     const url = this.getTicketUrl(ticketId);
     const body = this.createTicketApiBody(ticket);
 
-    return this.http.patch(url, body).pipe(finalize(() => this.setisTicketListLoaded(false)));
+    return this.http.patch(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)));
   }
 
   private createTicketApiBody(ticket: Partial<Ticket>): Partial<TicketFromApi> {
@@ -112,7 +106,7 @@ export class TicketService {
   }
 
   logoutFromApp() {
-    this.setisTicketListLoaded(false);
+    this.setIsTicketListLoaded(false);
     this.clearTicketList$();
   }
 }

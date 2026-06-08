@@ -19,8 +19,6 @@ import { Customer } from '../../core/models/user.model';
   styleUrl: './customers.css',
 })
 export class Customers implements OnInit {
-  customerList = signal<Customer[]>([]);
-
   filter = signal<string>('');
   filteredData = computed(() => {
     const filter = this.filter().trim().toLowerCase();
@@ -40,6 +38,9 @@ export class Customers implements OnInit {
   private customerService = inject(CustomerService);
   private router = inject(Router);
 
+  customerList = this.customerService.getCustomerList$();
+  isCustomerListLoaded = this.customerService.getIsCustomerListLoaded();
+
   ngOnInit(): void {
     this.titleService.setTitle('Customers');
     this.titleService.setHasBackButton(false);
@@ -47,8 +48,9 @@ export class Customers implements OnInit {
   }
 
   getCustomers() {
-    this.customerService.getCustomerList();
-    this.customerList = this.customerService.getCustomerList$();
+    if (!this.isCustomerListLoaded()) {
+      this.customerService.getCustomerList();
+    }
   }
 
   getFullName(firstName: string, lastName: string) {

@@ -25,7 +25,7 @@ export class Tickets {
   private ticketService = inject(TicketService);
   private router = inject(Router);
 
-  currentUser = this.userService.user;
+  currentUser = this.userService.getCurrentUser$();
   userRole = UserRole;
 
   ticketList = signal<Ticket[]>([]);

@@ -18,8 +18,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './managers.css',
 })
 export class Managers {
-  managerList = signal<Manager[]>([]);
-
   filter = signal<string>('');
   filteredData = computed(() => {
     const filter = this.filter().trim().toLowerCase();
@@ -39,6 +37,9 @@ export class Managers {
   private managerService = inject(ManagerService);
   private router = inject(Router);
 
+  managerList = this.managerService.getManagerList$();
+  isManagerListLoaded = this.managerService.getIsManagerListLoaded();
+
   ngOnInit(): void {
     this.titleService.setTitle('Managers');
     this.titleService.setHasBackButton(false);
@@ -46,8 +47,11 @@ export class Managers {
   }
 
   getManagers() {
-    this.managerService.getManagerList();
-    this.managerList = this.managerService.getManagerList$();
+    if (!this.isManagerListLoaded()) {
+      this.managerService
+        .getManagerList()
+        .subscribe((res) => this.managerService.updateManagerList$(res));
+    }
   }
 
   getFullName(firstName: string, lastName: string) {
