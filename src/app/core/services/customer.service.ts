@@ -20,7 +20,7 @@ import { UserRole } from '../../shared/enums/user-roles.enum';
 export class CustomerService {
   private customerList$ = signal<Customer[]>([]);
 
-  private isCustomerListLoaded = false;
+  private isCustomerListLoaded = signal<boolean>(true);
 
   private http = inject(HttpClient);
 
@@ -34,9 +34,7 @@ export class CustomerService {
     return customersUrl;
   }
 
-  getCustomerList(): void {
-    if (this.isCustomerListLoaded) return;
-
+  getCustomerList(): Observable<Customer[]> {
     const url = `${BASE_URL}:runQuery`;
     const body = {
       structuredQuery: {
@@ -59,17 +57,13 @@ export class CustomerService {
       },
     };
 
-    this.http
-      .post<UserFromApi[]>(url, body)
-      .pipe(
-        map((res) => mapRunQuery(res)),
-        map((users) => users.map(mapUserFromApi)),
-        map((users) => users.filter(this.isCustomer)),
-        map((users) => users.sort((a, b) => a.firstName.localeCompare(b.firstName))),
-        tap((list) => this.updateCustomerList$(list)),
-        finalize(() => this.setIsCustomerListLoaded(true)),
-      )
-      .subscribe();
+    return this.http.post<UserFromApi[]>(url, body).pipe(
+      map((res) => mapRunQuery(res)),
+      map((users) => users.map(mapUserFromApi)),
+      map((users) => users.filter(this.isCustomer)),
+      map((users) => users.sort((a, b) => a.firstName.localeCompare(b.firstName))),
+      finalize(() => this.setIsCustomerListLoaded(true)),
+    );
   }
 
   getCustomer(customerId: string): Observable<Customer> {
@@ -129,8 +123,12 @@ export class CustomerService {
     this.customerList$.set([]);
   }
 
+  getIsCustomerListLoaded() {
+    return this.isCustomerListLoaded;
+  }
+
   setIsCustomerListLoaded(updatedState: boolean) {
-    this.isCustomerListLoaded = updatedState;
+    this.isCustomerListLoaded.set(updatedState);
   }
 
   isCustomer(user: BaseUser | Customer | Manager | Admin): user is Customer {
