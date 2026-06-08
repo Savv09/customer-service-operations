@@ -10,13 +10,21 @@ import { TicketPriorityPipe } from '../../../shared/pipes/ticket-priority-pipe';
 import { UserService } from '../../../core/services/user.service';
 import { UserRole } from '../../../shared/enums/user-roles.enum';
 import { ManagerService } from '../../../core/services/manager.service';
-import { Customer, Manager } from '../../../core/models/user.model';
 import { CustomerService } from '../../../core/services/customer.service';
 import { MatIconModule } from '@angular/material/icon';
+import { CustomerPipe } from '../../../shared/pipes/customer-pipe';
+import { ManagerPipe } from '../../../shared/pipes/manager-pipe';
 
 @Component({
   selector: 'app-ticket-detail',
-  imports: [ReactiveFormsModule, CommonModule, TicketPriorityPipe, MatIconModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    TicketPriorityPipe,
+    MatIconModule,
+    CustomerPipe,
+    ManagerPipe,
+  ],
   templateUrl: './ticket-detail.html',
   styleUrl: './ticket-detail.css',
 })
@@ -33,13 +41,6 @@ export class TicketDetail implements OnInit {
   Priority = TicketPriority;
   priorityOptions = Object.values(this.Priority).filter((value) => typeof value === 'number');
 
-  managerList = signal<Manager[]>([]);
-  managersRelatedToSelectedDepartment = computed(() =>
-    this.managerList().filter((manager) => manager.department === this.selectedDepartment()),
-  );
-
-  customerList = signal<Customer[]>([]);
-
   private titleService = inject(TitleService);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -47,7 +48,14 @@ export class TicketDetail implements OnInit {
   private managerService = inject(ManagerService);
   private customerService = inject(CustomerService);
 
-  currentUser = this.userService.user;
+  customerList = this.customerService.getCustomerList$();
+
+  managerList = this.managerService.getManagerList$();
+  managersRelatedToSelectedDepartment = computed(() =>
+    this.managerList().filter((manager) => manager.department === this.selectedDepartment()),
+  );
+
+  currentUser = this.userService.getCurrentUser$();
 
   detailsForm = this.fb.nonNullable.group({
     title: ['', Validators.required],
@@ -65,9 +73,6 @@ export class TicketDetail implements OnInit {
       this.crudMode = data['mode'];
       this.initByMode();
     });
-
-    this.initManagerList();
-    this.initCustomerList();
   }
 
   initByMode() {
@@ -104,16 +109,6 @@ export class TicketDetail implements OnInit {
 
     this.titleService.setHasBackButton(true);
     this.titleService.setBackButtonUrl(['/', 'tickets']);
-  }
-
-  initManagerList() {
-    this.managerService.getManagerList();
-    this.managerList = this.managerService.getManagerList$();
-  }
-
-  initCustomerList() {
-    this.customerService.getCustomerList();
-    this.customerList = this.customerService.getCustomerList$();
   }
 
   onDepartmentChange(event: Event) {

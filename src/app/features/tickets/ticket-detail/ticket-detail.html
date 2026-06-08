@@ -3,7 +3,7 @@
     @if (currentUser()?.role === UserRole.ADMIN) {
       <div>
         <label for="customerId" class="block mb-2 text-lg font-medium text-[#78859c]">
-          Create for
+          Create for *
         </label>
         <select
           id="customerId"
@@ -18,14 +18,14 @@
 
           @for (customer of customerList(); track customer.id) {
             <option [value]="customer.id">
-              {{ customer.firstName + ' ' + customer.lastName }}
+              {{ customer.id | customer }}
             </option>
           }
         </select>
       </div>
       <div>
         <label for="assignedManagerId" class="block mb-2 text-lg font-medium text-[#78859c]">
-          Assign To
+          Assign to
         </label>
         <select
           id="assignedManagerId"
@@ -41,14 +41,14 @@
 
           @for (manager of managersRelatedToSelectedDepartment(); track manager.id) {
             <option [value]="manager.id">
-              {{ manager.firstName + ' ' + manager.lastName }}
+              {{ manager.id | manager }}
             </option>
           }
         </select>
       </div>
     }
     <div class="w-full">
-      <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]"> Title </label>
+      <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]"> Title *</label>
       <input
         type="text"
         id="title"
@@ -64,7 +64,7 @@
     </div>
     <div class="w-full">
       <label for="department" class="block mb-2 text-lg font-medium text-[#78859c]">
-        Department
+        Department *
       </label>
       <select
         id="department"
@@ -87,7 +87,7 @@
 
     <div class="w-full">
       <label for="description" class="block mb-2 text-lg font-medium text-[#78859c]">
-        Description
+        Description *
       </label>
       <textarea
         id="description"
@@ -104,7 +104,7 @@
     </div>
 
     <div class="w-full h-full">
-      <label class="block mb-2 text-lg font-medium text-[#78859c]"> Priority </label>
+      <label class="block mb-2 text-lg font-medium text-[#78859c]"> Priority *</label>
 
       <div class="h-60 flex flex-col justify-between">
         @for (priority of priorityOptions; track priority) {
@@ -120,6 +120,7 @@
       </div>
     </div>
   </form>
+  <p class="block mt-16 font-medium text-[#78859c]">Fields marked with (*) are required.</p>
 
   <section class="w-full h-1/5 flex items-center justify-end">
     <button
