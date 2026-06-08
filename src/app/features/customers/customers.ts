@@ -49,7 +49,9 @@ export class Customers implements OnInit {
 
   getCustomers() {
     if (!this.isCustomerListLoaded()) {
-      this.customerService.getCustomerList();
+      this.customerService
+        .getCustomerList()
+        .subscribe((res) => this.customerService.updateCustomerList$(res));
     }
   }
 
