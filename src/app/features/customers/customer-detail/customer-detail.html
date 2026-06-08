@@ -32,6 +32,9 @@
       <div class="w-full">
         <label for="firstName" class="block mb-2 text-base font-medium text-[#78859c]">
           First Name
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <input
           type="text"
@@ -50,6 +53,9 @@
       <div class="w-full">
         <label for="lastName" class="block mb-2 text-base font-medium text-[#78859c]">
           Last Name
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <input
           type="text"
@@ -66,7 +72,7 @@
       </div>
 
       <div class="w-full">
-        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]"> Email </label>
+        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]"> Email *</label>
         <input
           type="email"
           id="email"
@@ -84,6 +90,9 @@
       <div class="w-full">
         <label for="company" class="block mb-2 text-base font-medium text-[#78859c]">
           Company
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <input
           type="text"
@@ -115,6 +124,9 @@
         />
       </div>
     </form>
+    @if (crudMode !== CrudMode.READ) {
+      <p class="font-medium text-[#78859c]">Fields marked with (*) are required.</p>
+    }
 
     <section
       class="w-full flex items-center pt-6"

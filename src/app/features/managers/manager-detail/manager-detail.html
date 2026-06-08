@@ -32,6 +32,9 @@
       <div class="w-full">
         <label for="firstName" class="block mb-2 text-base font-medium text-[#78859c]">
           First Name
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <input
           type="text"
@@ -50,6 +53,9 @@
       <div class="w-full">
         <label for="lastName" class="block mb-2 text-base font-medium text-[#78859c]">
           Last Name
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <input
           type="text"
@@ -66,7 +72,12 @@
       </div>
 
       <div class="w-full">
-        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]"> Email </label>
+        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]">
+          Email
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
+        </label>
         <input
           type="email"
           id="email"
@@ -94,7 +105,12 @@
               crudMode === CrudMode.READ,
           }"
         >
-          <option value="" disabled>Select department</option>
+          <option value="" disabled>
+            Select department
+            @if (crudMode !== CrudMode.READ) {
+              <span class="font-semibold">*</span>
+            }
+          </option>
 
           @for (department of departmentOptions; track department) {
             <option [value]="department">
@@ -120,6 +136,9 @@
         />
       </div>
     </form>
+    @if (crudMode !== CrudMode.READ) {
+      <p class="font-medium text-[#78859c]">Fields marked with (*) are required.</p>
+    }
 
     <section
       class="w-full flex items-center pt-6"
