@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 
 import { TitleService } from '../../core/services/title.service';
 import { Ticket } from '../../core/models/ticket.model';
@@ -10,45 +10,69 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Router } from '@angular/router';
+import { ManagerPipe } from '../../shared/pipes/manager-pipe';
+import { CustomerPipe } from '../../shared/pipes/customer-pipe';
+import { TicketPriorityPipe } from '../../shared/pipes/ticket-priority-pipe';
+import { TicketStatusPipe } from '../../shared/pipes/ticket-status-pipe';
+import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-tickets',
-  imports: [MatTabsModule, MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule],
+  imports: [
+    MatTabsModule,
+    MatTableModule,
+    MatIcon,
+    MatButtonModule,
+    CommonModule,
+    ManagerPipe,
+    CustomerPipe,
+    TicketPriorityPipe,
+    TicketStatusPipe,
+    MatExpansionModule,
+  ],
   templateUrl: './tickets.html',
   styleUrl: './tickets.css',
 })
-export class Tickets {
+export class Tickets implements OnInit {
   private userService = inject(UserService);
   private titleService = inject(TitleService);
   private ticketService = inject(TicketService);
   private router = inject(Router);
 
+  ticketStatus = TicketStatus;
+  ticketPriority = TicketPriority;
+
   currentUser = this.userService.getCurrentUser$();
   userRole = UserRole;
 
-  ticketList = signal<Ticket[]>([]);
+  ticketList = this.ticketService.getTicketList$();
   departmentList = computed(() => {
     const departments = [...new Set(this.ticketList().map((ticket) => ticket.department))];
 
     return departments;
   });
 
-  filter = signal<string>('');
-  filteredData = computed(() => {
-    const filter = this.filter().trim().toLowerCase();
+  isTicketListLoaded = this.ticketService.getIsTicketListLoaded();
 
-    if (!filter) return this.ticketList();
+  // filter = signal<string>('');
+  // filteredData = computed(() => {
+  //   const filter = this.filter().trim().toLowerCase();
 
-    return this.ticketList().filter((ticket) => ticket.title.toLowerCase().includes(filter));
-  });
+  //   if (!filter) return this.ticketList();
 
-  columnToDisplay = ['code', 'createdBy', 'assignedTo', 'status', 'priority'];
+  //   return this.ticketList().filter((ticket) => ticket.title.toLowerCase().includes(filter));
+  // });
+
+  readonly panelOpenState = signal(false);
+
+  columnToDisplay = ['code', 'createdAt', 'assignedTo', 'status', 'priority'];
 
   ngOnInit(): void {
     this.setTitleByUser();
     this.titleService.setHasBackButton(false);
+    this.getTickets();
   }
 
   setTitleByUser() {
@@ -57,8 +81,11 @@ export class Tickets {
   }
 
   getTickets() {
-    this.ticketService.getTicketList();
-    this.ticketList = this.ticketService.getTicketList$();
+    if (!this.isTicketListLoaded()) {
+      this.ticketService
+        .getTicketList()
+        .subscribe((res) => this.ticketService.updateTicketList$(res));
+    }
   }
 
   navigateToCreateTicket() {

@@ -1,118 +1,271 @@
-<section class="flex items-center justify-between w-full mb-4">
-  <div class="flex items-center pt-0.5">
-    <label class="mr-2 font-medium text-base text-[#78859c]">Search: </label>
-    <input
-      type="text"
-      class="w-40 h-6 p-2 border rounded-md border-[#78859c] focus:outline-1 focus:outline-[#78859c] focus:bg-[#fcfcfa]"
-      matInput
-    />
-  </div>
+<div class="w-full h-full">
+  <section class="flex items-center justify-between w-full h-1/[5%] mb-4">
+    <div class="flex items-center pt-0.5">
+      <label class="mr-2 font-medium text-base text-[#78859c]">Search: </label>
+      <input
+        type="text"
+        class="w-40 h-6 p-2 border rounded-md border-[#78859c] focus:outline-1 focus:outline-[#78859c] focus:bg-[#fcfcfa]"
+        matInput
+      />
+    </div>
 
-  <button
-    class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
-    (click)="navigateToCreateTicket()"
-  >
-    <mat-icon>add</mat-icon>
-    <span> New ticket</span>
-  </button>
-</section>
-
-@if (departmentList().length !== 0) {
-  @if (currentUser()?.role === userRole.ADMIN) {
-    <mat-tab-group>
-      @for (department of departmentList(); track department) {
-        <mat-tab [label]="department">
-          <div class="flex flex-col h-full">
-            <section class="flex items-center justify-between w-full mb-4">
-              <div class="flex items-center pt-0.5">
-                <label class="mr-2 font-medium text-base text-[#78859c]">Search: </label>
-                <input
-                  type="text"
-                  class="w-40 h-6 p-2 border rounded-md border-[#78859c] focus:outline-1 focus:outline-[#78859c] focus:bg-[#fcfcfa]"
-                  matInput
-                />
-              </div>
-
-              <button
-                class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
-                (click)="navigateToCreateTicket()"
-              >
-                <mat-icon>add</mat-icon>
-                <span> New manager </span>
-              </button>
-            </section>
-
-            <cdk-virtual-scroll-viewport
-              class="flex-1 min-h-0 w-full"
-              [itemSize]="52"
-              [maxBufferPx]="1200"
-              [minBufferPx]="400"
-            >
-              <table
-                mat-table
-                [dataSource]="filteredData().filter((item) => item.department === department)"
-                class="mat-column-company mat-column-edit customers-list"
-              >
-                <ng-container matColumnDef="code">
-                  <th mat-header-cell *matHeaderCellDef>Code</th>
-                  <td
-                    mat-cell
-                    class="code-cell"
-                    *matCellDef="let element"
-                    (click)="navigateToDetails(element)"
-                  >
-                    {{ element.title }}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="createdBy">
-                  <th mat-header-cell *matHeaderCellDef>CREATED BY</th>
-                  <td mat-cell *matCellDef="let element">{{ element.createdBy }}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="assignedTo">
-                  <th mat-header-cell *matHeaderCellDef>ASSIGNED TO</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ !!element.assignedTo ? element.assignedTo : 'None' }}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef>STATUS</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.status }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="priority">
-                  <th mat-header-cell *matHeaderCellDef>PRIORITY</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.priority }}
-                  </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="columnToDisplay; sticky: true"></tr>
-                <tr mat-row class="element-row" *matRowDef="let row; columns: columnToDisplay"></tr>
-                <tr class="mat-row" *matNoDataRow>
-                  <td class="mat-cell" [attr.colspan]="columnToDisplay.length">
-                    No data available.
-                  </td>
-                </tr>
-              </table>
-            </cdk-virtual-scroll-viewport>
-          </div>
-        </mat-tab>
-      }
-    </mat-tab-group>
-  } @else {
-    <cdk-virtual-scroll-viewport
-      class="flex-1 min-h-0 w-full"
-      [itemSize]="52"
-      [maxBufferPx]="1200"
-      [minBufferPx]="400"
+    <button
+      class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
+      (click)="navigateToCreateTicket()"
     >
+      <mat-icon>add</mat-icon>
+      <span> New ticket</span>
+    </button>
+  </section>
+
+  @if (departmentList().length !== 0) {
+    @if (currentUser()?.role === userRole.ADMIN) {
+      <mat-tab-group class="h-[95%]">
+        @for (department of departmentList(); track department) {
+          <mat-tab [label]="department">
+            <mat-accordion [multi]="true">
+              <mat-expansion-panel
+                class="mt-4! bg-[#ffffff]! shadow-none! expansion-panel rounded-sm!"
+                [expanded]="true"
+                (opened)="panelOpenState.set(true)"
+                (closed)="panelOpenState.set(false)"
+              >
+                <mat-expansion-panel-header
+                  class="border-b-3 border-[#78859c]!"
+                  [collapsedHeight]="'2.8125rem'"
+                  [expandedHeight]="'2.8125rem'"
+                >
+                  <mat-panel-title class="text-[#636872]! text-base font-medium">
+                    Open tickets
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <table
+                  mat-table
+                  [dataSource]="ticketList().filter((item) => item.department === department && item.status === ticketStatus.OPEN)"
+                  class="mat-column-company mat-column-edit customers-list"
+                >
+                  <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef>Code</th>
+                    <td
+                      mat-cell
+                      class="code-cell"
+                      *matCellDef="let element"
+                      (click)="navigateToDetails(element)"
+                    >
+                      {{ element.code }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="createdAt">
+                    <th mat-header-cell *matHeaderCellDef>CREATED AT</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.createdAt | date: 'dd/MM/yyyy' }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="assignedTo">
+                    <th mat-header-cell *matHeaderCellDef>ASSIGNED TO</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{
+                        element.assignedManagerId ? (element.assignedManagerId | manager) : 'None'
+                      }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>STATUS</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.status | ticketStatus }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="priority">
+                    <th mat-header-cell *matHeaderCellDef>PRIORITY</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span
+                        class="font-semibold"
+                        [ngClass]="{
+                          'text-[#636872]': element.priority === ticketPriority.LOW,
+                          'text-[#d4ac0d]': element.priority === ticketPriority.MEDIUM,
+                          'text-[#c0392b]': element.priority === ticketPriority.HIGH,
+                          'text-[#6c3483]': element.priority === ticketPriority.URGENT,
+                        }"
+                        >{{ element.priority | ticketPriority }}</span
+                      >
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="columnToDisplay; sticky: true"></tr>
+                  <tr
+                    mat-row
+                    class="element-row"
+                    *matRowDef="let row; columns: columnToDisplay"
+                  ></tr>
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="columnToDisplay.length">
+                      No data available.
+                    </td>
+                  </tr>
+                </table>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel
+                class="mt-4! bg-[#ffffff]! shadow-none! expansion-panel rounded-sm!"
+                [expanded]="true"
+                (opened)="panelOpenState.set(true)"
+                (closed)="panelOpenState.set(false)"
+              >
+                <mat-expansion-panel-header
+                  class="border-b-3 border-[#78859c]!"
+                  [collapsedHeight]="'2.8125rem'"
+                  [expandedHeight]="'2.8125rem'"
+                >
+                  <mat-panel-title class="text-[#636872]! text-base font-medium">
+                    On going tickets
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <table
+                  mat-table
+                  [dataSource]="ticketList().filter((item) => item.department === department && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
+                  class="mat-column-company mat-column-edit customers-list"
+                >
+                  <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef>Code</th>
+                    <td
+                      mat-cell
+                      class="code-cell"
+                      *matCellDef="let element"
+                      (click)="navigateToDetails(element)"
+                    >
+                      {{ element.code }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="createdAt">
+                    <th mat-header-cell *matHeaderCellDef>CREATED BY</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.customerId | customer }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="assignedTo">
+                    <th mat-header-cell *matHeaderCellDef>ASSIGNED TO</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{
+                        !!element.assignedManagerId ? (element.assignedManagerId | manager) : 'None'
+                      }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>STATUS</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.status | ticketStatus }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="priority">
+                    <th mat-header-cell *matHeaderCellDef>PRIORITY</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.priority | ticketPriority }}
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="columnToDisplay; sticky: true"></tr>
+                  <tr
+                    mat-row
+                    class="element-row"
+                    *matRowDef="let row; columns: columnToDisplay"
+                  ></tr>
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="columnToDisplay.length">
+                      No data available.
+                    </td>
+                  </tr>
+                </table>
+              </mat-expansion-panel>
+              <mat-expansion-panel
+                class="mt-4! bg-[#ffffff]! shadow-none! expansion-panel rounded-sm!"
+                [expanded]="false"
+                (opened)="panelOpenState.set(true)"
+                (closed)="panelOpenState.set(false)"
+              >
+                <mat-expansion-panel-header
+                  class="border-b-3 border-[#78859c]!"
+                  [collapsedHeight]="'2.8125rem'"
+                  [expandedHeight]="'2.8125rem'"
+                >
+                  <mat-panel-title class="text-[#636872]! text-base font-medium">
+                    Closed tickets
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <table
+                  mat-table
+                  [dataSource]="ticketList().filter((item) => item.department === department && item.status === ticketStatus.CLOSED)"
+                  class="mat-column-company mat-column-edit customers-list"
+                >
+                  <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef>Code</th>
+                    <td
+                      mat-cell
+                      class="code-cell"
+                      *matCellDef="let element"
+                      (click)="navigateToDetails(element)"
+                    >
+                      {{ element.code }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="createdAt">
+                    <th mat-header-cell *matHeaderCellDef>CREATED BY</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.customerId | customer }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="assignedTo">
+                    <th mat-header-cell *matHeaderCellDef>ASSIGNED TO</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{
+                        !!element.assignedManagerId ? (element.assignedManagerId | manager) : 'None'
+                      }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>STATUS</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.status | ticketStatus }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="priority">
+                    <th mat-header-cell *matHeaderCellDef>PRIORITY</th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.priority | ticketPriority }}
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="columnToDisplay; sticky: true"></tr>
+                  <tr
+                    mat-row
+                    class="element-row"
+                    *matRowDef="let row; columns: columnToDisplay"
+                  ></tr>
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="columnToDisplay.length">
+                      No data available.
+                    </td>
+                  </tr>
+                </table>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    } @else {
       <table
         mat-table
-        [dataSource]="filteredData().filter((item) => item.customerId === currentUser()?.id)"
+        [dataSource]="ticketList().filter((item) => item.customerId === currentUser()?.id)"
         class="mat-column-company mat-column-edit customers-list"
       >
         <ng-container matColumnDef="code">
@@ -127,28 +280,28 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="createdBy">
+        <ng-container matColumnDef="createdAt">
           <th mat-header-cell *matHeaderCellDef>CREATED BY</th>
-          <td mat-cell *matCellDef="let element">{{ element.createdBy }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.createdBy | customer }}</td>
         </ng-container>
 
         <ng-container matColumnDef="assignedTo">
           <th mat-header-cell *matHeaderCellDef>ASSIGNED TO</th>
           <td mat-cell *matCellDef="let element">
-            {{ !!element.assignedTo ? element.assignedTo : 'None' }}
+            {{ !!element.assignedTo ? (element.assignedTo | manager) : 'None' }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>STATUS</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.status }}
+            {{ element.status | ticketStatus }}
           </td>
         </ng-container>
         <ng-container matColumnDef="priority">
           <th mat-header-cell *matHeaderCellDef>PRIORITY</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.priority }}
+            {{ element.priority | ticketPriority }}
           </td>
         </ng-container>
 
@@ -158,10 +311,12 @@
           <td class="mat-cell" [attr.colspan]="columnToDisplay.length">No data available.</td>
         </tr>
       </table>
-    </cdk-virtual-scroll-viewport>
+    }
+  } @else {
+    <section
+      class="mt-8 w-full flex items-center justify-center text-xl font-medium text-[#636872]"
+    >
+      No ticket found.
+    </section>
   }
-} @else {
-  <section class="mt-8 w-full flex items-center justify-center text-xl font-medium text-[#636872]">
-    No ticket found.
-  </section>
-}
+</div>

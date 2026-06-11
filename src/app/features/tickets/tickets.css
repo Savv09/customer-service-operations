@@ -20,7 +20,7 @@ td {
   color: #78859c;
 }
 
-.name-cell {
+.code-cell {
   font-weight: 500;
   color: #5e8fea;
   font-size: small;
@@ -42,4 +42,18 @@ td {
   text-align: center;
   font-weight: 500;
   font-size: 1rem;
+}
+
+::ng-deep .mdc-tab-indicator__content--underline {
+  border-color: #5e8fea !important;
+}
+
+::ng-deep .mdc-tab__text-label {
+  color: #636872 !important;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.expansion-panel {
+  --mat-expansion-header-indicator-color: #636872;
 }
