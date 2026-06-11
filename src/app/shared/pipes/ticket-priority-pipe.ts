@@ -2,10 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TicketPriority } from '../enums/tickets.enum';
 
 @Pipe({
-  name: 'ticketPriorityPipe',
+  name: 'ticketPriority',
 })
 export class TicketPriorityPipe implements PipeTransform {
-  transform(value: unknown, ...args: unknown[]): unknown {
+  transform(value: TicketPriority): string {
     switch (value) {
       case TicketPriority.LOW:
         return 'Low';
@@ -16,6 +16,5 @@ export class TicketPriorityPipe implements PipeTransform {
       case TicketPriority.URGENT:
         return 'Urgent';
     }
-    return null;
   }
 }
