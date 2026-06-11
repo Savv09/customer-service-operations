@@ -51,6 +51,7 @@ export class ManagerDetail {
   });
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.route.data.subscribe((data) => {
       this.crudMode = data['mode'];
       this.initByMode();
@@ -63,21 +64,25 @@ export class ManagerDetail {
     if (this.crudMode === CrudMode.CREATE) {
       this.detailsForm.reset();
       this.detailsForm.enable();
+      this.isLoading.set(false);
       return;
     }
 
     const managerId = this.route.snapshot.paramMap.get('managerId') as string;
 
-    this.managerService.getManager(managerId).subscribe((res) => {
-      this.selectedManager = res;
-      this.detailsForm.patchValue(res);
+    this.managerService
+      .getManager(managerId)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe((res) => {
+        this.selectedManager = res;
+        this.detailsForm.patchValue(res);
 
-      if (this.crudMode === CrudMode.READ) {
-        this.detailsForm.disable();
-      } else {
-        this.detailsForm.enable();
-      }
-    });
+        if (this.crudMode === CrudMode.READ) {
+          this.detailsForm.disable();
+        } else {
+          this.detailsForm.enable();
+        }
+      });
   }
 
   setHeaderValues() {

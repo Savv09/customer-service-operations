@@ -51,6 +51,7 @@ export class CustomerDetail implements OnInit {
   });
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.route.data.subscribe((data) => {
       this.crudMode = data['mode'];
       this.initByMode();
@@ -63,21 +64,25 @@ export class CustomerDetail implements OnInit {
     if (this.crudMode === CrudMode.CREATE) {
       this.detailsForm.reset();
       this.detailsForm.enable();
+      this.isLoading.set(false);
       return;
     }
 
     const customerId = this.route.snapshot.paramMap.get('customerId') as string;
 
-    this.customerService.getCustomer(customerId).subscribe((res) => {
-      this.selectedCustomer = res;
-      this.detailsForm.patchValue(res);
+    this.customerService
+      .getCustomer(customerId)
+      .pipe(finalize(() => this.isLoading.set(true)))
+      .subscribe((res) => {
+        this.selectedCustomer = res;
+        this.detailsForm.patchValue(res);
 
-      if (this.crudMode === CrudMode.READ) {
-        this.detailsForm.disable();
-      } else {
-        this.detailsForm.enable();
-      }
-    });
+        if (this.crudMode === CrudMode.READ) {
+          this.detailsForm.disable();
+        } else {
+          this.detailsForm.enable();
+        }
+      });
   }
 
   setHeaderValues() {
