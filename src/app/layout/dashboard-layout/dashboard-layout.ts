@@ -46,14 +46,14 @@ export class DashboradLayout implements OnInit {
     forkJoin({
       managers: this.managerService.getManagerList(),
       customers: this.customerService.getCustomerList(),
-      // tickets: this.ticketService.getTicketList(),
+      tickets: this.ticketService.getTicketList(),
     }).subscribe({
-      next: ({ managers, customers }) => {
+      next: ({ managers, customers, tickets }) => {
         this.isInitApplicationFailed.set(false);
 
         this.managerService.updateManagerList$(managers);
         this.customerService.updateCustomerList$(customers);
-        // this.ticketService.updateTicketList$(tickets);
+        this.ticketService.updateTicketList$(tickets);
 
         this.isLoading.set(false);
       },

@@ -8,7 +8,9 @@
       <section class="w-full h-1/8">
         <app-header [currentUser]="currentUser()"></app-header>
       </section>
-      <section class="w-full h-full mt-6 p-6 bg-[#ffffff] drop-shadow-sm rounded-t-sm">
+      <section
+        class="w-full h-full mt-6 p-6 bg-[#ffffff] drop-shadow-sm rounded-t-sm overflow-y-auto"
+      >
         <router-outlet></router-outlet>
       </section>
     </main>
