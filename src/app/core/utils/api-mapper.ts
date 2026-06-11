@@ -64,6 +64,7 @@ export function mapTicketFromApi(ticket: TicketFromApi): Ticket {
 
   return {
     id: extractIdFromName(ticket.name),
+    code: ticket.fields.code?.stringValue || '',
     title: ticket.fields.title?.stringValue || '',
     description: ticket.fields.description?.stringValue || '',
     customerId: ticket.fields.customerId.stringValue || '',
@@ -71,7 +72,8 @@ export function mapTicketFromApi(ticket: TicketFromApi): Ticket {
     department: isDepartment(departmentValue) ? departmentValue : Department.CUSTOMER_SUPPORT,
     priority: Number(ticket.fields.priority?.integerValue || 0) as TicketPriority,
     status: Number(ticket.fields.status?.integerValue || 0) as TicketStatus,
-    closedAt: ticket.fields.closedAt.stringValue || '',
+    closedAt: new Date(ticket.fields.closedAt.stringValue) || undefined,
+    assignedAt: new Date(ticket.fields.assignedAt.stringValue) || undefined,
     createdAt: new Date(ticket.createTime),
   };
 }

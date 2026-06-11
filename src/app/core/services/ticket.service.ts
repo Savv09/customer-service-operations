@@ -53,6 +53,7 @@ export class TicketService {
       map((ticketListFromApi) =>
         ticketListFromApi.documents.map((ticketFromApi) => mapTicketFromApi(ticketFromApi)),
       ),
+      map((ticketList) => ticketList.sort((a, b) => b.priority - a.priority)),
       finalize(() => this.setIsTicketListLoaded(true)),
     );
   }
@@ -81,6 +82,7 @@ export class TicketService {
 
   private createTicketApiBody(ticket: Partial<Ticket>): Partial<TicketFromApi> {
     const {
+      code,
       title,
       description,
       customerId,
@@ -89,10 +91,12 @@ export class TicketService {
       priority,
       status,
       closedAt,
+      assignedAt,
     } = ticket;
 
     return {
       fields: {
+        code: { stringValue: code || '' },
         title: { stringValue: title || '' },
         description: { stringValue: description || '' },
         customerId: { stringValue: customerId || '' },
@@ -100,7 +104,8 @@ export class TicketService {
         assignedManagerId: { stringValue: assignedManagerId || '' },
         priority: { integerValue: priority || 0 },
         status: { integerValue: status || 0 },
-        closedAt: { stringValue: closedAt || '' },
+        closedAt: { stringValue: closedAt?.toISOString() || '' },
+        assignedAt: { stringValue: assignedAt?.toISOString() || '' },
       },
     };
   }

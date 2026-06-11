@@ -21,6 +21,7 @@ export interface UserListFromApi {
 export interface TicketFromApi {
   name: string;
   fields: {
+    code: { stringValue: string };
     title: { stringValue: string };
     description: { stringValue: string };
     customerId: { stringValue: string };
@@ -29,6 +30,7 @@ export interface TicketFromApi {
     priority: { integerValue: number };
     status: { integerValue: number };
     closedAt: { stringValue: string };
+    assignedAt: { stringValue: string };
   };
   createTime: string;
   updateTime: string;
