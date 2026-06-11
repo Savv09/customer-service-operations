@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { map } from 'rxjs';
 
-import { mapUserFromApi } from '../utils/api-formatter';
+import { mapUserFromApi } from '../utils/api-mapper';
 
 import { UserFromApi } from '../models/responses-from-api.model';
 import { User } from '../models/user.model';

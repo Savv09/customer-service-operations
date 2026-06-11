@@ -5,7 +5,7 @@ import { filter, finalize, map, Observable, tap } from 'rxjs';
 
 import { mapRunQuery } from '../firebase/api.adapters';
 
-import { mapUserFromApi } from '../utils/api-formatter';
+import { mapUserFromApi } from '../utils/api-mapper';
 
 import { UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';

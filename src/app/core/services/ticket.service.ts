@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
 import { finalize, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
-import { mapTicketFromApi } from '../utils/api-formatter';
+import { mapTicketFromApi } from '../utils/api-mapper';
 
 @Injectable({
   providedIn: 'root',
