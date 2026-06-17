@@ -1,0 +1,83 @@
+<cdk-virtual-scroll-viewport
+  class="example-container h-140"
+  [itemSize]="52"
+  [maxBufferPx]="1200"
+  [minBufferPx]="400"
+>
+  <table mat-table class="table" [dataSource]="dataSource()">
+    @for (column of displayedColumns(); track column) {
+      <ng-container [matColumnDef]="column">
+        <th mat-header-cell *matHeaderCellDef class="table-header">
+          @switch (column) {
+            @case ('assignedTo') {
+              {{ 'assigned to' }}
+            }
+            @case ('customerId') {
+              {{ 'created by' }}
+            }
+            @case ('createdAt') {
+              {{ 'created at' }}
+            }
+            @case ('closedAt') {
+              {{ 'closed at' }}
+            }
+            @case ('assignedAt') {
+              {{ 'assigned at' }}
+            }
+            @default {
+              {{ column }}
+            }
+          }
+        </th>
+        <td mat-cell [class]="`${column}-cell`" *matCellDef="let element">
+          @switch (column) {
+            @case ('code') {
+              <span class="font-medium text-[#5e8fea]">
+                {{ element[column] | uppercase }}
+              </span>
+            }
+            @case ('priority') {
+              <span
+                class="font-semibold"
+                [ngClass]="{
+                  'text-[#636872]': element[column] === ticketPriority.LOW,
+                  'text-[#d4ac0d]': element[column] === ticketPriority.MEDIUM,
+                  'text-[#c0392b]': element[column] === ticketPriority.HIGH,
+                  'text-[#6c3483]': element[column] === ticketPriority.URGENT,
+                }"
+                >{{ element[column] | ticketPriority }}</span
+              >
+            }
+            @case ('status') {
+              {{ element[column] | ticketStatus }}
+            }
+            @case ('assignedTo') {
+              {{ element['assignedManagerId'] ? (element['assignedManagerId'] | manager) : 'None' }}
+            }
+            @case ('customerId') {
+              {{ element[column] | customer }}
+            }
+            @case ('createdAt') {
+              {{ element[column] | date: 'dd/MM/yyyy' }}
+            }
+            @case ('closedAt') {
+              {{ element[column] | date: 'dd/MM/yyyy' }}
+            }
+            @case ('assignedAt') {
+              {{ element[column] | date: 'dd/MM/yyyy' }}
+            }
+            @default {
+              {{ element[column] | titlecase }}
+            }
+          }
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+    <tr mat-row (click)="onSelectRow(row)" *matRowDef="let row; columns: displayedColumns()"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumns().length">No data available.</td>
+    </tr>
+  </table>
+</cdk-virtual-scroll-viewport>
