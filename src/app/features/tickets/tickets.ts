@@ -1,7 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 
 import { TitleService } from '../../core/services/title.service';
-import { Ticket } from '../../core/models/ticket.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -17,6 +16,9 @@ import { TicketPriorityPipe } from '../../shared/pipes/ticket-priority-pipe';
 import { TicketStatusPipe } from '../../shared/pipes/ticket-status-pipe';
 import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { Table } from '../../shared/components/table/table';
+import { TableEvent } from '../../core/models/table-event.model';
+import { Manager, User } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-tickets',
@@ -26,11 +28,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatIcon,
     MatButtonModule,
     CommonModule,
-    ManagerPipe,
-    CustomerPipe,
-    TicketPriorityPipe,
-    TicketStatusPipe,
     MatExpansionModule,
+    Table,
   ],
   templateUrl: './tickets.html',
   styleUrl: './tickets.css',
@@ -47,6 +46,22 @@ export class Tickets implements OnInit {
   currentUser = this.userService.getCurrentUser$();
   userRole = UserRole;
 
+  managerOpenTickets = computed(() => {
+    const user = this.currentUser();
+
+    if (user?.role !== UserRole.MANAGER) {
+      return [];
+    }
+
+    if (this.isManager(user)) {
+      return this.ticketList().filter(
+        (item) => item.department === user.department && item.status === TicketStatus.OPEN,
+      );
+    }
+
+    return [];
+  });
+
   ticketList = this.ticketService.getTicketList$();
   departmentList = computed(() => {
     const departments = [...new Set(this.ticketList().map((ticket) => ticket.department))];
@@ -55,17 +70,6 @@ export class Tickets implements OnInit {
   });
 
   isTicketListLoaded = this.ticketService.getIsTicketListLoaded();
-
-  // filter = signal<string>('');
-  // filteredData = computed(() => {
-  //   const filter = this.filter().trim().toLowerCase();
-
-  //   if (!filter) return this.ticketList();
-
-  //   return this.ticketList().filter((ticket) => ticket.title.toLowerCase().includes(filter));
-  // });
-
-  readonly panelOpenState = signal(false);
 
   columnToDisplay = ['code', 'createdAt', 'assignedTo', 'status', 'priority'];
 
@@ -92,7 +96,11 @@ export class Tickets implements OnInit {
     this.router.navigate(['/', 'tickets', 'new']);
   }
 
-  navigateToDetails(ticket: Ticket) {
+  navigateToDetails(ticket: TableEvent) {
     this.router.navigate(['/', 'tickets', ticket.id]);
+  }
+
+  isManager(user: User | null | undefined): user is Manager {
+    return user?.role === UserRole.MANAGER;
   }
 }

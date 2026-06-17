@@ -50,7 +50,15 @@ td {
 
 ::ng-deep .mdc-tab__text-label {
   color: #636872 !important;
+  text-transform: uppercase;
   font-size: 1rem;
+  font-weight: 500;
+}
+
+::ng-deep .sub-group .mdc-tab__text-label {
+  color: #636872 !important;
+  text-transform: none;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
