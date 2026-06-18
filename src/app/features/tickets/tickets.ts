@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 
 import { TitleService } from '../../core/services/title.service';
 import { UserService } from '../../core/services/user.service';
@@ -10,10 +10,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { ManagerPipe } from '../../shared/pipes/manager-pipe';
-import { CustomerPipe } from '../../shared/pipes/customer-pipe';
-import { TicketPriorityPipe } from '../../shared/pipes/ticket-priority-pipe';
-import { TicketStatusPipe } from '../../shared/pipes/ticket-status-pipe';
 import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Table } from '../../shared/components/table/table';
@@ -55,7 +51,10 @@ export class Tickets implements OnInit {
 
     if (this.isManager(user)) {
       return this.ticketList().filter(
-        (item) => item.department === user.department && item.status === TicketStatus.OPEN,
+        (item) =>
+          item.department === user.department &&
+          item.status === TicketStatus.OPEN &&
+          (item.assignedManagerId === user.id || !item.assignedManagerId),
       );
     }
 

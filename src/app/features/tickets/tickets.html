@@ -1,5 +1,5 @@
 <div class="w-full h-full">
-  @if (currentUser()?.role === userRole.ADMIN) {
+  @if (currentUser()?.role !== userRole.MANAGER) {
     <section class="flex items-center justify-end w-full h-1/[5%] mb-4">
       <button
         class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
@@ -19,21 +19,28 @@
             <mat-tab-group class="h-full sub-group">
               <mat-tab label="Open Tickets">
                 <app-table
-                  [displayedColumns]="columnToDisplay"
+                  [displayedColumns]="[
+                    'code',
+                    'title',
+                    'customerId',
+                    'createdAt',
+                    'assignedTo',
+                    'priority',
+                  ]"
                   [dataSource]="ticketList().filter((item) => item.department === department && item.status === ticketStatus.OPEN)"
                   (rowSelected)="navigateToDetails($event)"
                 ></app-table>
               </mat-tab>
               <mat-tab label="On Going Tickets">
                 <app-table
-                  [displayedColumns]="columnToDisplay"
+                  [displayedColumns]="['code', 'title', 'assignedTo', 'updatedAt', 'priority']"
                   [dataSource]="ticketList().filter((item) =>  item.department === department && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
                   (rowSelected)="navigateToDetails($event)"
                 ></app-table
               ></mat-tab>
               <mat-tab label="Closed Tickets">
                 <app-table
-                  [displayedColumns]="columnToDisplay"
+                  [displayedColumns]="['code', 'title', 'customerId', 'assignedTo', 'closedAt']"
                   [dataSource]="ticketList().filter((item) =>  item.department === department && item.status === ticketStatus.CLOSED)"
                   (rowSelected)="navigateToDetails($event)"
                 ></app-table
@@ -46,21 +53,21 @@
       <mat-tab-group class="h-[95%]">
         <mat-tab label="Open Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'customerId', 'createdAt', 'priority']"
             [dataSource]="managerOpenTickets()"
             (rowSelected)="navigateToDetails($event)"
           ></app-table>
         </mat-tab>
         <mat-tab label="On Going Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'assignedAt', 'updatedAt', 'priority']"
             [dataSource]="ticketList().filter((item) =>  item.assignedManagerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
             (rowSelected)="navigateToDetails($event)"
           ></app-table
         ></mat-tab>
         <mat-tab label="Closed Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'closedAt', 'resolutionTime']"
             [dataSource]="ticketList().filter((item) => item.assignedManagerId === currentUser()?.id && item.status === ticketStatus.CLOSED)"
             (rowSelected)="navigateToDetails($event)"
           ></app-table
@@ -70,21 +77,21 @@
       <mat-tab-group class="h-full">
         <mat-tab label="Open Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'createdAt', 'department', 'status', 'priority']"
             [dataSource]="ticketList().filter((item) => item.customerId === currentUser()?.id && item.status === ticketStatus.OPEN)"
             (rowSelected)="navigateToDetails($event)"
           ></app-table>
         </mat-tab>
         <mat-tab label="On Going Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'department', 'updatedAt', 'status', 'priority']"
             [dataSource]="ticketList().filter((item) =>  item.customerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
             (rowSelected)="navigateToDetails($event)"
           ></app-table
         ></mat-tab>
         <mat-tab label="Closed Tickets">
           <app-table
-            [displayedColumns]="columnToDisplay"
+            [displayedColumns]="['code', 'title', 'department', 'closedAt']"
             [dataSource]="ticketList().filter((item) =>  item.customerId === currentUser()?.id && item.status === ticketStatus.CLOSED)"
             (rowSelected)="navigateToDetails($event)"
           ></app-table
