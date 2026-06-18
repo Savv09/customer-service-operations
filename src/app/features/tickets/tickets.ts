@@ -15,6 +15,11 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { Table } from '../../shared/components/table/table';
 import { TableEvent } from '../../core/models/table-event.model';
 import { Manager, User } from '../../core/models/user.model';
+import { Ticket } from '../../core/models/ticket.model';
+import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from '../../core/services/snackbar.service';
+import { SnackbarMode } from '../../shared/enums/snackbarMode.enum';
 
 @Component({
   selector: 'app-tickets',
@@ -35,6 +40,8 @@ export class Tickets implements OnInit {
   private titleService = inject(TitleService);
   private ticketService = inject(TicketService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private snackbarService = inject(SnackbarService);
 
   ticketStatus = TicketStatus;
   ticketPriority = TicketPriority;
@@ -89,6 +96,130 @@ export class Tickets implements OnInit {
         .getTicketList()
         .subscribe((res) => this.ticketService.updateTicketList$(res));
     }
+  }
+
+  claimTicket(ticket: Ticket) {
+    const assignedManagerId = this.currentUser()?.id;
+    const assignedAt = new Date();
+    const closedAt = undefined;
+
+    const updatedTicket = {
+      ...ticket,
+      assignedManagerId,
+      assignedAt,
+      closedAt,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Claim ticket',
+        message: 'Are you sure you want to claim this ticket?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.ticketService
+          .updateTicket(updatedTicket, updatedTicket.id as string)
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar(
+                'Ticket assigned succesfully!',
+                SnackbarMode.SUCCESS,
+              ),
+              this.isTicketListLoaded.set(false),
+              this.getTickets()
+            ),
+          );
+      }
+    });
+  }
+
+  changeActiveStatus(event: { ticket: Ticket; status: TicketStatus }) {
+    const { ticket, status } = { ...event };
+
+    const closedAt = undefined;
+
+    const updatedTicket = {
+      ...ticket,
+      status,
+      closedAt,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Change status',
+        message: 'Are you sure you want to change this ticket status?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.ticketService
+          .updateTicket(updatedTicket, updatedTicket.id as string)
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar(
+                'Ticket status changed succesfully!',
+                SnackbarMode.SUCCESS,
+              ),
+              this.isTicketListLoaded.set(false),
+              this.getTickets()
+            ),
+          );
+      }
+    });
+  }
+
+  closeTicket(ticket: Ticket) {
+    const closedAt = new Date();
+    const status = TicketStatus.CLOSED;
+
+    const updatedTicket = {
+      ...ticket,
+      status,
+      closedAt,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Close ticket',
+        message: 'Are you sure you want to close this ticket?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.ticketService
+          .updateTicket(updatedTicket, updatedTicket.id as string)
+
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar('Ticket closed succesfully!', SnackbarMode.SUCCESS),
+              this.isTicketListLoaded.set(false),
+              this.getTickets()
+            ),
+          );
+      }
+    });
   }
 
   navigateToCreateTicket() {

@@ -53,16 +53,27 @@
       <mat-tab-group class="h-[95%]">
         <mat-tab label="Open Tickets">
           <app-table
-            [displayedColumns]="['code', 'title', 'customerId', 'createdAt', 'priority']"
+            [displayedColumns]="['code', 'title', 'customerId', 'createdAt', 'priority', 'actions']"
             [dataSource]="managerOpenTickets()"
             (rowSelected)="navigateToDetails($event)"
+            (ticketClaimed)="claimTicket($event)"
+            (ticketStatusChanged)="changeActiveStatus($event)"
           ></app-table>
         </mat-tab>
         <mat-tab label="On Going Tickets">
           <app-table
-            [displayedColumns]="['code', 'title', 'assignedAt', 'updatedAt', 'priority']"
+            [displayedColumns]="[
+              'code',
+              'title',
+              'assignedAt',
+              'updatedAt',
+              'priority',
+              'status',
+              'actions',
+            ]"
             [dataSource]="ticketList().filter((item) =>  item.assignedManagerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
             (rowSelected)="navigateToDetails($event)"
+            (ticketStatusChanged)="changeActiveStatus($event)"
           ></app-table
         ></mat-tab>
         <mat-tab label="Closed Tickets">
@@ -84,9 +95,18 @@
         </mat-tab>
         <mat-tab label="On Going Tickets">
           <app-table
-            [displayedColumns]="['code', 'title', 'department', 'updatedAt', 'status', 'priority']"
+            [displayedColumns]="[
+              'code',
+              'title',
+              'department',
+              'updatedAt',
+              'status',
+              'priority',
+              'actions',
+            ]"
             [dataSource]="ticketList().filter((item) =>  item.customerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
             (rowSelected)="navigateToDetails($event)"
+            (ticketClosed)="closeTicket($event)"
           ></app-table
         ></mat-tab>
         <mat-tab label="Closed Tickets">
