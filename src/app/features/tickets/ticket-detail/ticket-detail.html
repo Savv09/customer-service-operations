@@ -274,20 +274,21 @@
               @for (priority of priorityOptions; track priority) {
                 <button
                   type="button"
-                  class="px-4 py-2 w-full rounded-md border hover:cursor-pointer"
+                  class="px-4 py-2 w-full text-white font-medium! rounded-md border hover:cursor-pointer"
                   [ngClass]="{
-                    'bg-[#5e8fea] text-white! font-medium!':
+                    'bg-[#5e8fea]  ':
                       detailsForm.value.priority === priority &&
                       detailsForm.value.priority === ticketPriority.LOW,
-                    'bg-[#d4ac0d] text-white font-medium':
+                    'bg-[#d4ac0d]':
                       detailsForm.value.priority === priority &&
                       detailsForm.value.priority === ticketPriority.MEDIUM,
-                    'bg-[#c0392b] text-white font-medium':
+                    'bg-[#c0392b]':
                       detailsForm.value.priority === priority &&
                       detailsForm.value.priority === ticketPriority.HIGH,
-                    'bg-[#6c3483] text-white font-medium':
+                    'bg-[#6c3483]':
                       detailsForm.value.priority === priority &&
                       detailsForm.value.priority === ticketPriority.URGENT,
+                    'text-[#78859c]! font-normal!': detailsForm.value.priority !== priority,
                   }"
                   (click)="detailsForm.controls.priority.setValue(priority)"
                 >
