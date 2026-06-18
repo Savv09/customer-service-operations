@@ -84,6 +84,58 @@
             @case ('resolutionTime') {
               {{ getResolutionTime(element) }}
             }
+            @case ('actions') {
+              <span class="flex items-center z-50">
+                @if (currentUser()?.role === userRole.MANAGER) {
+                  @if (!element['assignedManagerId']) {
+                    <button
+                      class="h-8 w-10 font-medium flex items-center justify-center text-white bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
+                      matTooltip="Claim ticket"
+                      (click)="onClaimTicket(element); $event.stopPropagation()"
+                    >
+                      <mat-icon>assignment_ind</mat-icon>
+                    </button>
+                  }
+                  @if (element['assignedManagerId'] === currentUser()?.id) {
+                    <button
+                      class="h-8 w-10 font-medium text-white flex items-center justify-center bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
+                      matTooltip="Change status"
+                      #trigger="matMenuTrigger"
+                      [matMenuTriggerFor]="statusMenu"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>sync_alt</mat-icon>
+                    </button>
+                    <mat-menu #statusMenu="matMenu">
+                      @for (
+                        status of statusOptions.filter(s => s !== 3 && s !== element['status']);
+                        track status
+                      ) {
+                        <button
+                          mat-menu-item
+                          class="text-[#636872]!"
+                          (click)="
+                            onChangeStatus(element, status, trigger); $event.stopPropagation()
+                          "
+                        >
+                          {{ status | ticketStatus }}
+                        </button>
+                      }
+                    </mat-menu>
+                  }
+                } @else {
+                  @if (element['status'] === ticketStatus.RESOLVED) {
+                    <button
+                      class="h-8 w-10 font-medium flex items-center justify-center text-white bg-[#30a21e] rounded-md cursor-pointer hover:bg-[#2e951e] focus:outline-none"
+                      matTooltip="Close ticket"
+                      (click)="onCloseTicket(element); $event.stopPropagation()"
+                    >
+                      <mat-icon>task_alt</mat-icon>
+                    </button>
+                  }
+                }
+              </span>
+            }
             @default {
               {{ element[column] | titlecase }}
             }
