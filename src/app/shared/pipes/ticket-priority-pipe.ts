@@ -5,7 +5,7 @@ import { TicketPriority } from '../enums/tickets.enum';
   name: 'ticketPriority',
 })
 export class TicketPriorityPipe implements PipeTransform {
-  transform(value: TicketPriority): string {
+  transform(value: TicketPriority | undefined): string {
     switch (value) {
       case TicketPriority.LOW:
         return 'Low';
@@ -15,6 +15,9 @@ export class TicketPriorityPipe implements PipeTransform {
         return 'High';
       case TicketPriority.URGENT:
         return 'Urgent';
+      default: {
+        return '';
+      }
     }
   }
 }

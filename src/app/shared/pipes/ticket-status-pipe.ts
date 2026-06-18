@@ -5,7 +5,7 @@ import { TicketStatus } from '../enums/tickets.enum';
   name: 'ticketStatus',
 })
 export class TicketStatusPipe implements PipeTransform {
-  transform(value: TicketStatus): string {
+  transform(value: TicketStatus | undefined): string {
     switch (value) {
       case TicketStatus.CLOSED:
         return 'Closed';
@@ -15,6 +15,9 @@ export class TicketStatusPipe implements PipeTransform {
         return 'Open';
       case TicketStatus.RESOLVED:
         return 'Resolved';
+      default: {
+        return '';
+      }
     }
   }
 }
