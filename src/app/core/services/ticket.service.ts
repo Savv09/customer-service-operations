@@ -2,9 +2,10 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Ticket } from '../models/ticket.model';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
-import { finalize, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
+import { EMPTY, finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
 import { mapTicketFromApi } from '../utils/api-mapper';
+import { DialogService } from './dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ export class TicketService {
   private isTicketListLoaded = signal<boolean>(true);
 
   private http = inject(HttpClient);
+  private dialogService = inject(DialogService);
 
   private getTicketUrl(ticketId: string | null) {
     let ticketsUrl = `${BASE_URL}/tickets`;
@@ -70,7 +72,15 @@ export class TicketService {
     const url = this.getTicketUrl(null);
     const body = this.createTicketApiBody(newTicket);
 
-    return this.http.post(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)));
+    return this.dialogService
+      .confirmOperation('Create ticket', 'Are you sure you want to create a new ticket?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.http.post(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)))
+            : EMPTY,
+        ),
+      );
   }
 
   updateTicket(ticket: Partial<Ticket>, ticketId: string) {
@@ -78,6 +88,39 @@ export class TicketService {
     const body = this.createTicketApiBody(ticket);
 
     return this.http.patch(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)));
+  }
+
+  claimTicket(ticket: Partial<Ticket>) {
+    return this.dialogService
+      .confirmOperation('Claim ticket', 'Are you sure you want to claim this ticket?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed ? this.updateTicket(ticket, ticket.id as string) : EMPTY,
+        ),
+      );
+  }
+
+  changeTicketStatus(ticket: Partial<Ticket>) {
+    return this.dialogService
+      .confirmOperation(
+        'Change ticket status',
+        'Are you sure you want to change this ticket status?',
+      )
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed ? this.updateTicket(ticket, ticket.id as string) : of(null),
+        ),
+      );
+  }
+
+  closeTicket(ticket: Partial<Ticket>) {
+    return this.dialogService
+      .confirmOperation('Close ticket', 'Are you sure you want to close this ticket?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed ? this.updateTicket(ticket, ticket.id as string) : EMPTY,
+        ),
+      );
   }
 
   private createTicketApiBody(ticket: Partial<Ticket>): Partial<TicketFromApi> {
