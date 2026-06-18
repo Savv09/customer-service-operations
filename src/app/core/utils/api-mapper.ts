@@ -75,6 +75,7 @@ export function mapTicketFromApi(ticket: TicketFromApi): Ticket {
     closedAt: new Date(ticket.fields.closedAt.stringValue) || undefined,
     assignedAt: new Date(ticket.fields.assignedAt.stringValue) || undefined,
     createdAt: new Date(ticket.createTime),
+    updatedAt: new Date(ticket.updateTime),
   };
 }
 
