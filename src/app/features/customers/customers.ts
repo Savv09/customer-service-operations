@@ -11,10 +11,12 @@ import { TitleService } from '../../core/services/title.service';
 import { CustomerService } from '../../core/services/customer.service';
 
 import { Customer } from '../../core/models/user.model';
+import { Table } from '../../shared/components/table/table';
+import { TableEvent } from '../../core/models/table-event.model';
 
 @Component({
   selector: 'app-customers',
-  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule],
+  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })
@@ -32,7 +34,7 @@ export class Customers implements OnInit {
     );
   });
 
-  columnToDisplay = ['name', 'email', 'company', 'edit'];
+  columnToDisplay = ['name', 'email', 'company'];
 
   private titleService = inject(TitleService);
   private customerService = inject(CustomerService);
@@ -59,7 +61,7 @@ export class Customers implements OnInit {
     return `${firstName} ${lastName}`;
   }
 
-  navigateToDetails(customer: Customer) {
+  navigateToDetails(customer: TableEvent) {
     this.router.navigate(['/', 'customers', customer.id]);
   }
 

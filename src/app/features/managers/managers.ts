@@ -10,10 +10,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
+import { TableEvent } from '../../core/models/table-event.model';
+import { Table } from '../../shared/components/table/table';
 
 @Component({
   selector: 'app-managers',
-  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule],
+  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table],
   templateUrl: './managers.html',
   styleUrl: './managers.css',
 })
@@ -31,7 +33,7 @@ export class Managers {
     );
   });
 
-  columnToDisplay = ['name', 'email', 'department', 'edit'];
+  columnToDisplay = ['name', 'email', 'department'];
 
   private titleService = inject(TitleService);
   private managerService = inject(ManagerService);
@@ -58,7 +60,7 @@ export class Managers {
     return `${firstName} ${lastName}`;
   }
 
-  navigateToDetails(manager: Manager) {
+  navigateToDetails(manager: TableEvent) {
     this.router.navigate(['/', 'managers', manager.id]);
   }
 

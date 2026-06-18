@@ -37,6 +37,11 @@
         </th>
         <td mat-cell [class]="`${column}-cell`" *matCellDef="let element">
           @switch (column) {
+            @case ('name') {
+              <span class="font-medium text-[#5e8fea]">
+                {{ element['firstName'] + ' ' + element['lastName'] | titlecase }}
+              </span>
+            }
             @case ('code') {
               <span class="font-medium text-[#5e8fea]">
                 {{ element[column] | uppercase }}

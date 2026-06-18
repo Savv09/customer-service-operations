@@ -72,7 +72,7 @@ export class CustomerDetail implements OnInit {
 
     this.customerService
       .getCustomer(customerId)
-      .pipe(finalize(() => this.isLoading.set(true)))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((res) => {
         this.selectedCustomer = res;
         this.detailsForm.patchValue(res);
