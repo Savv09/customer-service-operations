@@ -1,56 +1,64 @@
 <div class="h-full w-full overflow-hidden">
   @if (!isLoading()) {
-    @if (selectedTicket && crudMode === CrudMode.READ) {
+    @if (selectedTicket() && crudMode === CrudMode.READ) {
       <section
         class="w-full mb-10 flex items-center justify-between h-1/7 border-b border-b-[#78859c]"
       >
         <div class="w-[65%] flex items-center justify-between">
           <div>
             <p class="font-medium text-[#78859c]">Ticket Code</p>
-            <p class="text-xl font-semibold text-[#636872]">
-              {{ selectedTicket.code }}
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.code }}
             </p>
           </div>
           <div>
             <p class="font-medium text-[#78859c]">Created at</p>
-            <p class="text-xl font-semibold text-[#636872]">
-              {{ selectedTicket.createdAt | date: 'dd/MM/yyyy' }}
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.createdAt | date: 'dd/MM/yy HH:mm' }}
             </p>
           </div>
-          @if (!!selectedTicket.assignedManagerId) {
+          @if (!!selectedTicket()?.assignedManagerId) {
             <div>
-              <p class="font-medium text-[#78859c]">Assigned at</p>
-              <p class="text-xl font-semibold text-[#636872]">
-                {{ selectedTicket.assignedAt | date: 'dd/MM/yyyy' }}
+              <p class="font-medium text-[#78859c]">
+                {{ selectedTicket()?.status === ticketSatus.CLOSED ? 'Closed at' : 'Assigned at' }}
+              </p>
+              <p class="text-lg font-semibold text-[#636872]">
+                {{
+                  selectedTicket()?.status === ticketSatus.CLOSED
+                    ? (selectedTicket()?.closedAt | date: 'dd/MM/yy HH:mm')
+                    : (selectedTicket()?.assignedAt | date: 'dd/MM/yy HH:mm')
+                }}
               </p>
             </div>
           }
           <div>
             <p class="font-medium text-[#78859c]">Department</p>
-            <p class="text-xl font-semibold text-[#636872]">
-              {{ selectedTicket.department }}
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.department }}
             </p>
           </div>
           <div>
             <p class="font-medium text-[#78859c]">Status</p>
-            <p class="text-xl font-semibold text-[#636872]">
-              {{ selectedTicket.status | ticketStatus }}
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.status | ticketStatus }}
             </p>
           </div>
-          <div>
-            <p class="font-medium text-[#78859c]">Priority</p>
-            <p
-              class="text-xl font-semibold"
-              [ngClass]="{
-                'text-[#636872]': selectedTicket.priority === ticketPriority.LOW,
-                'text-[#d4ac0d]': selectedTicket.priority === ticketPriority.MEDIUM,
-                'text-[#c0392b]': selectedTicket.priority === ticketPriority.HIGH,
-                'text-[#6c3483]': selectedTicket.priority === ticketPriority.URGENT,
-              }"
-            >
-              {{ selectedTicket.priority | ticketPriority }}
-            </p>
-          </div>
+          @if (selectedTicket()?.status !== ticketSatus.CLOSED) {
+            <div>
+              <p class="font-medium text-[#78859c]">Priority</p>
+              <p
+                class="text-lg font-semibold"
+                [ngClass]="{
+                  'text-[#636872]': selectedTicket()?.priority === ticketPriority.LOW,
+                  'text-[#d4ac0d]': selectedTicket()?.priority === ticketPriority.MEDIUM,
+                  'text-[#c0392b]': selectedTicket()?.priority === ticketPriority.HIGH,
+                  'text-[#6c3483]': selectedTicket()?.priority === ticketPriority.URGENT,
+                }"
+              >
+                {{ selectedTicket()?.priority | ticketPriority }}
+              </p>
+            </div>
+          }
         </div>
 
         @if (currentUser()?.role === UserRole.ADMIN) {
@@ -62,13 +70,38 @@
             Edit
           </button>
         }
-        @if (currentUser()?.role === UserRole.MANAGER && !selectedTicket.assignedManagerId) {
+        @if (currentUser()?.role === UserRole.MANAGER && !selectedTicket()?.assignedManagerId) {
           <button
             class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
             (click)="onClaimTicket()"
           >
             <mat-icon class="mr-2">assignment_ind</mat-icon>
             Claim ticket
+          </button>
+        }
+        @if (
+          currentUser()?.role === UserRole.CUSTOMER &&
+          (selectedTicket()?.status === ticketSatus.RESOLVED ||
+            selectedTicket()?.status === ticketSatus.CLOSED)
+        ) {
+          <button
+            class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white rounded-md cursor-pointer focus:outline-none"
+            [ngClass]="
+              selectedTicket()?.status === ticketSatus.RESOLVED
+                ? 'bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
+                : 'bg-[#30a21e83] hover:bg-[#30a21e83] cursor-not-allowed'
+            "
+            [disabled]="selectedTicket()?.status === ticketSatus.CLOSED"
+            (click)="onCloseTicket()"
+          >
+            <mat-icon class="mr-2">
+              {{
+                selectedTicket()?.status === ticketSatus.RESOLVED ? 'task_alt' : 'verified'
+              }}</mat-icon
+            >
+            {{
+              selectedTicket()?.status === ticketSatus.RESOLVED ? 'Close ticket' : 'Ticket Closed'
+            }}
           </button>
         }
       </section>
@@ -138,7 +171,12 @@
         </div>
       }
       <div class="w-full col-start-1">
-        <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]"> Title *</label>
+        <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]">
+          Title
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
+        </label>
         <input
           type="text"
           id="title"
@@ -152,6 +190,33 @@
           required
         />
       </div>
+      @if (
+        currentUser()?.role === UserRole.MANAGER &&
+        crudMode === CrudMode.READ &&
+        selectedTicket()?.assignedManagerId === currentUser()?.id &&
+        selectedTicket()?.status !== ticketSatus.CLOSED
+      ) {
+        <div class="w-full col-start-2">
+          <div class="w-full text-[#78859c]">
+            <label class="block mb-2 text-lg font-medium"> Change Status </label>
+
+            <div class="w-full flex items-center justify-between text">
+              @for (status of statusOptions.filter(s => s !== 3); track status) {
+                <button
+                  type="button"
+                  class="px-4 py-2 w-[30%] h-12 text-base rounded-md border hover:cursor-pointer"
+                  [ngClass]="{
+                    'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
+                  }"
+                  (click)="changeActiveStatus(status)"
+                >
+                  {{ status | ticketStatus | uppercase }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
 
       @if (crudMode !== CrudMode.READ) {
         <div class="w-full col-start-2">
@@ -231,34 +296,43 @@
               }
             </div>
           </div>
+          @if (currentUser()?.role !== UserRole.CUSTOMER) {
+            <div class="h-full w-1/4 text-[#78859c]">
+              <label class="block mb-2 text-lg font-medium">
+                Status
 
-          <div class="h-full w-1/4 text-[#78859c]">
-            <label class="block mb-2 text-lg font-medium">
-              Status
+                <span class="font-semibold">*</span>
+              </label>
 
-              <span class="font-semibold">*</span>
-            </label>
-
-            <div class="h-60 flex flex-col justify-between text">
-              @for (status of statusOptions; track status) {
-                <button
-                  type="button"
-                  class="px-4 py-2 w-full rounded-md border hover:cursor-pointer"
-                  [ngClass]="{
-                    'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
-                  }"
-                  (click)="detailsForm.controls.status.setValue(status)"
-                >
-                  {{ status | ticketStatus }}
-                </button>
-              }
+              <div class="h-60 flex flex-col justify-between text">
+                @for (status of statusOptions; track status) {
+                  <button
+                    type="button"
+                    class="px-4 py-2 w-full rounded-md border hover:cursor-pointer"
+                    [ngClass]="{
+                      'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
+                    }"
+                    (click)="detailsForm.controls.status.setValue(status)"
+                  >
+                    {{ status | ticketStatus }}
+                  </button>
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
       }
     </form>
     @if (crudMode !== CrudMode.READ) {
-      <p class="block mt-8 font-medium text-[#78859c]">Fields marked with (*) are required.</p>
+      <p
+        class="block font-medium text-[#78859c]"
+        [ngClass]="{
+          'mt-0': currentUser()?.role === UserRole.CUSTOMER,
+          'mt-8': currentUser()?.role === UserRole.ADMIN,
+        }"
+      >
+        Fields marked with (*) are required.
+      </p>
       <section class="w-full h-1/5 flex items-center justify-end">
         <button
           class="w-28 h-9 font-medium text-lg flex items-center justify-center text-[#5e8fea] outline-1 outline-[#5e8fea] rounded-md cursor-pointer hover:bg-[#5e8fea] hover:text-white focus:outline-none"

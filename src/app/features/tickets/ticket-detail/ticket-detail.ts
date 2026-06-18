@@ -45,7 +45,7 @@ export class TicketDetail implements OnInit {
   UserRole = UserRole;
   isLoading = signal<boolean>(false);
 
-  selectedTicket: Ticket | null = null;
+  selectedTicket = signal<Ticket | null>(null);
 
   Department = Department;
   departmentOptions = Object.values(this.Department);
@@ -118,6 +118,12 @@ export class TicketDetail implements OnInit {
     if (this.crudMode === CrudMode.CREATE) {
       this.detailsForm.reset();
       this.detailsForm.enable();
+
+      if (this.currentUser()?.role === UserRole.CUSTOMER) {
+        this.detailsForm.controls.customerId.setValue(this.currentUser()?.id as string);
+        this.detailsForm.controls.assignedManagerId.setValue('none');
+      }
+
       this.isLoading.set(false);
       return;
     }
@@ -128,9 +134,13 @@ export class TicketDetail implements OnInit {
       .getTicket(ticketId)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((res) => {
-        this.selectedTicket = res;
+        this.selectedTicket.set(res);
 
         const assignedManagerId = res.assignedManagerId ?? 'none';
+
+        const department = res.department;
+
+        this.selectedDepartment.set(department);
 
         this.detailsForm.patchValue({ ...res, assignedManagerId });
 
@@ -177,7 +187,7 @@ export class TicketDetail implements OnInit {
         ...formValue,
         code,
         assignedManagerId,
-        // assignedAt,
+        assignedAt,
       };
       const dialogRef = this.dialog.open(ConfirmDialog, {
         data: {
@@ -213,8 +223,14 @@ export class TicketDetail implements OnInit {
 
       const assignedAt = formValue.assignedManagerId === 'none' ? undefined : new Date();
 
+      const selectedTicket = this.selectedTicket();
+
+      if (!selectedTicket) {
+        return;
+      }
+
       const editedTicket: Ticket = {
-        ...this.selectedTicket,
+        ...selectedTicket,
         ...formValue,
         assignedManagerId,
         assignedAt,
@@ -231,15 +247,15 @@ export class TicketDetail implements OnInit {
   }
 
   onClaimTicket() {
-    this.isLoading.set(true);
-
     const assignedManagerId = this.currentUser()?.id;
     const assignedAt = new Date();
+    const closedAt = undefined;
 
     const updatedTicket = {
-      ...this.selectedTicket,
+      ...this.selectedTicket(),
       assignedManagerId,
       assignedAt,
+      closedAt,
     };
 
     const dialogRef = this.dialog.open(ConfirmDialog, {
@@ -257,11 +273,101 @@ export class TicketDetail implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.isLoading.set(true);
         this.ticketService
           .updateTicket(updatedTicket, updatedTicket.id as string)
           .pipe(finalize(() => this.isLoading.set(false)))
-          .subscribe((res) =>
-            this.snackbarService.showSnackbar('Ticket assigned succesfully!', SnackbarMode.SUCCESS),
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar(
+                'Ticket assigned succesfully!',
+                SnackbarMode.SUCCESS,
+              ),
+              this.initByMode()
+            ),
+          );
+      }
+    });
+  }
+
+  changeActiveStatus(status: TicketStatus) {
+    const previousStatus = this.detailsForm.get('status')?.value;
+    const closedAt = undefined;
+
+    const updatedTicket = {
+      ...this.selectedTicket(),
+      status,
+      closedAt,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Change status',
+        message: 'Are you sure you want to change this ticket status?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isLoading.set(true);
+        this.ticketService
+          .updateTicket(updatedTicket, updatedTicket.id as string)
+          .pipe(finalize(() => this.isLoading.set(false)))
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar(
+                'Ticket status changed succesfully!',
+                SnackbarMode.SUCCESS,
+              ),
+              this.initByMode()
+            ),
+          );
+      } else {
+        this.detailsForm.controls.status.setValue(previousStatus as TicketStatus);
+      }
+    });
+  }
+
+  onCloseTicket() {
+    const closedAt = new Date();
+    const status = this.ticketSatus.CLOSED;
+
+    const updatedTicket = {
+      ...this.selectedTicket(),
+      status,
+      closedAt,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Close ticket',
+        message: 'Are you sure you want to close this ticket?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+      },
+      panelClass: 'custom-dialog',
+      position: {
+        left: '40%',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isLoading.set(true);
+        this.ticketService
+          .updateTicket(updatedTicket, updatedTicket.id as string)
+          .pipe(finalize(() => this.isLoading.set(false)))
+          .subscribe(
+            (res) => (
+              this.snackbarService.showSnackbar('Ticket closed succesfully!', SnackbarMode.SUCCESS),
+              this.initByMode()
+            ),
           );
       }
     });
@@ -272,14 +378,14 @@ export class TicketDetail implements OnInit {
   }
 
   navigateToEditTicket() {
-    this.router.navigate(['/', 'tickets', this.selectedTicket?.id, 'edit']);
+    this.router.navigate(['/', 'tickets', this.selectedTicket()?.id, 'edit']);
   }
 
   cancelOperation() {
     if (this.crudMode === CrudMode.CREATE) {
       this.router.navigate(['/', 'tickets']);
     } else {
-      this.router.navigate(['/', 'tickets', this.selectedTicket?.id]);
+      this.router.navigate(['/', 'tickets', this.selectedTicket()?.id]);
     }
   }
 }
