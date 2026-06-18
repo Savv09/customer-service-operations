@@ -24,6 +24,12 @@
             @case ('assignedAt') {
               {{ 'assigned at' }}
             }
+            @case ('updatedAt') {
+              {{ 'updated at' }}
+            }
+            @case ('resolutionTime') {
+              {{ 'resolution time' }}
+            }
             @default {
               {{ column }}
             }
@@ -49,7 +55,13 @@
               >
             }
             @case ('status') {
-              {{ element[column] | ticketStatus }}
+              <span
+                [ngClass]="{
+                  'text-[#30a21e] font-semibold': element[column] === ticketStatus.RESOLVED,
+                }"
+              >
+                {{ element[column] | ticketStatus }}
+              </span>
             }
             @case ('assignedTo') {
               {{ element['assignedManagerId'] ? (element['assignedManagerId'] | manager) : 'None' }}
@@ -58,13 +70,19 @@
               {{ element[column] | customer }}
             }
             @case ('createdAt') {
-              {{ element[column] | date: 'dd/MM/yyyy' }}
+              {{ element[column] | date: 'dd/MM/yy HH:mm' }}
             }
             @case ('closedAt') {
-              {{ element[column] | date: 'dd/MM/yyyy' }}
+              {{ element[column] | date: 'dd/MM/yy HH:mm' }}
             }
             @case ('assignedAt') {
-              {{ element[column] | date: 'dd/MM/yyyy' }}
+              {{ element[column] | date: 'dd/MM/yy HH:mm' }}
+            }
+            @case ('updatedAt') {
+              {{ element[column] | date: 'dd/MM/yy HH:mm' }}
+            }
+            @case ('resolutionTime') {
+              {{ getResolutionTime(element) }}
             }
             @default {
               {{ element[column] | titlecase }}

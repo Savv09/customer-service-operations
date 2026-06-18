@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { TicketPriorityPipe } from '../../pipes/ticket-priority-pipe';
 import { TicketStatusPipe } from '../../pipes/ticket-status-pipe';
 import { CustomerPipe } from '../../pipes/customer-pipe';
-import { TicketPriority } from '../../enums/tickets.enum';
+import { TicketPriority, TicketStatus } from '../../enums/tickets.enum';
 import { Ticket } from '../../../core/models/ticket.model';
 import { Customer, Manager } from '../../../core/models/user.model';
 import { TableEvent } from '../../../core/models/table-event.model';
@@ -32,6 +32,19 @@ export class Table {
   rowSelected = output<Ticket | Manager | Customer>();
 
   ticketPriority = TicketPriority;
+  ticketStatus = TicketStatus;
+
+  getResolutionTime(ticket: Ticket): string {
+    if (!ticket.closedAt) return '-';
+
+    const diffMs = new Date(ticket.closedAt).getTime() - new Date(ticket.createdAt).getTime();
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${days}d ${hours}h ${minutes}m`;
+  }
 
   onSelectRow(row: TableEvent) {
     this.rowSelected.emit(row);
