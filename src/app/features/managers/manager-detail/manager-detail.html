@@ -95,6 +95,9 @@
       <div class="w-full">
         <label for="department" class="block mb-2 text-base font-medium text-[#78859c]">
           Department
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
         </label>
         <select
           id="department"
