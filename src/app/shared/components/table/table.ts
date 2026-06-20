@@ -9,7 +9,6 @@ import { TicketPriority, TicketStatus } from '../../enums/tickets.enum';
 import { Ticket } from '../../../core/models/ticket.model';
 import { Customer, Manager } from '../../../core/models/user.model';
 import { TableEvent } from '../../../core/models/table-event.model';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -26,7 +25,6 @@ import { UserRole } from '../../enums/user-roles.enum';
     TicketPriorityPipe,
     TicketStatusPipe,
     CustomerPipe,
-    ScrollingModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
