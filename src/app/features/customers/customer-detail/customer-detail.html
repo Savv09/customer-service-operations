@@ -72,7 +72,12 @@
       </div>
 
       <div class="w-full">
-        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]"> Email *</label>
+        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]">
+          Email
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
+        </label>
         <input
           type="email"
           id="email"

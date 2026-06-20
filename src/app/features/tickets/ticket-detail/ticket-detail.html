@@ -85,9 +85,9 @@
             selectedTicket()?.status === ticketSatus.CLOSED)
         ) {
           <button
-            class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white rounded-md cursor-pointer focus:outline-none"
+            class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white rounded-md focus:outline-none"
             [ngClass]="
-              selectedTicket()?.status === ticketSatus.RESOLVED
+              selectedTicket()?.status !== ticketSatus.CLOSED
                 ? 'bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
                 : 'bg-[#30a21e83] hover:bg-[#30a21e83] cursor-not-allowed'
             "
