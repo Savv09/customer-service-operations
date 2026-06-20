@@ -14,8 +14,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard').then((c) => c.Dashboard),
+        path: 'home',
+        loadComponent: () => import('./features/home-page/home-page').then((c) => c.HomePage),
       },
       {
         path: 'managers',
@@ -124,7 +124,7 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   {
     path: '**',

@@ -30,7 +30,7 @@ export class Header {
 
   title = this.titleService.getTitle();
   private readonly titleIcons: Record<string, string> = {
-    Dashboard: 'dashboard',
+    'Home Page': 'home',
 
     Managers: 'manage_accounts',
     'Manager Details': 'manage_accounts',
@@ -52,7 +52,7 @@ export class Header {
   };
 
   titleIcon = computed(() => {
-    return this.titleIcons[this.title()] ?? 'dashboard';
+    return this.titleIcons[this.title()] ?? 'home';
   });
 
   hasBackButton = this.titleService.getHasBackButton();

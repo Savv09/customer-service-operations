@@ -3,18 +3,18 @@ import { TitleService } from '../../core/services/title.service';
 import { UserService } from '../../core/services/user.service';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-home-page',
   imports: [],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  templateUrl: './home-page.html',
+  styleUrl: './home-page.css',
 })
-export class Dashboard implements OnInit {
+export class HomePage implements OnInit {
   private titleService = inject(TitleService);
   private userService = inject(UserService);
 
   currentUser = this.userService.getCurrentUser$();
 
   ngOnInit(): void {
-    this.titleService.setTitle('Dashboard');
+    this.titleService.setTitle('Home Page');
   }
 }

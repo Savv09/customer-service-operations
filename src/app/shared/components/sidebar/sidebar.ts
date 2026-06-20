@@ -26,8 +26,8 @@ export class Sidebar {
   private router = inject(Router);
 
   activePage = toSignal(
-    this.router.events.pipe(map(() => this.router.url.split('/')[1] || 'dashboard')),
-    { initialValue: 'dashboard' },
+    this.router.events.pipe(map(() => this.router.url.split('/')[1] || 'home')),
+    { initialValue: 'home' },
   );
 
   navigateToSelectedPage(selectedPage: string) {

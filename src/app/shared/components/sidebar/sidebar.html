@@ -8,13 +8,13 @@
       <button
         class="w-full h-16 flex items-center px-[20%] text-xl text-white cursor-pointer transition-colors duration-200"
         [ngClass]="{
-          'bg-white/20': activePage() === 'dashboard',
-          'hover:bg-white/10': activePage() !== 'dashboard',
+          'bg-white/20': activePage() === 'home',
+          'hover:bg-white/10': activePage() !== 'home',
         }"
-        (click)="navigateToSelectedPage('dashboard')"
+        (click)="navigateToSelectedPage('home')"
       >
-        <mat-icon class="mr-3">dashboard</mat-icon>
-        <span>Dashboard</span>
+        <mat-icon class="mr-3">home</mat-icon>
+        <span>Home Page</span>
       </button>
     </li>
 

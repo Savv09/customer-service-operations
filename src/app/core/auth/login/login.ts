@@ -58,6 +58,6 @@ export class Login {
 
     this.userService.getUser(res.localId);
 
-    this.router.navigate(['/', 'dashboard']);
+    this.router.navigate(['/', 'home']);
   }
 }

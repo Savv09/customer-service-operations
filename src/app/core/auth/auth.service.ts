@@ -48,7 +48,7 @@ export class AuthService {
 
     this.authenticatedUser.set(authResponse);
     this.userService.getUser(decodedAuthUser.user_id);
-    this.router.navigate(['/', 'dashboard']);
+    this.router.navigate(['/', 'home']);
   }
 
   login(email: string, password: string): Observable<FirebaseSigninResponse> {
