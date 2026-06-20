@@ -19,9 +19,16 @@
     </button>
   </section>
 
-  <app-table
-    [displayedColumns]="columnToDisplay"
-    [dataSource]="filteredData()"
-    (rowSelected)="navigateToDetails($event)"
-  ></app-table>
+  <cdk-virtual-scroll-viewport
+    class="flex-1 min-h-0 w-full"
+    [itemSize]="52"
+    [maxBufferPx]="1200"
+    [minBufferPx]="400"
+  >
+    <app-table
+      [displayedColumns]="columnToDisplay"
+      [dataSource]="filteredData()"
+      (rowSelected)="navigateToDetails($event)"
+    ></app-table>
+  </cdk-virtual-scroll-viewport>
 </div>
