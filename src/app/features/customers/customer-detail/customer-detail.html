@@ -5,127 +5,85 @@
         class="w-full mb-10 flex items-center justify-between h-1/5 border-b border-b-[#78859c]"
       >
         <div class="flex items-center">
-          <div class="h-18 w-18 rounded-full bg-[#193f83]"></div>
+          <div
+            class="h-18 w-18 rounded-full border-2 border-[#5e8fea] text-[#5e8fea] flex items-center justify-center"
+          >
+            <span class="text-3xl font-medium">{{
+              selectedCustomer.firstName.charAt(0) + '' + selectedCustomer.lastName.charAt(0)
+            }}</span>
+          </div>
           <span class="ml-4">
-            <p class="text-xl font-semibold text-[#193f83]">
+            <p class="text-xl font-bold text-[#78859c]">
               {{ `${selectedCustomer.firstName} ${selectedCustomer.lastName}` }}
             </p>
             <p class="text-lg text-[#636872] font-base">{{ selectedCustomer.company }}</p>
           </span>
         </div>
-        <button
+
+        <app-button
+          label="Edit"
+          icon="edit"
+          variant="primary"
           [disabled]="crudMode === CrudMode.EDIT"
-          (click)="navigateToEditCustomer(selectedCustomer.id)"
-          class="w-28 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
-          [ngClass]="{
-            'bg-[#2459b58c] hover:bg-[#2459b58c] hover:cursor-not-allowed':
-              crudMode === CrudMode.EDIT,
-          }"
-        >
-          <mat-icon class="mr-2">edit</mat-icon>
-          Edit
-        </button>
+          (buttonClicked)="navigateToEditCustomer(selectedCustomer.id)"
+        />
       </section>
     }
 
     <form [formGroup]="detailsForm" class="w-full h-3/5 grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
       <div class="w-full">
-        <label for="firstName" class="block mb-2 text-base font-medium text-[#78859c]">
-          First Name
-          @if (crudMode !== CrudMode.READ) {
-            <span class="font-semibold">*</span>
-          }
-        </label>
-        <input
-          type="text"
-          id="firstName"
-          formControlName="firstName"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
+        <app-input-field
+          label="First Name"
           placeholder="First Name"
-          required
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.firstName"
         />
       </div>
 
       <div class="w-full">
-        <label for="lastName" class="block mb-2 text-base font-medium text-[#78859c]">
-          Last Name
-          @if (crudMode !== CrudMode.READ) {
-            <span class="font-semibold">*</span>
-          }
-        </label>
-        <input
-          type="text"
-          id="lastName"
-          formControlName="lastName"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
+        <app-input-field
+          label="Last Name"
           placeholder="Last Name"
-          required
-        />
-      </div>
-
-      <div class="w-full">
-        <label for="email" class="block mb-2 text-base font-medium text-[#78859c]">
-          Email
-          @if (crudMode !== CrudMode.READ) {
-            <span class="font-semibold">*</span>
-          }
-        </label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
-          placeholder="Email"
-          required
-        />
-      </div>
-
-      <div class="w-full">
-        <label for="company" class="block mb-2 text-base font-medium text-[#78859c]">
-          Company
-          @if (crudMode !== CrudMode.READ) {
-            <span class="font-semibold">*</span>
-          }
-        </label>
-        <input
           type="text"
-          id="company"
-          formControlName="company"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
-          placeholder="Company"
-          required
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.lastName"
         />
       </div>
 
       <div class="w-full">
-        <label for="phone" class="block mb-2 text-base font-medium text-[#78859c]"
-          >Phone Number</label
-        >
-        <input
-          id="phone"
-          formControlName="phone"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-lg shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
+        <app-input-field
+          label="Email"
+          placeholder="Email"
+          type="email"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.email"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Company"
+          placeholder="Company"
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.company"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Phone Number"
           [placeholder]="crudMode === CrudMode.READ ? '' : '+...'"
+          type="text"
+          [hasStar]="false"
+          [required]="false"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.phone"
         />
       </div>
     </form>
@@ -140,37 +98,32 @@
         'justify-end': crudMode === CrudMode.CREATE,
       }"
     >
-      @if (crudMode === CrudMode.EDIT || crudMode === CrudMode.READ) {
-        <button
-          class="w-28 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#c0392b] rounded-md cursor-pointer hover:bg-[#ab3326] focus:outline-none"
-          (click)="deleteCustomer()"
-        >
-          <mat-icon class="mr-2">delete</mat-icon>
-          Delete
-        </button>
+      @if (crudMode === CrudMode.EDIT) {
+        <app-button
+          label="Delete"
+          icon="delete"
+          variant="danger"
+          (buttonClicked)="deleteCustomer()"
+        />
       }
       @if (crudMode === CrudMode.CREATE || crudMode === CrudMode.EDIT) {
         <div class="flex items-center">
-          <button
-            class="w-28 h-9 font-medium text-lg flex items-center justify-center text-[#5e8fea] outline-1 outline-[#5e8fea] rounded-md cursor-pointer hover:bg-[#5e8fea] hover:text-white focus:outline-none"
-            (click)="navigateToReadDetails()"
-          >
-            <mat-icon class="mr-2">cancel</mat-icon>
-            Cancel
-          </button>
-          <button
-            class="w-28 h-9 font-medium ml-2 text-lg flex items-center justify-center text-white rounded-md focus:outline-none"
-            [disabled]="!detailsForm.valid"
-            [ngClass]="
-              detailsForm.valid
-                ? 'bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
-                : 'bg-[#30a21e83] hover:bg-[#30a21e83] cursor-not-allowed'
-            "
-            (click)="saveCustomerForm()"
-          >
-            <mat-icon class="mr-2">save</mat-icon>
-            Save
-          </button>
+          <div class="flex items-center">
+            <app-button
+              label="Cancel"
+              icon="cancel"
+              variant="outline"
+              (buttonClicked)="navigateToReadDetails()"
+            />
+            <span class="mx-2"></span>
+            <app-button
+              label="Save"
+              icon="save"
+              variant="success"
+              [disabled]="!detailsForm.valid"
+              (buttonClicked)="saveCustomerForm()"
+            />
+          </div>
         </div>
       }
     </section>

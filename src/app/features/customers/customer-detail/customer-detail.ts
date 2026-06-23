@@ -20,10 +20,12 @@ import { Customer } from '../../../core/models/user.model';
 import { CrudMode } from '../../../shared/enums/crud.enum';
 import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 import { UserRole } from '../../../shared/enums/user-roles.enum';
+import { Button } from '../../../shared/components/button/button';
+import { InputField } from '../../../shared/components/input-field/input-field';
 
 @Component({
   selector: 'app-customer-detail',
-  imports: [ReactiveFormsModule, MatIconModule, CommonModule],
+  imports: [ReactiveFormsModule, MatIconModule, CommonModule, Button, InputField],
   templateUrl: './customer-detail.html',
   styleUrl: './customer-detail.css',
 })
@@ -128,9 +130,14 @@ export class CustomerDetail implements OnInit {
 
       this.authService
         .registerUser(newCustomer, UserRole.CUSTOMER)
-        .pipe(finalize(() => this.router.navigate(['/', 'customers'])))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Customer created succesfully!', SnackbarMode.SUCCESS),
+        .subscribe(
+          (res) => (
+            this.snackbarService.showSnackbar(
+              'Customer created succesfully!',
+              SnackbarMode.SUCCESS,
+            ),
+            this.router.navigate(['/', 'customers'])
+          ),
         );
     } else if (this.selectedCustomer) {
       const editedCustomer: Customer = {
@@ -140,38 +147,23 @@ export class CustomerDetail implements OnInit {
 
       this.customerService
         .updateCustomer(editedCustomer)
-        .pipe(finalize(() => this.navigateToReadDetails()))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Customer updated succesfully!', SnackbarMode.SUCCESS),
+        .subscribe(
+          (res) => (
+            this.snackbarService.showSnackbar(
+              'Customer updated succesfully!',
+              SnackbarMode.SUCCESS,
+            ),
+            this.navigateToReadDetails()
+          ),
         );
     }
   }
 
   deleteCustomer() {
-    const dialogRef = this.dialog.open(ConfirmDialog, {
-      data: {
-        title: 'Delete customer',
-        message: 'Are you sure you want to delete this customer?',
-        confirmText: 'Yes',
-        cancelText: 'No',
-      },
-      panelClass: 'custom-dialog',
-      position: {
-        left: '40%',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (this.selectedCustomer)
-          this.customerService.deleteCustomer(this.selectedCustomer?.id).subscribe((res) => {
-            this.snackbarService.showSnackbar(
-              'Customer deleted succesfully!',
-              SnackbarMode.SUCCESS,
-            );
-            this.router.navigate(['/', 'customers']);
-          });
-      }
+    console.log('csdnjcnbjcj');
+    this.customerService.deleteCustomer(this.selectedCustomer?.id as string).subscribe((res) => {
+      this.snackbarService.showSnackbar('Customer deleted succesfully!', SnackbarMode.SUCCESS);
+      this.router.navigate(['/', 'customers']);
     });
   }
 }
