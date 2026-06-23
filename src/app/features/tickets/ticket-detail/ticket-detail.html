@@ -62,47 +62,37 @@
         </div>
 
         @if (currentUser()?.role === UserRole.ADMIN) {
-          <button
-            class="w-28 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
-            (click)="navigateToEditTicket()"
-          >
-            <mat-icon class="mr-2">edit</mat-icon>
-            Edit
-          </button>
+          <app-button
+            variant="primary"
+            label="Edit"
+            icon="edit"
+            (buttonClicked)="navigateToEditTicket()"
+          />
         }
         @if (currentUser()?.role === UserRole.MANAGER && !selectedTicket()?.assignedManagerId) {
-          <button
-            class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white bg-[#5e8fea] rounded-md cursor-pointer hover:bg-[#183d7e] focus:outline-none"
-            (click)="onClaimTicket()"
-          >
-            <mat-icon class="mr-2">assignment_ind</mat-icon>
-            Claim ticket
-          </button>
+          <app-button
+            size="sm"
+            variant="primary"
+            label="Claim ticket"
+            icon="assignment_ind"
+            (buttonClicked)="onClaimTicket()"
+          />
         }
         @if (
           currentUser()?.role === UserRole.CUSTOMER &&
           (selectedTicket()?.status === ticketSatus.RESOLVED ||
             selectedTicket()?.status === ticketSatus.CLOSED)
         ) {
-          <button
-            class="w-38 h-9 font-medium text-lg flex items-center justify-center text-white rounded-md focus:outline-none"
-            [ngClass]="
-              selectedTicket()?.status !== ticketSatus.CLOSED
-                ? 'bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
-                : 'bg-[#30a21e83] hover:bg-[#30a21e83] cursor-not-allowed'
-            "
-            [disabled]="selectedTicket()?.status === ticketSatus.CLOSED"
-            (click)="onCloseTicket()"
-          >
-            <mat-icon class="mr-2">
-              {{
-                selectedTicket()?.status === ticketSatus.RESOLVED ? 'task_alt' : 'verified'
-              }}</mat-icon
-            >
-            {{
+          <app-button
+            size="sm"
+            variant="success"
+            [label]="
               selectedTicket()?.status === ticketSatus.RESOLVED ? 'Close ticket' : 'Ticket Closed'
-            }}
-          </button>
+            "
+            [icon]="selectedTicket()?.status === ticketSatus.RESOLVED ? 'task_alt' : 'verified'"
+            [disabled]="selectedTicket()?.status === ticketSatus.CLOSED"
+            (buttonClicked)="onCloseTicket()"
+          />
         }
       </section>
     }
@@ -110,7 +100,7 @@
     <form [formGroup]="detailsForm" class="w-full h-4/6 grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
       @if (currentUser()?.role === UserRole.ADMIN) {
         <div class="col-start-1 row-start-1">
-          <label for="customerId" class="block mb-2 text-lg font-medium text-[#78859c]">
+          <label for="customerId" class="block mb-2 text-base font-medium text-[#78859c]">
             {{
               crudMode === CrudMode.READ
                 ? 'Created by'
@@ -125,7 +115,7 @@
           <select
             id="customerId"
             formControlName="customerId"
-            class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
             [ngClass]="{
               'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
                 crudMode === CrudMode.READ,
@@ -142,7 +132,7 @@
         </div>
 
         <div class="col-start-2 row-start-1">
-          <label for="assignedManagerId" class="block mb-2 text-lg font-medium text-[#78859c]">
+          <label for="assignedManagerId" class="block mb-2 text-base font-medium text-[#78859c]">
             {{ crudMode !== CrudMode.READ ? 'Assign to' : 'Assigned to' }}
 
             @if (crudMode !== CrudMode.READ) {
@@ -153,7 +143,7 @@
           <select
             id="assignedManagerId"
             formControlName="assignedManagerId"
-            class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
             [ngClass]="{
               'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
                 crudMode === CrudMode.READ,
@@ -171,23 +161,13 @@
         </div>
       }
       <div class="w-full col-start-1">
-        <label for="title" class="block mb-2 text-lg font-medium text-[#78859c]">
-          Title
-          @if (crudMode !== CrudMode.READ) {
-            <span class="font-semibold">*</span>
-          }
-        </label>
-        <input
-          type="text"
-          id="title"
-          formControlName="title"
-          class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
-          [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
-          }"
+        <app-input-field
+          label="Title"
           placeholder="Title"
-          required
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.title"
         />
       </div>
       @if (
@@ -220,7 +200,7 @@
 
       @if (crudMode !== CrudMode.READ) {
         <div class="w-full col-start-2">
-          <label for="department" class="block mb-2 text-lg font-medium text-[#78859c]">
+          <label for="department" class="block mb-2 text-base font-medium text-[#78859c]">
             Department
 
             <span class="font-semibold">*</span>
@@ -228,7 +208,7 @@
           <select
             id="department"
             formControlName="department"
-            class="block w-full h-12 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
             (change)="onDepartmentChange($event)"
           >
             <option value="" disabled>Select department</option>
@@ -251,10 +231,10 @@
         <textarea
           id="description"
           formControlName="description"
-          class="block w-full h-60 px-3 py-2 text-base border rounded-md shadow focus:outline-none focus:ring-1 focus:ring-[#183d7e] focus:bg-[#ededee]"
+          class="block w-full h-60 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
           [ngClass]="{
-            'bg-[#78859c2c]': crudMode === CrudMode.READ,
-            'border-0': crudMode === CrudMode.READ,
+            'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
+              crudMode === CrudMode.READ,
           }"
           placeholder="Enter a description"
           required
@@ -335,26 +315,22 @@
         Fields marked with (*) are required.
       </p>
       <section class="w-full h-1/5 flex items-center justify-end">
-        <button
-          class="w-28 h-9 font-medium text-lg flex items-center justify-center text-[#5e8fea] outline-1 outline-[#5e8fea] rounded-md cursor-pointer hover:bg-[#5e8fea] hover:text-white focus:outline-none"
-          (click)="cancelOperation()"
-        >
-          <mat-icon class="mr-2">cancel</mat-icon>
-          Cancel
-        </button>
-        <button
-          class="w-28 h-9 font-medium ml-2 text-lg flex items-center justify-center text-white rounded-md focus:outline-none"
+        <app-button
+          label="Cancel"
+          icon="cancel"
+          variant="outline"
+          size="md"
+          (buttonClicked)="cancelOperation()"
+        />
+        <span class="px-2"></span>
+        <app-button
+          label="Save"
+          icon="save"
+          variant="success"
+          size="md"
           [disabled]="!detailsForm.valid"
-          [ngClass]="
-            detailsForm.valid
-              ? 'bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
-              : 'bg-[#30a21e83] hover:bg-[#30a21e83] cursor-not-allowed'
-          "
-          (click)="onSaveTicketsForm()"
-        >
-          <mat-icon class="mr-2">save</mat-icon>
-          Save
-        </button>
+          (buttonClicked)="onSaveTicketsForm()"
+        />
       </section>
     }
   } @else {

@@ -21,6 +21,8 @@ import { TicketStatusPipe } from '../../../shared/pipes/ticket-status-pipe';
 import { finalize } from 'rxjs';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
+import { Button } from '../../../shared/components/button/button';
+import { InputField } from '../../../shared/components/input-field/input-field';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -32,6 +34,8 @@ import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
     CustomerPipe,
     ManagerPipe,
     TicketStatusPipe,
+    Button,
+    InputField,
   ],
   templateUrl: './ticket-detail.html',
   styleUrl: './ticket-detail.css',
