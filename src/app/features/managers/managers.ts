@@ -12,10 +12,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { TableEvent } from '../../core/models/table-event.model';
 import { Table } from '../../shared/components/table/table';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-managers',
-  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table],
+  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table, Button],
   templateUrl: './managers.html',
   styleUrl: './managers.css',
 })
