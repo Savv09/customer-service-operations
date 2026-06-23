@@ -5,11 +5,11 @@
     </h2>
   </section>
 
-  @if (currentUser()?.role === userRole.ADMIN) {
-    <section class="w-full row-start-2 col-span-2">
-      <table class="w-full h-full border-collapse">
-        <tbody>
-          <tr>
+  <section class="w-full row-start-2 col-span-2">
+    <table class="w-full h-full border-collapse">
+      <tbody>
+        <tr>
+          @if (currentUser()?.role === userRole.ADMIN) {
             @for (card of adminCards(); track card) {
               <td class="px-8 h-full border-r border-l border-[#78859c]">
                 <div class="flex items-center justify-between h-full">
@@ -22,11 +22,34 @@
                 </div>
               </td>
             }
-          </tr>
-        </tbody>
-      </table>
-    </section>
+          }
+          @if (currentUser()?.role === userRole.MANAGER) {
+            @for (card of managerCards(); track card) {
+              <td class="px-8 h-full border-r border-l border-[#78859c]">
+                <div class="flex items-center justify-between h-full">
+                  <h4 class="text-lg font-medium text-[#636872]">
+                    {{ card.label | titlecase }}
+                  </h4>
+                  <p
+                    class="text-xl font-semibold text-[#78859c]"
+                    [ngClass]="{
+                      'text-[#c0392b]':
+                        card.value > 0 &&
+                        (card.label === 'high priority' || card.label === 'overdue'),
+                    }"
+                  >
+                    {{ card.value }}
+                  </p>
+                </div>
+              </td>
+            }
+          }
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
+  @if (currentUser()?.role === userRole.ADMIN) {
     <section class="row-start-3 shadow-md">
       <app-dashboard-card [title]="'Tickets by Department'">
         @for (department of departmentList(); track department) {
@@ -40,39 +63,86 @@
       </app-dashboard-card>
     </section>
 
-    <section class="row-start-3 shadow-md">
-      <app-dashboard-card [title]="'Recent Activities'"> </app-dashboard-card>
+    <section class="w-full h-full">
+      <header>
+        <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
+      </header>
+      <div class="flex items-center mt-4">
+        <app-button
+          label="New ticket"
+          icon="assignment"
+          variant="outline"
+          size="sm"
+          (buttonClicked)="navigateToCreateTicket()"
+        />
+        <span class="mx-2"></span>
+        <app-button
+          label="New manager"
+          icon="manage_accounts"
+          variant="outline"
+          size="sm"
+          (buttonClicked)="navigateToCreateManager()"
+        />
+        <span class="mx-2"></span>
+        <app-button
+          label="New customer"
+          icon="groups"
+          variant="outline"
+          size="sm"
+          (buttonClicked)="navigateToCreateCustomer()"
+        />
+      </div>
     </section>
   }
 
-  <section class="w-full h-full">
-    <header>
-      <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
-    </header>
-    <div class="flex items-center mt-4">
-      <app-button
-        label="New ticket"
-        icon="assignment"
-        variant="outline"
-        size="sm"
-        (buttonClicked)="navigateToCreateTicket()"
-      />
-      <span class="mx-2"></span>
-      <app-button
-        label="New manager"
-        icon="manage_accounts"
-        variant="outline"
-        size="sm"
-        (buttonClicked)="navigateToCreateManager()"
-      />
-      <span class="mx-2"></span>
-      <app-button
-        label="New customer"
-        icon="groups"
-        variant="outline"
-        size="sm"
-        (buttonClicked)="navigateToCreateCustomer()"
-      />
-    </div>
+  @if (currentUser()?.role === userRole.MANAGER) {
+    <section class="row-start-3 shadow-md">
+      <app-dashboard-card [title]="'Notifications'">
+        <div
+          class="w-full h-80 px-4 flex flex-col justify-between overflow-y-scroll overflow-x-hidden"
+        >
+          @if (notifications().length === 0) {
+            <p class="text-base font-medium text-[#78859c]">You have 0 notifications.</p>
+          }
+          @for (notification of notifications(); track notification) {
+            <button
+              class="w-full text-base py-2 font-medium flex items-center rounded-sm text-[#78859c] hover:cursor-pointer hover:bg-[#78859c2c] hover:font-semibold hover:shadow-md"
+              (click)="navigateToTicketDetails(notification.ticketId)"
+            >
+              <span
+                class="pl-12 pr-6 mt-1"
+                [ngClass]="{
+                  'text-[#c0392b]': notification.severity === 'danger',
+                  'text-[#d4ac0d]': notification.severity === 'warning',
+                }"
+                ><mat-icon>{{
+                  notification.severity === 'danger' ? 'error' : 'warning'
+                }}</mat-icon></span
+              >
+              {{ notification.message }}
+            </button>
+          }
+        </div>
+      </app-dashboard-card>
+    </section>
+
+    <section class="w-full h-full">
+      <header>
+        <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
+      </header>
+      <div class="flex items-center mt-4">
+        <app-button
+          label="View tickets"
+          icon="assignment"
+          variant="outline"
+          size="sm"
+          (buttonClicked)="navigateToTickets()"
+        />
+      </div>
+    </section>
+  }
+
+  <section class="row-start-3 col-start-2 shadow-md">
+    <app-dashboard-card [title]="'Recent Activities'"> </app-dashboard-card>
   </section>
 </div>
