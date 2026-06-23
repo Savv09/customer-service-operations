@@ -1,0 +1,36 @@
+<button
+  [disabled]="disabled()"
+  (click)="onButtonClicked()"
+  class="flex items-center justify-center rounded-md font-medium shadow-md focus:outline-none transition-colors"
+  [ngClass]="[
+    size() === 'md' ? 'w-28 h-9 text-lg' : 'w-38 h-8 text-base',
+
+    variant() === 'primary'
+      ? disabled()
+        ? ' text-white bg-[#5e8feaaf] hover:bg-[#5e8feaaf] hover:cursor-not-allowed'
+        : 'text-white bg-[#5e8fea] hover:bg-[#183d7e] cursor-pointer'
+      : '',
+
+    variant() === 'outline'
+      ? 'text-[#5e8fea] outline-1 outline-[#5e8fea] hover:bg-[#5e8fea] hover:text-white'
+      : '',
+
+    variant() === 'success'
+      ? disabled()
+        ? 'text-white bg-[#30a21e83] cursor-not-allowed'
+        : 'text-white bg-[#30a21e] hover:bg-[#2e951e] cursor-pointer'
+      : '',
+
+    variant() === 'danger' ? 'text-white bg-[#c0392b] hover:bg-[#ab3326]' : '',
+
+    !disabled() ? 'cursor-pointer' : 'cursor-not-allowed',
+  ]"
+>
+  @if (icon()) {
+    <mat-icon class="mr-2">
+      {{ icon() }}
+    </mat-icon>
+  }
+
+  {{ label() }}
+</button>
