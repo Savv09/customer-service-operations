@@ -1,0 +1,19 @@
+<label class="block mb-2 text-base font-medium text-[#78859c]">
+  {{ label() }}
+  @if (hasStar()) {
+    <span class="font-semibold">*</span>
+  }
+</label>
+
+<input
+  [type]="type()"
+  [placeholder]="placeholder()"
+  [formControl]="$any(control())"
+  class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
+  [required]="required()"
+  [ngClass]="{
+    'border-[#c0392b] ring-1 ring-[#c0392b] focus:ring-[#c0392b] focus:border-[#c0392b]':
+      hasError(),
+    'bg-[#78859c2c] pointer-events-none border-0 appearance-none': disabled(),
+  }"
+/>
