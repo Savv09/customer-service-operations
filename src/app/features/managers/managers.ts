@@ -16,7 +16,7 @@ import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-managers',
-  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table, Button],
+  imports: [MatTableModule, MatButtonModule, CommonModule, ScrollingModule, Table, Button],
   templateUrl: './managers.html',
   styleUrl: './managers.css',
 })

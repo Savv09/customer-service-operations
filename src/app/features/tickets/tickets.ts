@@ -26,7 +26,6 @@ import { Button } from '../../shared/components/button/button';
   imports: [
     MatTabsModule,
     MatTableModule,
-    MatIcon,
     MatButtonModule,
     CommonModule,
     MatExpansionModule,
