@@ -16,10 +16,12 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
 import { UserRole } from '../../../shared/enums/user-roles.enum';
 import { RolePipe } from '../../../shared/pipes/role-pipe';
 import { Department } from '../../../shared/enums/department.enum';
+import { Button } from '../../../shared/components/button/button';
+import { InputField } from '../../../shared/components/input-field/input-field';
 
 @Component({
   selector: 'app-manager-detail',
-  imports: [ReactiveFormsModule, MatIconModule, CommonModule, RolePipe],
+  imports: [ReactiveFormsModule, MatIconModule, CommonModule, RolePipe, Button, InputField],
   templateUrl: './manager-detail.html',
   styleUrl: './manager-detail.css',
 })
@@ -128,9 +130,11 @@ export class ManagerDetail {
 
       this.authService
         .registerUser(newManager, UserRole.MANAGER)
-        .pipe(finalize(() => this.router.navigate(['/', 'managers'])))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Manager created succesfully!', SnackbarMode.SUCCESS),
+        .subscribe(
+          (res) => (
+            this.snackbarService.showSnackbar('Manager created succesfully!', SnackbarMode.SUCCESS),
+            this.router.navigate(['/', 'managers'])
+          ),
         );
     } else if (this.selectedManager) {
       const editedManager: Manager = {
@@ -140,35 +144,19 @@ export class ManagerDetail {
 
       this.managerService
         .updateManager(editedManager)
-        .pipe(finalize(() => this.navigateToReadDetails()))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Manager updated succesfully!', SnackbarMode.SUCCESS),
+        .subscribe(
+          (res) => (
+            this.snackbarService.showSnackbar('Manager updated succesfully!', SnackbarMode.SUCCESS),
+            this.navigateToReadDetails()
+          ),
         );
     }
   }
 
   deleteManager() {
-    const dialogRef = this.dialog.open(ConfirmDialog, {
-      data: {
-        title: 'Delete manager',
-        message: 'Are you sure you want to delete this manager?',
-        confirmText: 'Yes',
-        cancelText: 'No',
-      },
-      panelClass: 'custom-dialog',
-      position: {
-        left: '40%',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (this.selectedManager)
-          this.managerService.deleteManager(this.selectedManager?.id).subscribe((res) => {
-            this.snackbarService.showSnackbar('Manager deleted succesfully!', SnackbarMode.SUCCESS);
-            this.router.navigate(['/', 'managers']);
-          });
-      }
+    this.managerService.deleteManager(this.selectedManager?.id as string).subscribe((res) => {
+      this.snackbarService.showSnackbar('Manager deleted succesfully!', SnackbarMode.SUCCESS);
+      this.router.navigate(['/', 'managers']);
     });
   }
 }
