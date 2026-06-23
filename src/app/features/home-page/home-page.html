@@ -1,19 +1,78 @@
-<div class="w-full h-full flex flex-col items-center justify-between">
-  <section class="w-full">
-    <h2 class="font-medium text-[1.7rem] text-[#636872]">
+<div class="w-full h-full grid grid-cols-2 grid-rows-[8%_10%_auto_15%] gap-x-6 gap-y-6">
+  <section class="w-full row-start-1 col-span-2 border-b border-[#78859c]">
+    <h2 class="font-medium text-3xl text-[#636872]">
       Welcome back, {{ currentUser()?.firstName }}!
     </h2>
   </section>
-  <section class="w-full h-1/4">
-    <h3 class="text-xl font-medium text-[#636872]">Your Tickets</h3>
-  </section>
 
-  <section class="w-full flex items-center">
-    <div>
-      <h2>Recent Activity</h2>
-    </div>
-    <div>
-      <h2>Quick Actions</h2>
+  @if (currentUser()?.role === userRole.ADMIN) {
+    <section class="w-full row-start-2 col-span-2">
+      <table class="w-full h-full border-collapse">
+        <tbody>
+          <tr>
+            @for (card of adminCards(); track card) {
+              <td class="px-8 h-full border-r border-l border-[#78859c]">
+                <div class="flex items-center justify-between h-full">
+                  <h4 class="text-lg font-medium text-[#636872]">
+                    {{ card.label | titlecase }}
+                  </h4>
+                  <p class="text-xl font-semibold text-[#78859c]">
+                    {{ card.value }}
+                  </p>
+                </div>
+              </td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="row-start-3 shadow-md">
+      <app-dashboard-card [title]="'Tickets by Department'">
+        @for (department of departmentList(); track department) {
+          <div class="w-full h-auto flex items-center justify-between">
+            <h4 class="text-base font-medium text-[#636872]">{{ department | titlecase }}</h4>
+            <p class="text-lg font-semibold text-[#78859c]">
+              {{ getTicketsByDepartment(department) }}
+            </p>
+          </div>
+        }
+      </app-dashboard-card>
+    </section>
+
+    <section class="row-start-3 shadow-md">
+      <app-dashboard-card [title]="'Recent Activities'"> </app-dashboard-card>
+    </section>
+  }
+
+  <section class="w-full h-full">
+    <header>
+      <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
+    </header>
+    <div class="flex items-center mt-4">
+      <app-button
+        label="New ticket"
+        icon="assignment"
+        variant="outline"
+        size="sm"
+        (buttonClicked)="navigateToCreateTicket()"
+      />
+      <span class="mx-2"></span>
+      <app-button
+        label="New manager"
+        icon="manage_accounts"
+        variant="outline"
+        size="sm"
+        (buttonClicked)="navigateToCreateManager()"
+      />
+      <span class="mx-2"></span>
+      <app-button
+        label="New customer"
+        icon="groups"
+        variant="outline"
+        size="sm"
+        (buttonClicked)="navigateToCreateCustomer()"
+      />
     </div>
   </section>
 </div>
