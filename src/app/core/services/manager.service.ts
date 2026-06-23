@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { filter, finalize, map, Observable, tap } from 'rxjs';
+import { EMPTY, filter, finalize, map, Observable, switchMap, tap } from 'rxjs';
 
 import { mapRunQuery } from '../firebase/api.adapters';
 
@@ -13,6 +13,7 @@ import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 import { BASE_URL } from '../contsants/base.const';
 
 import { UserRole } from '../../shared/enums/user-roles.enum';
+import { DialogService } from './dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class ManagerService {
   private isManagerListLoaded = signal<boolean>(false);
 
   private http = inject(HttpClient);
+  private dialogService = inject(DialogService);
 
   private getManagersUrl(managerId: string | null) {
     let managersUrl = `${BASE_URL}/users`;
@@ -110,13 +112,28 @@ export class ManagerService {
     const url = this.getManagersUrl(editedManager.id);
     const body = this.createManagerApiBody(editedManager);
 
-    return this.http.patch(url, body).pipe(finalize(() => this.setIsManagerListLoaded(false)));
+    return this.dialogService
+      .confirmOperation('Update Manager', 'Are you sure you want to update this manager info?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.http.patch(url, body).pipe(finalize(() => this.setIsManagerListLoaded(false)))
+            : EMPTY,
+        ),
+      );
   }
 
   deleteManager(managerId: string) {
     const url = this.getManagersUrl(managerId);
-
-    return this.http.delete(url).pipe(finalize(() => this.setIsManagerListLoaded(false)));
+    return this.dialogService
+      .confirmOperation('Update Manager', 'Are you sure you want to update this manager info?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.http.delete(url).pipe(finalize(() => this.setIsManagerListLoaded(false)))
+            : EMPTY,
+        ),
+      );
   }
 
   private createManagerApiBody(manager: Partial<Manager>) {

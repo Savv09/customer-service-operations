@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { filter, finalize, map, Observable, tap } from 'rxjs';
+import { EMPTY, filter, finalize, map, Observable, switchMap, tap } from 'rxjs';
 
 import { mapRunQuery } from '../firebase/api.adapters';
 
@@ -13,6 +13,7 @@ import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 import { BASE_URL } from '../contsants/base.const';
 
 import { UserRole } from '../../shared/enums/user-roles.enum';
+import { DialogService } from './dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class CustomerService {
   private isCustomerListLoaded = signal<boolean>(true);
 
   private http = inject(HttpClient);
+  private dialogService = inject(DialogService);
 
   private getCustomersUrl(customerId: string | null) {
     let customersUrl = `${BASE_URL}/users`;
@@ -86,13 +88,29 @@ export class CustomerService {
     const url = this.getCustomersUrl(editedCustomer.id);
     const body = this.createCustomerApiBody(editedCustomer);
 
-    return this.http.patch(url, body).pipe(finalize(() => this.setIsCustomerListLoaded(false)));
+    return this.dialogService
+      .confirmOperation('Update Customer', 'Are you sure you want to update this customer info?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.http.patch(url, body).pipe(finalize(() => this.setIsCustomerListLoaded(false)))
+            : EMPTY,
+        ),
+      );
   }
 
   deleteCustomer(customerId: string) {
     const url = this.getCustomersUrl(customerId);
 
-    return this.http.delete(url).pipe(finalize(() => this.setIsCustomerListLoaded(false)));
+    return this.dialogService
+      .confirmOperation('Delete Customer', 'Are you sure you want to delete this customer?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.http.delete(url).pipe(finalize(() => this.setIsCustomerListLoaded(false)))
+            : EMPTY,
+        ),
+      );
   }
 
   private createCustomerApiBody(customer: Partial<Customer>) {
