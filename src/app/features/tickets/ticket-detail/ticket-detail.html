@@ -178,13 +178,13 @@
       ) {
         <div class="w-full col-start-2">
           <div class="w-full text-[#78859c]">
-            <label class="block mb-2 text-lg font-medium"> Change Status </label>
+            <label class="block mb-2 text-base font-medium text-[#78859c]"> Change Status </label>
 
             <div class="w-full flex items-center justify-between text">
               @for (status of statusOptions.filter(s => s !== 3); track status) {
                 <button
                   type="button"
-                  class="px-4 py-2 w-[30%] h-12 text-base rounded-md border hover:cursor-pointer"
+                  class="px-4 py-2 w-[30%] h-12 text-base rounded-md border hover:cursor-pointer shadow-md"
                   [ngClass]="{
                     'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
                   }"
@@ -222,7 +222,7 @@
         </div>
       }
       <div class="w-full col-start-1">
-        <label for="description" class="block mb-2 text-lg font-medium text-[#78859c]">
+        <label for="description" class="block mb-2 text-base font-medium text-[#78859c]">
           Description
           @if (crudMode !== CrudMode.READ) {
             <span class="font-semibold">*</span>
@@ -244,7 +244,7 @@
       @if (crudMode !== CrudMode.READ) {
         <div class="w-full h-full flex items-center text-base text-[#78859c]">
           <div class="h-full w-1/4 mr-20">
-            <label class="block mb-2 text-lg font-medium">
+            <label class="block mb-2 text-base font-medium text-[#78859c]">
               Priority
 
               <span class="font-semibold">*</span>
@@ -254,7 +254,7 @@
               @for (priority of priorityOptions; track priority) {
                 <button
                   type="button"
-                  class="px-4 py-2 w-full text-white font-medium! rounded-md border hover:cursor-pointer"
+                  class="px-4 py-2 w-full text-white font-medium! rounded-md border shadow-md hover:cursor-pointer"
                   [ngClass]="{
                     'bg-[#5e8fea]  ':
                       detailsForm.value.priority === priority &&
@@ -279,7 +279,7 @@
           </div>
           @if (currentUser()?.role !== UserRole.CUSTOMER) {
             <div class="h-full w-1/4 text-[#78859c]">
-              <label class="block mb-2 text-lg font-medium">
+              <label class="block mb-2 text-base font-medium text-[#78859c]">
                 Status
 
                 <span class="font-semibold">*</span>
@@ -289,7 +289,7 @@
                 @for (status of statusOptions; track status) {
                   <button
                     type="button"
-                    class="px-4 py-2 w-full rounded-md border hover:cursor-pointer"
+                    class="px-4 py-2 w-full rounded-md border hover:cursor-pointer shadow-md"
                     [ngClass]="{
                       'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
                     }"
