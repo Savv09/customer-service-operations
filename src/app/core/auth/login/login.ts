@@ -9,10 +9,11 @@ import { AuthService } from '../auth.service';
 import { UserService } from '../../services/user.service';
 
 import { FirebaseSigninResponse } from '../auth-response.model';
+import { InputField } from '../../../shared/components/input-field/input-field';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, InputField],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -48,7 +49,6 @@ export class Login {
     }
   }
 
-  // Todo: Handling errors in a dedicated service
   handleLoginError(err: any) {
     this.isLoginFailed.set(true);
   }
