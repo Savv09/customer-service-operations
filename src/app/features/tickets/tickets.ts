@@ -19,6 +19,7 @@ import { Ticket } from '../../core/models/ticket.model';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { SnackbarMode } from '../../shared/enums/snackbarMode.enum';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-tickets',
@@ -31,6 +32,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     MatExpansionModule,
     ScrollingModule,
     Table,
+    Button,
   ],
   templateUrl: './tickets.html',
   styleUrl: './tickets.css',
