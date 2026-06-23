@@ -13,10 +13,11 @@ import { CustomerService } from '../../core/services/customer.service';
 import { Customer } from '../../core/models/user.model';
 import { Table } from '../../shared/components/table/table';
 import { TableEvent } from '../../core/models/table-event.model';
+import { Button } from '../../shared/components/button/button';
 
 @Component({
   selector: 'app-customers',
-  imports: [MatTableModule, MatIcon, MatButtonModule, CommonModule, ScrollingModule, Table],
+  imports: [MatTableModule, MatButtonModule, CommonModule, ScrollingModule, Table, Button],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })

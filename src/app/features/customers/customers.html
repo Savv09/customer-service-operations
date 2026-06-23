@@ -10,13 +10,13 @@
       />
     </div>
 
-    <button
-      class="flex items-center justify-center w-36 h-8 ml-2 font-medium text-base text-[#5e8fea] rounded-md outline-1 outline-[#5e8fea] hover:cursor-pointer hover:text-white hover:bg-[#5e8fea] focus:outline-none"
-      (click)="navigateToCreateCustomer()"
-    >
-      <mat-icon>add</mat-icon>
-      <span> New customer </span>
-    </button>
+    <app-button
+      label="New customer"
+      icon="add"
+      variant="outline"
+      size="sm"
+      (buttonClicked)="navigateToCreateCustomer()"
+    />
   </section>
 
   <cdk-virtual-scroll-viewport
