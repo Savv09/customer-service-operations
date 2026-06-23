@@ -156,7 +156,7 @@ export class HomePage implements OnInit {
       ) {
         notifications.push({
           ticketId: ticket.id,
-          message: `Ticket ${ticket.code.toUpperCase()} High Priority`,
+          message: `Ticket ${ticket.code.toUpperCase()} HIGH priority`,
           severity: 'warning',
         });
       }
@@ -167,7 +167,7 @@ export class HomePage implements OnInit {
       ) {
         notifications.push({
           ticketId: ticket.id,
-          message: `Ticket ${ticket.code.toUpperCase()} Urgent Priority`,
+          message: `Ticket ${ticket.code.toUpperCase()} URGENT priority`,
           severity: 'danger',
         });
       }
@@ -193,7 +193,7 @@ export class HomePage implements OnInit {
       ) {
         notifications.push({
           ticketId: ticket.id,
-          message: `Ticket ${ticket.code.toUpperCase()} Not updated recently`,
+          message: `Ticket ${ticket.code.toUpperCase()} not updated recently`,
           severity: 'warning',
         });
       }

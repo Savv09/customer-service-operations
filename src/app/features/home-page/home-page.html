@@ -99,18 +99,18 @@
     <section class="row-start-3 shadow-md">
       <app-dashboard-card [title]="'Notifications'">
         <div
-          class="w-full h-80 px-4 flex flex-col justify-between overflow-y-scroll overflow-x-hidden"
+          class="w-full h-75 flex flex-col items-center justify-between overflow-y-scroll overflow-x-hidden"
         >
           @if (notifications().length === 0) {
             <p class="text-base font-medium text-[#78859c]">You have 0 notifications.</p>
           }
           @for (notification of notifications(); track notification) {
             <button
-              class="w-full text-base py-2 font-medium flex items-center rounded-sm text-[#78859c] hover:cursor-pointer hover:bg-[#78859c2c] hover:font-semibold hover:shadow-md"
+              class="w-full text-base my-1 py-2 px-2 font-medium flex items-center rounded-sm text-[#78859c] hover:cursor-pointer hover:bg-[#78859c2c] hover:font-semibold hover:shadow-md"
               (click)="navigateToTicketDetails(notification.ticketId)"
             >
               <span
-                class="pl-12 pr-6 mt-1"
+                class="pr-2 mt-1"
                 [ngClass]="{
                   'text-[#c0392b]': notification.severity === 'danger',
                   'text-[#d4ac0d]': notification.severity === 'warning',
