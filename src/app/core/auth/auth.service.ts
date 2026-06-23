@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { Observable, switchMap } from 'rxjs';
+import { EMPTY, Observable, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { parseToken } from '../utils/token-parser';
@@ -15,6 +15,7 @@ import { Customer, Manager } from '../models/user.model';
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { ManagerService } from '../services/manager.service';
 import { TicketService } from '../services/ticket.service';
+import { DialogService } from '../services/dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,7 @@ export class AuthService {
   private managerService = inject(ManagerService);
   private ticketService = inject(TicketService);
   private router = inject(Router);
+  private dialogService = inject(DialogService);
 
   autoLogin() {
     const token = localStorage.getItem('token');
@@ -73,21 +75,32 @@ export class AuthService {
       password: password,
     };
 
-    return ignoreInterceptorHttp
-      .post<FirebaseSignupResponse>(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.APIKey}`,
-        body,
+    return this.dialogService
+      .confirmOperation(
+        `Create ${userRole === UserRole.CUSTOMER ? 'Customer' : 'Manager'}`,
+        `Are you sure you want to create a new ${userRole === UserRole.CUSTOMER ? 'customer' : 'manager'}?`,
       )
       .pipe(
-        switchMap((res) => {
-          const id = res.localId;
+        switchMap((confirmed) =>
+          confirmed
+            ? ignoreInterceptorHttp
+                .post<FirebaseSignupResponse>(
+                  `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.APIKey}`,
+                  body,
+                )
+                .pipe(
+                  switchMap((res) => {
+                    const id = res.localId;
 
-          if (userRole === UserRole.MANAGER) {
-            return this.managerService.createManager(newUser as Manager, id);
-          }
+                    if (userRole === UserRole.MANAGER) {
+                      return this.managerService.createManager(newUser as Manager, id);
+                    }
 
-          return this.customerService.createCustomer(newUser as Customer, id);
-        }),
+                    return this.customerService.createCustomer(newUser as Customer, id);
+                  }),
+                )
+            : EMPTY,
+        ),
       );
   }
 
