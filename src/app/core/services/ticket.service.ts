@@ -77,7 +77,10 @@ export class TicketService {
       .pipe(
         switchMap((confirmed) =>
           confirmed
-            ? this.http.post(url, body).pipe(finalize(() => this.setIsTicketListLoaded(false)))
+            ? this.http.post<TicketFromApi>(url, body).pipe(
+                map((ticketFromApi) => mapTicketFromApi(ticketFromApi)),
+                finalize(() => this.setIsTicketListLoaded(false)),
+              )
             : EMPTY,
         ),
       );

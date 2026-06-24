@@ -18,6 +18,8 @@ import { RolePipe } from '../../../shared/pipes/role-pipe';
 import { Department } from '../../../shared/enums/department.enum';
 import { Button } from '../../../shared/components/button/button';
 import { InputField } from '../../../shared/components/input-field/input-field';
+import { Message } from '../../../core/models/message.model';
+import { MessageService } from '../../../core/services/message.service';
 
 @Component({
   selector: 'app-manager-detail',
@@ -40,7 +42,7 @@ export class ManagerDetail {
   private managerService = inject(ManagerService);
   private titleService = inject(TitleService);
   private fb = inject(FormBuilder);
-  private dialog = inject(MatDialog);
+  private messageService = inject(MessageService);
   private snackbarService = inject(SnackbarService);
   private authService = inject(AuthService);
 
@@ -128,14 +130,19 @@ export class ManagerDetail {
         createdBy: activeUserId ?? '',
       };
 
-      this.authService
-        .registerUser(newManager, UserRole.MANAGER)
-        .subscribe(
-          (res) => (
-            this.snackbarService.showSnackbar('Manager created succesfully!', SnackbarMode.SUCCESS),
-            this.router.navigate(['/', 'managers'])
-          ),
-        );
+      this.authService.registerUser(newManager, UserRole.MANAGER).subscribe((res) => {
+        (this.snackbarService.showSnackbar('Manager created succesfully!', SnackbarMode.SUCCESS),
+          this.managerService.setIsManagerListLoaded(false));
+
+        const message: Partial<Message> = {
+          message: `Manager ${newManager.firstName} ${newManager.lastName} has been created.`,
+          recipients: ['oTdsBHvmd8WyXkLndq9sJR433R33'],
+        };
+
+        this.messageService.createMessage(message);
+
+        this.router.navigate(['/', 'managers']);
+      });
     } else if (this.selectedManager) {
       const editedManager: Manager = {
         ...this.selectedManager,
@@ -166,6 +173,14 @@ export class ManagerDetail {
       .subscribe((res) => {
         this.snackbarService.showSnackbar('Manager deleted succesfully!', SnackbarMode.SUCCESS);
         this.managerService.setIsManagerListLoaded(false);
+
+        const message: Partial<Message> = {
+          message: `Manager ${this.selectedManager?.firstName} ${this.selectedManager?.lastName} has been deleted.`,
+          recipients: ['oTdsBHvmd8WyXkLndq9sJR433R33'],
+        };
+
+        this.messageService.createMessage(message);
+
         this.router.navigate(['/', 'managers']);
       });
   }

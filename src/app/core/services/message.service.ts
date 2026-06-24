@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Message } from '../models/message.model';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
-import { finalize, map, Observable, switchMap } from 'rxjs';
+import { finalize, map, Observable, switchMap, tap } from 'rxjs';
 import { MessageListFromApi } from '../models/responses-from-api.model';
 import { mapMessageFromApi } from '../utils/api-mapper';
 
@@ -53,26 +53,29 @@ export class MessageService {
       map((messageListFromApi) =>
         messageListFromApi.documents.map((messageFromApi) => mapMessageFromApi(messageFromApi)),
       ),
-      finalize(() => this.setIsMessageListLoaded(true)),
+      tap((res) => this.updateMessageList$(res)),
     );
   }
 
-  createMessage(message: Message) {
+  createMessage(message: Partial<Message>) {
     const url = this.getMessageUrl(null);
     const body = this.createMessageApiBody(message);
-    this.http.post(url, body).pipe(finalize(() => this.setIsMessageListLoaded(false)));
+    this.http
+      .post(url, body)
+      .pipe(switchMap((res) => this.getMessageList()))
+      .subscribe();
   }
 
-  markMessageAsRead(message: Message) {
-    const url = this.getMessageUrl(message.id);
+  markMessageAsRead(message: Partial<Message>) {
+    const url = this.getMessageUrl(message.id as string);
     console.log(url);
     const body = this.createMessageApiBody(message);
 
     return this.http.patch(url, body).pipe(switchMap((res) => this.getMessageList()));
   }
 
-  archiveMessage(message: Message) {
-    const url = this.getMessageUrl(message.id);
+  archiveMessage(message: Partial<Message>) {
+    const url = this.getMessageUrl(message.id as string);
 
     const body = this.createMessageApiBody(message);
 

@@ -3,17 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { TitleService } from '../../../core/services/title.service';
 import { SnackbarService } from '../../../core/services/snackbar.service';
-
-import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog';
 
 import { Customer } from '../../../core/models/user.model';
 
@@ -22,6 +19,9 @@ import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 import { UserRole } from '../../../shared/enums/user-roles.enum';
 import { Button } from '../../../shared/components/button/button';
 import { InputField } from '../../../shared/components/input-field/input-field';
+import { MessageService } from '../../../core/services/message.service';
+import { Message } from '../../../core/models/message.model';
+import { ManagerService } from '../../../core/services/manager.service';
 
 @Component({
   selector: 'app-customer-detail',
@@ -40,9 +40,10 @@ export class CustomerDetail implements OnInit {
   private customerService = inject(CustomerService);
   private titleService = inject(TitleService);
   private fb = inject(FormBuilder);
-  private dialog = inject(MatDialog);
   private snackbarService = inject(SnackbarService);
   private authService = inject(AuthService);
+  private managerService = inject(ManagerService);
+  private messageService = inject(MessageService);
 
   detailsForm = this.fb.nonNullable.group({
     firstName: ['', Validators.required],
@@ -127,18 +128,23 @@ export class CustomerDetail implements OnInit {
         ...formValue,
         createdBy: activeUserId ?? '',
       };
+      this.authService.registerUser(newCustomer, UserRole.CUSTOMER).subscribe((res) => {
+        this.snackbarService.showSnackbar('Customer created succesfully!', SnackbarMode.SUCCESS);
+        this.customerService.setIsCustomerListLoaded(false);
 
-      this.authService
-        .registerUser(newCustomer, UserRole.CUSTOMER)
-        .subscribe(
-          (res) => (
-            this.snackbarService.showSnackbar(
-              'Customer created succesfully!',
-              SnackbarMode.SUCCESS,
-            ),
-            this.router.navigate(['/', 'customers'])
-          ),
-        );
+        const managers = this.managerService
+          .getManagerList$()()
+          .map((m) => m.id);
+
+        const message: Partial<Message> = {
+          message: `Customer ${newCustomer.firstName} ${newCustomer.lastName} has been created.`,
+          recipients: [...managers, 'oTdsBHvmd8WyXkLndq9sJR433R33'],
+        };
+
+        this.messageService.createMessage(message);
+
+        this.router.navigate(['/', 'customers']);
+      });
     } else if (this.selectedCustomer) {
       const editedCustomer: Customer = {
         ...this.selectedCustomer,
@@ -161,6 +167,7 @@ export class CustomerDetail implements OnInit {
 
   deleteCustomer() {
     const role = UserRole.CUSTOMER;
+
     this.authService
       .deleteUser(
         this.selectedCustomer?.id as string,
@@ -169,9 +176,22 @@ export class CustomerDetail implements OnInit {
         this.selectedCustomer?.lastName as string,
         role,
       )
-      .subscribe((res) => {
-        this.snackbarService.showSnackbar('Customer deleted succesfully!', SnackbarMode.SUCCESS);
+      .subscribe(() => {
+        this.snackbarService.showSnackbar('Customer deleted successfully!', SnackbarMode.SUCCESS);
+
         this.customerService.setIsCustomerListLoaded(false);
+
+        const managers = this.managerService
+          .getManagerList$()()
+          .map((m) => m.id);
+
+        const message: Partial<Message> = {
+          message: `Customer ${this.selectedCustomer?.firstName} ${this.selectedCustomer?.lastName} has been deleted.`,
+          recipients: [...managers, 'oTdsBHvmd8WyXkLndq9sJR433R33'],
+        };
+
+        this.messageService.createMessage(message);
+
         this.router.navigate(['/', 'customers']);
       });
   }

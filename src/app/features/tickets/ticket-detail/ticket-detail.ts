@@ -23,6 +23,9 @@ import { SnackbarService } from '../../../core/services/snackbar.service';
 import { SnackbarMode } from '../../../shared/enums/snackbarMode.enum';
 import { Button } from '../../../shared/components/button/button';
 import { InputField } from '../../../shared/components/input-field/input-field';
+import { MessageService } from '../../../core/services/message.service';
+import { Message } from '../../../core/models/message.model';
+import { MessageSeverity } from '../../../shared/enums/message-severity.enum';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -68,6 +71,7 @@ export class TicketDetail implements OnInit {
   private customerService = inject(CustomerService);
   private ticketService = inject(TicketService);
   private snackbarService = inject(SnackbarService);
+  private messageService = inject(MessageService);
 
   customerList = this.customerService.getCustomerList$();
 
@@ -191,12 +195,55 @@ export class TicketDetail implements OnInit {
         assignedAt,
       };
 
-      this.ticketService
-        .createTicket(newTicket)
-        .pipe(finalize(() => this.router.navigate(['/', 'tickets'])))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Ticket created succesfully!', SnackbarMode.SUCCESS),
-        );
+      this.ticketService.createTicket(newTicket).subscribe((res) => {
+        this.snackbarService.showSnackbar('Ticket created succesfully!', SnackbarMode.SUCCESS);
+
+        if (assignedManagerId === '') {
+          let severity = MessageSeverity.INFO;
+          let message = `New ticket has been created.`;
+
+          if (newTicket.priority === TicketPriority.HIGH) {
+            severity = MessageSeverity.WARNING;
+            message = `High priority ticket has been created.`;
+          }
+          if (newTicket.priority === TicketPriority.URGENT) {
+            severity = MessageSeverity.DANGER;
+            message = `Urgent priority ticket has been created!`;
+          }
+
+          const managers = this.managerService
+            .getManagerList$()()
+            .filter((m) => m.department === newTicket.department)
+            .map((m) => m.id);
+
+          const newMessage: Partial<Message> = {
+            message: message,
+            recipients: [...managers, 'oTdsBHvmd8WyXkLndq9sJR433R33'],
+            ticketId: res.id,
+            severity: severity,
+          };
+
+          this.messageService.createMessage(newMessage);
+        } else {
+          const newMessage: Partial<Message> = {
+            message: `You have been assigned to ticket ${res.code}`,
+            recipients: [assignedManagerId],
+            severity: MessageSeverity.WARNING,
+            ticketId: res.id,
+          };
+
+          this.messageService.createMessage(newMessage);
+        }
+
+        const message: Partial<Message> = {
+          message: `Ticket ${res.code.toUpperCase()} has been created.`,
+          recipients: [res.customerId],
+          ticketId: res.id,
+        };
+
+        this.messageService.createMessage(message);
+        this.router.navigate(['/', 'tickets']);
+      });
     } else if (this.selectedTicket) {
       const closedAt = undefined;
       const assignedManagerId =
@@ -221,9 +268,18 @@ export class TicketDetail implements OnInit {
       this.ticketService
         .updateTicket(editedTicket, editedTicket.id)
         .pipe(finalize(() => this.navigateToReadDetails(editedTicket.id)))
-        .subscribe((res) =>
-          this.snackbarService.showSnackbar('Ticket updated succesfully!', SnackbarMode.SUCCESS),
-        );
+        .subscribe((res) => {
+          const ids = [editedTicket.customerId, assignedManagerId];
+
+          const message: Partial<Message> = {
+            message: `Ticket ${editedTicket.code.toUpperCase()} has been updated.`,
+            recipients: [...ids],
+            ticketId: editedTicket.id,
+          };
+          this.messageService.createMessage(message);
+
+          this.snackbarService.showSnackbar('Ticket updated succesfully!', SnackbarMode.SUCCESS);
+        });
     }
   }
 
@@ -239,18 +295,27 @@ export class TicketDetail implements OnInit {
       closedAt,
     };
 
-    this.ticketService
-      .claimTicket(updatedTicket)
-      .subscribe(
-        (res) => (
-          this.snackbarService.showSnackbar(
-            'Ticket status closed succesfully!',
-            SnackbarMode.SUCCESS,
-          ),
-          this.snackbarService.showSnackbar('Ticket claimed succesfully!', SnackbarMode.SUCCESS),
-          this.initByMode()
-        ),
-      );
+    this.ticketService.claimTicket(updatedTicket).subscribe((res) => {
+      this.snackbarService.showSnackbar('Ticket status closed succesfully!', SnackbarMode.SUCCESS);
+
+      const ids = [updatedTicket.customerId, assignedManagerId];
+
+      const managerMessage: Partial<Message> = {
+        message: `You claimed ticket ${updatedTicket?.code?.toString().toUpperCase()}`,
+        recipients: [assignedManagerId as string],
+        ticketId: updatedTicket.id,
+      };
+      this.messageService.createMessage(managerMessage);
+      const message: Partial<Message> = {
+        message: `Ticket ${updatedTicket?.code?.toString().toUpperCase()} has been assigned.`,
+        recipients: [updatedTicket.customerId as string],
+        ticketId: updatedTicket.id,
+      };
+      this.messageService.createMessage(message);
+
+      (this.snackbarService.showSnackbar('Ticket claimed succesfully!', SnackbarMode.SUCCESS),
+        this.initByMode());
+    });
   }
 
   changeActiveStatus(status: TicketStatus) {
@@ -269,14 +334,26 @@ export class TicketDetail implements OnInit {
         return;
       }
 
+      const message: Partial<Message> = {
+        message: `Ticket ${updatedTicket?.code?.toString().toUpperCase()} status updated.`,
+        recipients: [updatedTicket.customerId as string],
+        ticketId: updatedTicket.id,
+      };
+      this.messageService.createMessage(message);
+
+      if (updatedTicket.status === this.ticketSatus.RESOLVED) {
+        const resolvedTicket: Partial<Message> = {
+          message: `Ticket ${updatedTicket?.code?.toString().toUpperCase()} has been resolved`,
+          recipients: [updatedTicket.customerId as string, 'oTdsBHvmd8WyXkLndq9sJR433R33'],
+          ticketId: updatedTicket.id,
+        };
+
+        this.messageService.createMessage(resolvedTicket);
+      }
       (this.snackbarService.showSnackbar(
         'Ticket status changed succesfully!',
         SnackbarMode.SUCCESS,
       ),
-        this.snackbarService.showSnackbar(
-          'Ticket status changed succesfully!',
-          SnackbarMode.SUCCESS,
-        ),
         this.initByMode());
     });
   }
@@ -293,15 +370,17 @@ export class TicketDetail implements OnInit {
       closedAt,
     };
 
-    this.ticketService
-      .closeTicket(updatedTicket)
-      .subscribe(
-        (res) => (
-          this.snackbarService.showSnackbar('Ticket closed succesfully!', SnackbarMode.SUCCESS),
-          this.snackbarService.showSnackbar('Ticket closed succesfully!', SnackbarMode.SUCCESS),
-          this.initByMode()
-        ),
-      );
+    this.ticketService.closeTicket(updatedTicket).subscribe((res) => {
+      const resolvedTicket: Partial<Message> = {
+        message: `Ticket ${updatedTicket?.code?.toString().toUpperCase()} has been closed.`,
+        recipients: [updatedTicket.assignedManagerId as string, 'oTdsBHvmd8WyXkLndq9sJR433R33'],
+        ticketId: updatedTicket.id,
+      };
+
+      this.messageService.createMessage(resolvedTicket);
+      (this.snackbarService.showSnackbar('Ticket closed succesfully!', SnackbarMode.SUCCESS),
+        this.initByMode());
+    });
   }
 
   navigateToReadDetails(editedTicketId: string) {
