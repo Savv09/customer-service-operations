@@ -98,9 +98,7 @@
   @if (currentUser()?.role === userRole.MANAGER) {
     <section class="row-start-3 shadow-md">
       <app-dashboard-card [title]="'Notifications'">
-        <div
-          class="w-full h-75 flex flex-col items-center justify-between overflow-y-scroll overflow-x-hidden"
-        >
+        <div class="w-full h-75 flex flex-col items-center overflow-y-scroll overflow-x-hidden">
           @if (notifications().length === 0) {
             <p class="text-base font-medium text-[#78859c]">You have 0 notifications.</p>
           }
