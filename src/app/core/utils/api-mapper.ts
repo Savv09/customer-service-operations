@@ -1,10 +1,12 @@
-import { TicketFromApi, UserFromApi } from '../models/responses-from-api.model';
+import { MessageForomApi, TicketFromApi, UserFromApi } from '../models/responses-from-api.model';
 import { Admin, BaseUser, Customer, Manager } from '../models/user.model';
 
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { Department } from '../../shared/enums/department.enum';
 import { TicketPriority, TicketStatus } from '../../shared/enums/tickets.enum';
 import { Ticket } from '../models/ticket.model';
+import { Message } from '../models/message.model';
+import { MessageSeverity } from '../../shared/enums/message-severity.enum';
 
 function extractIdFromName(name: string) {
   const nameParts = name.split('/');
@@ -76,6 +78,23 @@ export function mapTicketFromApi(ticket: TicketFromApi): Ticket {
     assignedAt: new Date(ticket.fields.assignedAt.stringValue) || undefined,
     createdAt: new Date(ticket.createTime),
     updatedAt: new Date(ticket.updateTime),
+  };
+}
+
+export function mapMessageFromApi(message: MessageForomApi): Message {
+  return {
+    id: extractIdFromName(message.name),
+    message: message.fields.message.stringValue || '',
+    recipients:
+      message.fields.recipients?.arrayValue?.values?.map((recipient) => recipient.stringValue) ||
+      [],
+    archivedBy:
+      message.fields.archivedBy?.arrayValue?.values?.map((archivedBy) => archivedBy.stringValue) ||
+      [],
+    readBy: message.fields.readBy?.arrayValue?.values?.map((readBy) => readBy.stringValue) || [],
+    createdAt: new Date(message.createTime),
+    severity: Number(message.fields.severity?.integerValue || 0) as MessageSeverity,
+    ticketId: message.fields.ticketId.stringValue || undefined,
   };
 }
 

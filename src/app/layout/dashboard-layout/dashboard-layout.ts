@@ -13,6 +13,7 @@ import { forkJoin } from 'rxjs';
 import { ManagerService } from '../../core/services/manager.service';
 import { CustomerService } from '../../core/services/customer.service';
 import { TicketService } from '../../core/services/ticket.service';
+import { MessageService } from '../../core/services/message.service';
 
 @Component({
   selector: 'app-dashborad-layout',
@@ -28,6 +29,7 @@ export class DashboradLayout implements OnInit {
   private managerService = inject(ManagerService);
   private customerService = inject(CustomerService);
   private ticketService = inject(TicketService);
+  private messageService = inject(MessageService);
 
   private dialog = inject(MatDialog);
 
@@ -47,13 +49,15 @@ export class DashboradLayout implements OnInit {
       managers: this.managerService.getManagerList(),
       customers: this.customerService.getCustomerList(),
       tickets: this.ticketService.getTicketList(),
+      messages: this.messageService.getMessageList(),
     }).subscribe({
-      next: ({ managers, customers, tickets }) => {
+      next: ({ managers, customers, tickets, messages }) => {
         this.isInitApplicationFailed.set(false);
 
         this.managerService.updateManagerList$(managers);
         this.customerService.updateCustomerList$(customers);
         this.ticketService.updateTicketList$(tickets);
+        this.messageService.updateMessageList$(messages);
 
         this.isLoading.set(false);
       },

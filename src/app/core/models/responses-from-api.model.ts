@@ -39,3 +39,39 @@ export interface TicketFromApi {
 export interface TicketListFromApi {
   documents: TicketFromApi[];
 }
+
+export interface MessageForomApi {
+  name: string;
+  fields: {
+    message: { stringValue: string };
+    recipients: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    archivedBy: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    readBy: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    severity: { integerValue: number };
+    ticketId: { stringValue: string };
+  };
+  createTime: string;
+  updateTime: string;
+}
+
+export interface MessageListFromApi {
+  documents: MessageForomApi[];
+}

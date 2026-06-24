@@ -83,7 +83,42 @@
   }
 
   <section class="row-start-3 shadow-md">
-    <app-dashboard-card [title]="'Recent Activities'"> </app-dashboard-card>
+    <app-dashboard-card [title]="'Recent Activities'">
+      <div class="w-full h-75 flex flex-col overflow-y-auto">
+        @for (message of messageList(); track message.id) {
+          @if (
+            message.recipients.find(m => m === currentUser()?.id) && !message.archivedBy.find(m => m === currentUser()?.id)
+          ) {
+            <div
+              class="w-full h-18 px-3 mb-4 flex items-center justify-between rounded-sm shadow-md"
+              [ngClass]="{
+                'bg-[#5e8fea20]': message.severity === messageSeverity.INFO,
+                'bg-[#c03a2b20]': message.severity === messageSeverity.DANGER,
+                'bg-[#d4ac0d20]': message.severity === messageSeverity.WARNING,
+              }"
+            >
+              <p>{{ message.message }}</p>
+              <div class="w-22 flex items-center justify-between">
+                <button
+                  class="h-10 w-10 flex items-center justify-center bg-[#5e8fea] hover:bg-[#183d7e] hover:cursor-pointer text-white rounded-sm shadow-sm transition-colors"
+                  matTooltip="Mark as read"
+                  (click)="markAsRead(message)"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  class="h-10 w-10 flex items-center justify-center bg-[#5e8fea] hover:bg-[#183d7e] hover:cursor-pointer text-white rounded-sm shadow-sm transition-colors"
+                  matTooltip="Archive"
+                  (click)="archiveMessage(message)"
+                >
+                  <mat-icon>archive</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </app-dashboard-card>
   </section>
 
   <section class="w-full h-full row-start-4">

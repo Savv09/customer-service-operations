@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Ticket } from '../models/ticket.model';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../contsants/base.const';
-import { EMPTY, finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { EMPTY, finalize, map, Observable, switchMap } from 'rxjs';
 import { TicketFromApi, TicketListFromApi } from '../models/responses-from-api.model';
 import { mapTicketFromApi } from '../utils/api-mapper';
 import { DialogService } from './dialog.service';

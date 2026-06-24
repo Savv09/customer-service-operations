@@ -16,10 +16,14 @@ import { Manager, User } from '../../core/models/user.model';
 import { Ticket } from '../../core/models/ticket.model';
 import { TicketNotification } from '../../core/models/ticket-notifications.model';
 import { QuickAction } from '../../core/models/home-page-interfaces.model';
+import { MessageService } from '../../core/services/message.service';
+import { MessageSeverity } from '../../shared/enums/message-severity.enum';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Message } from '../../core/models/message.model';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, DashboardCard, MatIconModule, Button],
+  imports: [CommonModule, DashboardCard, MatIconModule, Button, MatTooltipModule],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })
@@ -29,9 +33,11 @@ export class HomePage implements OnInit {
   private managerService = inject(ManagerService);
   private customerService = inject(CustomerService);
   private ticketService = inject(TicketService);
+  private messageService = inject(MessageService);
   private router = inject(Router);
 
   userRole = UserRole;
+  messageSeverity = MessageSeverity;
 
   currentUser = this.userService.getCurrentUser$();
   customerList = this.customerService.getCustomerList$();
@@ -39,6 +45,8 @@ export class HomePage implements OnInit {
   managerList = this.managerService.getManagerList$();
 
   ticketList = this.ticketService.getTicketList$();
+
+  messageList = this.messageService.getMessageList$();
 
   departmentList = computed(() => {
     const departments = [...new Set(this.ticketList().map((ticket) => ticket.department))];
@@ -356,6 +364,33 @@ export class HomePage implements OnInit {
 
   getTicketsByDepartment(department: Department) {
     return this.ticketList().filter((ticket) => ticket.department === department).length;
+  }
+
+  markAsRead(message: Message) {
+    const userId = this.currentUser()?.id;
+
+    const readBy = message.readBy.includes(userId as string)
+      ? message.readBy
+      : [...message.readBy, userId as string];
+    const updatedMessage = { ...message, readBy };
+
+    this.messageService
+      .markMessageAsRead(updatedMessage)
+      .subscribe((res) => this.messageService.updateMessageList$(res));
+  }
+
+  archiveMessage(message: Message) {
+    const userId = this.currentUser()?.id;
+
+    const archivedBy = message.archivedBy.includes(userId as string)
+      ? message.archivedBy
+      : [...message.archivedBy, userId as string];
+
+    const updatedMessage = { ...message, archivedBy };
+
+    this.messageService
+      .archiveMessage(updatedMessage)
+      .subscribe((res) => this.messageService.updateMessageList$(res));
   }
 
   navigateToCreateManager() {
