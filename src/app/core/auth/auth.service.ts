@@ -104,7 +104,8 @@ export class AuthService {
       );
   }
 
-  // This method is only for demonstration purposes. I know it's ugly e wrong in evry way possible :)
+  // This method is only for demonstration purposes.
+  // Don't try this at home, school, production, staging, or anywhere :)
   deleteUser(
     userId: string,
     email: string,
