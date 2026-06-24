@@ -1,0 +1,77 @@
+<aside class="h-full w-full flex flex-col items-center bg-[#193f83]">
+  <div class="px-8 pt-10 h-1/8 w-full flex items-center justify-center">
+    <h2 class="text-3xl text-white font-semibold">CSO</h2>
+  </div>
+
+  <ul class="w-full h-full mt-20 flex flex-col">
+    <li>
+      <button
+        class="w-full h-16 flex items-center px-[20%] text-xl text-white cursor-pointer transition-colors duration-200"
+        [ngClass]="{
+          'bg-white/20': activePage() === 'home',
+          'hover:bg-white/10': activePage() !== 'home',
+        }"
+        (click)="navigateToSelectedPage('home')"
+      >
+        <mat-icon class="mr-3">home</mat-icon>
+        <span>Home Page</span>
+      </button>
+    </li>
+
+    @if (currentUser()?.role === userRole.ADMIN) {
+      <li>
+        <button
+          class="w-full h-16 flex items-center px-[20%] text-xl text-white cursor-pointer transition-colors duration-200"
+          [ngClass]="{
+            'bg-white/20': activePage() === 'managers',
+            'hover:bg-white/10': activePage() !== 'managers',
+          }"
+          (click)="navigateToSelectedPage('managers')"
+        >
+          <mat-icon class="mr-3">manage_accounts</mat-icon>
+          <span>Managers</span>
+        </button>
+      </li>
+    }
+
+    @if (currentUser()?.role === userRole.ADMIN || currentUser()?.role === userRole.MANAGER) {
+      <li>
+        <button
+          class="w-full h-16 flex items-center px-[20%] text-xl text-white cursor-pointer transition-colors duration-200"
+          [ngClass]="{
+            'bg-white/20': activePage() === 'customers',
+            'hover:bg-white/10': activePage() !== 'customers',
+          }"
+          (click)="navigateToSelectedPage('customers')"
+        >
+          <mat-icon class="mr-3">groups</mat-icon>
+          <span>Customers</span>
+        </button>
+      </li>
+    }
+
+    <li>
+      <button
+        class="w-full h-16 flex items-center px-[20%] text-xl text-white cursor-pointer transition-colors duration-200"
+        [ngClass]="{
+          'bg-white/20': activePage() === 'tickets',
+          'hover:bg-white/10': activePage() !== 'tickets',
+        }"
+        (click)="navigateToSelectedPage('tickets')"
+      >
+        <mat-icon class="mr-3">assignment</mat-icon>
+        <span>{{ currentUser()?.role === userRole.CUSTOMER ? 'My Tickets' : 'Tickets' }}</span>
+      </button>
+    </li>
+
+    <li class="mt-auto mb-3">
+      <button
+        class="w-full h-16 flex items-center justify-center text-xl text-white cursor-pointer transition-colors duration-200 hover:bg-white/10"
+        (click)="onLogout()"
+      >
+        <mat-icon class="mr-2">logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </li>
+  </ul>
+</aside>

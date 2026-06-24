@@ -1,0 +1,34 @@
+<div class="flex flex-col h-full">
+  <section class="flex items-center justify-between w-full mb-4">
+    <div class="flex items-center pt-0.5">
+      <label class="mr-2 font-medium text-base text-[#78859c]">Search: </label>
+      <input
+        type="text"
+        class="w-40 h-6 p-2 border rounded-md border-[#78859c] focus:outline-1 focus:outline-[#78859c] focus:bg-[#fcfcfa]"
+        matInput
+        (keyup)="searchCustomers($event)"
+      />
+    </div>
+
+    <app-button
+      label="New customer"
+      icon="add"
+      variant="outline"
+      size="sm"
+      (buttonClicked)="navigateToCreateCustomer()"
+    />
+  </section>
+
+  <cdk-virtual-scroll-viewport
+    class="flex-1 min-h-0 w-full"
+    [itemSize]="52"
+    [maxBufferPx]="1200"
+    [minBufferPx]="400"
+  >
+    <app-table
+      [displayedColumns]="columnToDisplay"
+      [dataSource]="filteredData()"
+      (rowSelected)="navigateToDetails($event)"
+    ></app-table>
+  </cdk-virtual-scroll-viewport>
+</div>

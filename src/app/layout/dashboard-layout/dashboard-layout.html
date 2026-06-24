@@ -1,0 +1,36 @@
+<div class="w-full h-full flex bg-[#fafbfc]">
+  @if (!isLoading()) {
+    <section class="h-full w-1/6">
+      <app-sidebar [currentUser]="currentUser()" (logoutClicked)="onLogout()"></app-sidebar>
+    </section>
+
+    <main class="w-5/6 h-full flex flex-col justify-center px-8 pt-8">
+      <section class="w-full h-1/8">
+        <app-header [currentUser]="currentUser()"></app-header>
+      </section>
+      <section
+        class="w-full h-full mt-6 p-6 bg-[#ffffff] drop-shadow-sm rounded-t-sm overflow-y-auto"
+      >
+        <router-outlet></router-outlet>
+      </section>
+    </main>
+  } @else {
+    <div
+      class="w-full h-full text-[#ffffff] bg-[#193f83] flex flex-col items-center justify-center"
+    >
+      <h1 class="text-4xl font-medium">Customer Service Operations</h1>
+      @if (!isInitApplicationFailed()) {
+        <div class="loader my-10"></div>
+        <h2 class="text-2xl font-medium">Loading</h2>
+      } @else {
+        <p class="my-4 text-lg">Something went wrong. Please try again.</p>
+        <button
+          class="flex items-center mt-2 justify-center w-36 h-8 ml-2 font-medium text-base text-[#ffffff] rounded-md outline-1 outline-[#ffffff] hover:cursor-pointer hover:text-[#193f83] hover:bg-[#ffffff]"
+          (click)="initApplication()"
+        >
+          Reload
+        </button>
+      }
+    </div>
+  }
+</div>

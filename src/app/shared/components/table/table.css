@@ -1,0 +1,39 @@
+.table {
+  width: 100%;
+  table-layout: fixed;
+  background-color: #ffffff;
+  border: none;
+}
+
+th {
+  color: #636872;
+  font-weight: bold;
+  font-size: small;
+  text-transform: uppercase;
+}
+
+td {
+  color: #78859c;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell,
+.mat-mdc-row:hover .mat-mdc-cell span {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: #8a93a32c;
+}
+
+.mat-mdc-no-data-row .mat-mdc-cell {
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.mat-mdc-no-data-row:hover .mat-mdc-cell {
+  cursor: unset;
+  font-weight: 500;
+  background-color: initial;
+}

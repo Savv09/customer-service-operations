@@ -1,0 +1,77 @@
+export interface UserFromApi {
+  name: string;
+  fields: {
+    firstName: { stringValue: string };
+    role: { integerValue: string };
+    email: { stringValue: string };
+    lastName: { stringValue: string };
+    phone?: { stringValue: string };
+    company?: { stringValue: string };
+    createdBy?: { stringValue: string };
+    department?: { stringValue: string };
+  };
+  createTime: string;
+  updateTime: string;
+}
+
+export interface UserListFromApi {
+  document: UserFromApi;
+}
+
+export interface TicketFromApi {
+  name: string;
+  fields: {
+    code: { stringValue: string };
+    title: { stringValue: string };
+    description: { stringValue: string };
+    customerId: { stringValue: string };
+    assignedManagerId: { stringValue: string };
+    department: { stringValue: string };
+    priority: { integerValue: number };
+    status: { integerValue: number };
+    closedAt: { stringValue: string };
+    assignedAt: { stringValue: string };
+  };
+  createTime: string;
+  updateTime: string;
+}
+
+export interface TicketListFromApi {
+  documents: TicketFromApi[];
+}
+
+export interface MessageForomApi {
+  name: string;
+  fields: {
+    message: { stringValue: string };
+    recipients: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    archivedBy: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    readBy: {
+      arrayValue: {
+        values: {
+          stringValue: string;
+        }[];
+      };
+    };
+    severity: { integerValue: number };
+    ticketId: { stringValue: string };
+  };
+  createTime: string;
+  updateTime: string;
+}
+
+export interface MessageListFromApi {
+  documents: MessageForomApi[];
+}

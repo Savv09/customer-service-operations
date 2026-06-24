@@ -1,3 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+.custom-dialog .mat-mdc-dialog-surface {
+  border-radius: 6px !important;
+}
+
+.mdc-snackbar__surface {
+  background-color: white !important;
+  border-bottom: 0.3rem solid #78859c;
+  margin-top: 1rem;
+  border-radius: 0.25rem;
+}
+
+.mdc-button__label {
+  color: #5e8fea !important;
+}
+
+.snackbar-success .mdc-snackbar__label {
+  color: #78859c !important;
+  font-weight: 500 !important;
+}
+
+.snackbar-success .mdc-snackbar__surface {
+  border-bottom: 0.3rem solid #30a21e;
+}
+
+.snackbar-error .mdc-snackbar__label {
+  color: #78859c !important;
+  font-weight: 500 !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  border-bottom: 0.3rem solid #c0392b;
+}
+
+.snackbar-info .mdc-snackbar__label {
+  color: #78859c !important;
+  font-weight: 500 !important;
+}
+
+.snackbar-info .mdc-snackbar__surface {
+  border-bottom: 0.3rem solid #5e8fea;
+}

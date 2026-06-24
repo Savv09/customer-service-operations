@@ -1,0 +1,213 @@
+<div class="w-full h-full">
+  @if (currentUser()?.role !== userRole.MANAGER) {
+    <section class="flex items-center justify-end w-full h-1/[5%] mb-4">
+      <app-button
+        label="New ticket"
+        icon="add"
+        variant="outline"
+        size="sm"
+        (buttonClicked)="navigateToCreateTicket()"
+      />
+    </section>
+  }
+
+  @if (departmentList().length !== 0) {
+    @if (currentUser()?.role === userRole.ADMIN) {
+      <mat-tab-group class="h-[95%]">
+        @for (department of departmentList(); track department) {
+          <mat-tab [label]="department">
+            <mat-tab-group class="h-full sub-group">
+              <mat-tab label="Open Tickets">
+                <cdk-virtual-scroll-viewport
+                  class="example-container h-140"
+                  [itemSize]="52"
+                  [maxBufferPx]="1200"
+                  [minBufferPx]="400"
+                >
+                  <app-table
+                    [displayedColumns]="[
+                      'code',
+                      'title',
+                      'customerId',
+                      'createdAt',
+                      'assignedTo',
+                      'priority',
+                    ]"
+                    [dataSource]="ticketList().filter((item) => item.department === department && item.status === ticketStatus.OPEN)"
+                    (rowSelected)="navigateToDetails($event)"
+                  ></app-table>
+                </cdk-virtual-scroll-viewport>
+              </mat-tab>
+              <mat-tab label="On Going Tickets">
+                <cdk-virtual-scroll-viewport
+                  class="example-container h-140"
+                  [itemSize]="52"
+                  [maxBufferPx]="1200"
+                  [minBufferPx]="400"
+                >
+                  <app-table
+                    [displayedColumns]="['code', 'title', 'assignedTo', 'updatedAt', 'priority']"
+                    [dataSource]="ticketList().filter((item) =>  item.department === department && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
+                    (rowSelected)="navigateToDetails($event)"
+                  ></app-table>
+                </cdk-virtual-scroll-viewport>
+              </mat-tab>
+              <mat-tab label="Closed Tickets">
+                <cdk-virtual-scroll-viewport
+                  class="example-container h-140"
+                  [itemSize]="52"
+                  [maxBufferPx]="1200"
+                  [minBufferPx]="400"
+                >
+                  <app-table
+                    [displayedColumns]="[
+                      'code',
+                      'title',
+                      'customerId',
+                      'assignedTo',
+                      'closedAt',
+                      'resolutionTime',
+                    ]"
+                    [dataSource]="ticketList().filter((item) =>  item.department === department && item.status === ticketStatus.CLOSED)"
+                    (rowSelected)="navigateToDetails($event)"
+                  ></app-table>
+                </cdk-virtual-scroll-viewport>
+              </mat-tab>
+            </mat-tab-group>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    } @else if (currentUser()?.role === userRole.MANAGER) {
+      <mat-tab-group class="h-[95%]">
+        <mat-tab label="Open Tickets" class="flex flex-col h-full">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="[
+                'code',
+                'title',
+                'customerId',
+                'createdAt',
+                'priority',
+                'actions',
+              ]"
+              [dataSource]="managerOpenTickets()"
+              (rowSelected)="navigateToDetails($event)"
+              (ticketClaimed)="claimTicket($event)"
+              (ticketStatusChanged)="changeActiveStatus($event)"
+            ></app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+        <mat-tab label="On Going Tickets">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="[
+                'code',
+                'title',
+                'assignedAt',
+                'updatedAt',
+                'priority',
+                'status',
+                'actions',
+              ]"
+              [dataSource]="ticketList().filter((item) =>  item.assignedManagerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
+              (rowSelected)="navigateToDetails($event)"
+              (ticketStatusChanged)="changeActiveStatus($event)"
+            ></app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+        <mat-tab label="Closed Tickets">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="['code', 'title', 'closedAt', 'resolutionTime']"
+              [dataSource]="ticketList().filter((item) => item.assignedManagerId === currentUser()?.id && item.status === ticketStatus.CLOSED)"
+              (rowSelected)="navigateToDetails($event)"
+            ></app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+      </mat-tab-group>
+    } @else {
+      <mat-tab-group class="h-[95%]">
+        <mat-tab label="Open Tickets">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="[
+                'code',
+                'title',
+                'createdAt',
+                'department',
+                'status',
+                'priority',
+              ]"
+              [dataSource]="ticketList().filter((item) => item.customerId === currentUser()?.id && item.status === ticketStatus.OPEN)"
+              (rowSelected)="navigateToDetails($event)"
+            >
+            </app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+        <mat-tab label="On Going Tickets">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="[
+                'code',
+                'title',
+                'department',
+                'updatedAt',
+                'status',
+                'priority',
+                'actions',
+              ]"
+              [dataSource]="ticketList().filter((item) =>  item.customerId === currentUser()?.id && (item.status === ticketStatus.IN_PROGRESS || item.status === ticketStatus.RESOLVED))"
+              (rowSelected)="navigateToDetails($event)"
+              (ticketClosed)="closeTicket($event)"
+            ></app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+        <mat-tab label="Closed Tickets">
+          <cdk-virtual-scroll-viewport
+            class="example-container h-150"
+            [itemSize]="52"
+            [maxBufferPx]="1200"
+            [minBufferPx]="400"
+          >
+            <app-table
+              [displayedColumns]="['code', 'title', 'department', 'closedAt']"
+              [dataSource]="ticketList().filter((item) =>  item.customerId === currentUser()?.id && item.status === ticketStatus.CLOSED)"
+              (rowSelected)="navigateToDetails($event)"
+            ></app-table>
+          </cdk-virtual-scroll-viewport>
+        </mat-tab>
+      </mat-tab-group>
+    }
+  } @else {
+    <section
+      class="mt-8 w-full flex items-center justify-center text-xl font-medium text-[#636872]"
+    >
+      No ticket found.
+    </section>
+  }
+</div>

@@ -1,0 +1,135 @@
+<div class="w-full h-full">
+  @if (!isLoading()) {
+    @if (selectedCustomer) {
+      <section
+        class="w-full mb-10 flex items-center justify-between h-1/5 border-b border-b-[#78859c]"
+      >
+        <div class="flex items-center">
+          <div
+            class="h-18 w-18 rounded-full border-2 border-[#5e8fea] text-[#5e8fea] flex items-center justify-center"
+          >
+            <span class="text-3xl font-medium">{{
+              selectedCustomer.firstName.charAt(0) + '' + selectedCustomer.lastName.charAt(0)
+            }}</span>
+          </div>
+          <span class="ml-4">
+            <p class="text-xl font-bold text-[#78859c]">
+              {{ `${selectedCustomer.firstName} ${selectedCustomer.lastName}` }}
+            </p>
+            <p class="text-lg text-[#636872] font-base">{{ selectedCustomer.company }}</p>
+          </span>
+        </div>
+
+        <app-button
+          label="Edit"
+          icon="edit"
+          variant="primary"
+          [disabled]="crudMode === CrudMode.EDIT"
+          (buttonClicked)="navigateToEditCustomer(selectedCustomer.id)"
+        />
+      </section>
+    }
+
+    <form [formGroup]="detailsForm" class="w-full h-3/5 grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
+      <div class="w-full">
+        <app-input-field
+          label="First Name"
+          placeholder="First Name"
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.firstName"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Last Name"
+          placeholder="Last Name"
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.lastName"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Email"
+          placeholder="Email"
+          type="email"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.email"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Company"
+          placeholder="Company"
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.company"
+        />
+      </div>
+
+      <div class="w-full">
+        <app-input-field
+          label="Phone Number"
+          [placeholder]="crudMode === CrudMode.READ ? '' : '+...'"
+          type="text"
+          [hasStar]="false"
+          [required]="false"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.phone"
+        />
+      </div>
+    </form>
+    @if (crudMode !== CrudMode.READ) {
+      <p class="font-medium text-[#78859c]">Fields marked with (*) are required.</p>
+    }
+
+    <section
+      class="w-full flex items-center pt-6"
+      [ngClass]="{
+        'justify-between': crudMode === CrudMode.EDIT || crudMode === CrudMode.READ,
+        'justify-end': crudMode === CrudMode.CREATE,
+      }"
+    >
+      @if (crudMode === CrudMode.EDIT) {
+        <app-button
+          label="Delete"
+          icon="delete"
+          variant="danger"
+          (buttonClicked)="deleteCustomer()"
+        />
+      }
+      @if (crudMode === CrudMode.CREATE || crudMode === CrudMode.EDIT) {
+        <div class="flex items-center">
+          <div class="flex items-center">
+            <app-button
+              label="Cancel"
+              icon="cancel"
+              variant="outline"
+              (buttonClicked)="navigateToReadDetails()"
+            />
+            <span class="mx-2"></span>
+            <app-button
+              label="Save"
+              icon="save"
+              variant="success"
+              [disabled]="!detailsForm.valid"
+              (buttonClicked)="saveCustomerForm()"
+            />
+          </div>
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="w-full h-3/4 flex justify-center items-center">
+      <div class="loader"></div>
+    </div>
+  }
+</div>

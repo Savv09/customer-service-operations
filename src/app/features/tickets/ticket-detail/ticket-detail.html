@@ -1,0 +1,341 @@
+<div class="h-full w-full overflow-hidden">
+  @if (!isLoading()) {
+    @if (selectedTicket() && crudMode === CrudMode.READ) {
+      <section
+        class="w-full mb-10 flex items-center justify-between h-1/7 border-b border-b-[#78859c]"
+      >
+        <div class="w-[65%] flex items-center justify-between">
+          <div>
+            <p class="font-medium text-[#78859c]">Ticket Code</p>
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.code }}
+            </p>
+          </div>
+          <div>
+            <p class="font-medium text-[#78859c]">Created at</p>
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.createdAt | date: 'dd/MM/yy HH:mm' }}
+            </p>
+          </div>
+          @if (!!selectedTicket()?.assignedManagerId) {
+            <div>
+              <p class="font-medium text-[#78859c]">
+                {{ selectedTicket()?.status === ticketSatus.CLOSED ? 'Closed at' : 'Assigned at' }}
+              </p>
+              <p class="text-lg font-semibold text-[#636872]">
+                {{
+                  selectedTicket()?.status === ticketSatus.CLOSED
+                    ? (selectedTicket()?.closedAt | date: 'dd/MM/yy HH:mm')
+                    : (selectedTicket()?.assignedAt | date: 'dd/MM/yy HH:mm')
+                }}
+              </p>
+            </div>
+          }
+          <div>
+            <p class="font-medium text-[#78859c]">Department</p>
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.department }}
+            </p>
+          </div>
+          <div>
+            <p class="font-medium text-[#78859c]">Status</p>
+            <p class="text-lg font-semibold text-[#636872]">
+              {{ selectedTicket()?.status | ticketStatus }}
+            </p>
+          </div>
+          @if (selectedTicket()?.status !== ticketSatus.CLOSED) {
+            <div>
+              <p class="font-medium text-[#78859c]">Priority</p>
+              <p
+                class="text-lg font-semibold"
+                [ngClass]="{
+                  'text-[#636872]': selectedTicket()?.priority === ticketPriority.LOW,
+                  'text-[#d4ac0d]': selectedTicket()?.priority === ticketPriority.MEDIUM,
+                  'text-[#c0392b]': selectedTicket()?.priority === ticketPriority.HIGH,
+                  'text-[#6c3483]': selectedTicket()?.priority === ticketPriority.URGENT,
+                }"
+              >
+                {{ selectedTicket()?.priority | ticketPriority }}
+              </p>
+            </div>
+          }
+        </div>
+
+        @if (currentUser()?.role === UserRole.ADMIN) {
+          <app-button
+            variant="primary"
+            label="Edit"
+            icon="edit"
+            (buttonClicked)="navigateToEditTicket()"
+          />
+        }
+        @if (currentUser()?.role === UserRole.MANAGER && !selectedTicket()?.assignedManagerId) {
+          <app-button
+            size="sm"
+            variant="primary"
+            label="Claim ticket"
+            icon="assignment_ind"
+            (buttonClicked)="onClaimTicket()"
+          />
+        }
+        @if (
+          currentUser()?.role === UserRole.CUSTOMER &&
+          (selectedTicket()?.status === ticketSatus.RESOLVED ||
+            selectedTicket()?.status === ticketSatus.CLOSED)
+        ) {
+          <app-button
+            size="sm"
+            variant="success"
+            [label]="
+              selectedTicket()?.status === ticketSatus.RESOLVED ? 'Close ticket' : 'Ticket Closed'
+            "
+            [icon]="selectedTicket()?.status === ticketSatus.RESOLVED ? 'task_alt' : 'verified'"
+            [disabled]="selectedTicket()?.status === ticketSatus.CLOSED"
+            (buttonClicked)="onCloseTicket()"
+          />
+        }
+      </section>
+    }
+
+    <form [formGroup]="detailsForm" class="w-full h-4/6 grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
+      @if (currentUser()?.role === UserRole.ADMIN) {
+        <div class="col-start-1 row-start-1">
+          <label for="customerId" class="block mb-2 text-base font-medium text-[#78859c]">
+            {{
+              crudMode === CrudMode.READ
+                ? 'Created by'
+                : currentUser()?.role !== UserRole.ADMIN
+                  ? 'Created by'
+                  : 'Create for'
+            }}
+            @if (crudMode !== CrudMode.READ) {
+              <span class="font-semibold">*</span>
+            }
+          </label>
+          <select
+            id="customerId"
+            formControlName="customerId"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
+            [ngClass]="{
+              'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
+                crudMode === CrudMode.READ,
+            }"
+          >
+            <option value="" disabled>Select customer</option>
+
+            @for (customer of customerList(); track customer.id) {
+              <option [value]="customer.id">
+                {{ customer.id | customer }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="col-start-2 row-start-1">
+          <label for="assignedManagerId" class="block mb-2 text-base font-medium text-[#78859c]">
+            {{ crudMode !== CrudMode.READ ? 'Assign to' : 'Assigned to' }}
+
+            @if (crudMode !== CrudMode.READ) {
+              <span class="font-semibold">*</span>
+            }
+          </label>
+
+          <select
+            id="assignedManagerId"
+            formControlName="assignedManagerId"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
+            [ngClass]="{
+              'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
+                crudMode === CrudMode.READ,
+            }"
+          >
+            <option value="" disabled>Select manager</option>
+            <option value="none">None</option>
+
+            @for (manager of managersRelatedToSelectedDepartment(); track manager.id) {
+              <option [value]="manager.id">
+                {{ manager.id | manager }}
+              </option>
+            }
+          </select>
+        </div>
+      }
+      <div class="w-full col-start-1">
+        <app-input-field
+          label="Title"
+          placeholder="Title"
+          type="text"
+          [hasStar]="crudMode !== CrudMode.READ"
+          [disabled]="crudMode === CrudMode.READ"
+          [control]="detailsForm.controls.title"
+        />
+      </div>
+      @if (
+        currentUser()?.role === UserRole.MANAGER &&
+        crudMode === CrudMode.READ &&
+        selectedTicket()?.assignedManagerId === currentUser()?.id &&
+        selectedTicket()?.status !== ticketSatus.CLOSED
+      ) {
+        <div class="w-full col-start-2">
+          <div class="w-full text-[#78859c]">
+            <label class="block mb-2 text-base font-medium text-[#78859c]"> Change Status </label>
+
+            <div class="w-full flex items-center justify-between text">
+              @for (status of statusOptions.filter(s => s !== 3); track status) {
+                <button
+                  type="button"
+                  class="px-4 py-2 w-[30%] h-12 text-base rounded-md border hover:cursor-pointer shadow-md"
+                  [ngClass]="{
+                    'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
+                  }"
+                  (click)="changeActiveStatus(status)"
+                >
+                  {{ status | ticketStatus | uppercase }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (crudMode !== CrudMode.READ) {
+        <div class="w-full col-start-2">
+          <label for="department" class="block mb-2 text-base font-medium text-[#78859c]">
+            Department
+
+            <span class="font-semibold">*</span>
+          </label>
+          <select
+            id="department"
+            formControlName="department"
+            class="block w-full h-12 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc]"
+            (change)="onDepartmentChange($event)"
+          >
+            <option value="" disabled>Select department</option>
+
+            @for (department of departmentOptions; track department) {
+              <option [value]="department">
+                {{ department }}
+              </option>
+            }
+          </select>
+        </div>
+      }
+      <div class="w-full col-start-1">
+        <label for="description" class="block mb-2 text-base font-medium text-[#78859c]">
+          Description
+          @if (crudMode !== CrudMode.READ) {
+            <span class="font-semibold">*</span>
+          }
+        </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="block w-full h-60 px-3 py-2 text-base text-[#636872] border rounded-lg shadow-md focus:outline-none focus:ring-1 focus:border-[#5e8fea] focus:ring-[#5e8fea] bg-[#fafbfc] resize-none"
+          [ngClass]="{
+            'bg-[#78859c2c] pointer-events-none border-0 appearance-none':
+              crudMode === CrudMode.READ,
+          }"
+          placeholder="Enter a description"
+          required
+        >
+        </textarea>
+      </div>
+      @if (crudMode !== CrudMode.READ) {
+        <div class="w-full h-full flex items-center text-base text-[#78859c]">
+          <div class="h-full w-1/4 mr-20">
+            <label class="block mb-2 text-base font-medium text-[#78859c]">
+              Priority
+
+              <span class="font-semibold">*</span>
+            </label>
+
+            <div class="h-60 flex flex-col justify-between">
+              @for (priority of priorityOptions; track priority) {
+                <button
+                  type="button"
+                  class="px-4 py-2 w-full text-white font-medium! rounded-md border shadow-md hover:cursor-pointer"
+                  [ngClass]="{
+                    'bg-[#5e8fea]  ':
+                      detailsForm.value.priority === priority &&
+                      detailsForm.value.priority === ticketPriority.LOW,
+                    'bg-[#d4ac0d]':
+                      detailsForm.value.priority === priority &&
+                      detailsForm.value.priority === ticketPriority.MEDIUM,
+                    'bg-[#c0392b]':
+                      detailsForm.value.priority === priority &&
+                      detailsForm.value.priority === ticketPriority.HIGH,
+                    'bg-[#6c3483]':
+                      detailsForm.value.priority === priority &&
+                      detailsForm.value.priority === ticketPriority.URGENT,
+                    'text-[#78859c]! font-normal!': detailsForm.value.priority !== priority,
+                  }"
+                  (click)="detailsForm.controls.priority.setValue(priority)"
+                >
+                  {{ priority | ticketPriority }}
+                </button>
+              }
+            </div>
+          </div>
+          @if (currentUser()?.role !== UserRole.CUSTOMER) {
+            <div class="h-full w-1/4 text-[#78859c]">
+              <label class="block mb-2 text-base font-medium text-[#78859c]">
+                Status
+
+                <span class="font-semibold">*</span>
+              </label>
+
+              <div class="h-60 flex flex-col justify-between text">
+                @for (status of statusOptions; track status) {
+                  <button
+                    type="button"
+                    class="px-4 py-2 w-full rounded-md border hover:cursor-pointer shadow-md"
+                    [ngClass]="{
+                      'bg-[#5e8fea] text-white font-medium': detailsForm.value.status === status,
+                    }"
+                    (click)="detailsForm.controls.status.setValue(status)"
+                  >
+                    {{ status | ticketStatus }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </form>
+    @if (crudMode !== CrudMode.READ) {
+      <p
+        class="block font-medium text-[#78859c]"
+        [ngClass]="{
+          'mt-0': currentUser()?.role === UserRole.CUSTOMER,
+          'mt-8': currentUser()?.role === UserRole.ADMIN,
+        }"
+      >
+        Fields marked with (*) are required.
+      </p>
+      <section class="w-full h-1/5 flex items-center justify-end">
+        <app-button
+          label="Cancel"
+          icon="cancel"
+          variant="outline"
+          size="md"
+          (buttonClicked)="cancelOperation()"
+        />
+        <span class="px-2"></span>
+        <app-button
+          label="Save"
+          icon="save"
+          variant="success"
+          size="md"
+          [disabled]="!detailsForm.valid"
+          (buttonClicked)="onSaveTicketsForm()"
+        />
+      </section>
+    }
+  } @else {
+    <div class="w-full h-3/4 flex justify-center items-center">
+      <div class="loader"></div>
+    </div>
+  }
+</div>
