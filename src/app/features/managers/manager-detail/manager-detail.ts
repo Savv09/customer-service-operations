@@ -154,9 +154,19 @@ export class ManagerDetail {
   }
 
   deleteManager() {
-    this.managerService.deleteManager(this.selectedManager?.id as string).subscribe((res) => {
-      this.snackbarService.showSnackbar('Manager deleted succesfully!', SnackbarMode.SUCCESS);
-      this.router.navigate(['/', 'managers']);
-    });
+    const role = UserRole.CUSTOMER;
+    this.authService
+      .deleteUser(
+        this.selectedManager?.id as string,
+        this.selectedManager?.email as string,
+        this.selectedManager?.firstName as string,
+        this.selectedManager?.lastName as string,
+        role,
+      )
+      .subscribe((res) => {
+        this.snackbarService.showSnackbar('Manager deleted succesfully!', SnackbarMode.SUCCESS);
+        this.managerService.setIsManagerListLoaded(false);
+        this.router.navigate(['/', 'managers']);
+      });
   }
 }

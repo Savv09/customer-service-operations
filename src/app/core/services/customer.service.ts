@@ -102,15 +102,7 @@ export class CustomerService {
   deleteCustomer(customerId: string) {
     const url = this.getCustomersUrl(customerId);
 
-    return this.dialogService
-      .confirmOperation('Delete Customer', 'Are you sure you want to delete this customer?')
-      .pipe(
-        switchMap((confirmed) =>
-          confirmed
-            ? this.http.delete(url).pipe(finalize(() => this.setIsCustomerListLoaded(false)))
-            : EMPTY,
-        ),
-      );
+    return this.http.delete(url).pipe(finalize(() => this.setIsCustomerListLoaded(false)));
   }
 
   private createCustomerApiBody(customer: Partial<Customer>) {

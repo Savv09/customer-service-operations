@@ -160,10 +160,19 @@ export class CustomerDetail implements OnInit {
   }
 
   deleteCustomer() {
-    console.log('csdnjcnbjcj');
-    this.customerService.deleteCustomer(this.selectedCustomer?.id as string).subscribe((res) => {
-      this.snackbarService.showSnackbar('Customer deleted succesfully!', SnackbarMode.SUCCESS);
-      this.router.navigate(['/', 'customers']);
-    });
+    const role = UserRole.CUSTOMER;
+    this.authService
+      .deleteUser(
+        this.selectedCustomer?.id as string,
+        this.selectedCustomer?.email as string,
+        this.selectedCustomer?.firstName as string,
+        this.selectedCustomer?.lastName as string,
+        role,
+      )
+      .subscribe((res) => {
+        this.snackbarService.showSnackbar('Customer deleted succesfully!', SnackbarMode.SUCCESS);
+        this.customerService.setIsCustomerListLoaded(false);
+        this.router.navigate(['/', 'customers']);
+      });
   }
 }

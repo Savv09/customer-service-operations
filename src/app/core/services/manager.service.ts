@@ -125,15 +125,8 @@ export class ManagerService {
 
   deleteManager(managerId: string) {
     const url = this.getManagersUrl(managerId);
-    return this.dialogService
-      .confirmOperation('Update Manager', 'Are you sure you want to update this manager info?')
-      .pipe(
-        switchMap((confirmed) =>
-          confirmed
-            ? this.http.delete(url).pipe(finalize(() => this.setIsManagerListLoaded(false)))
-            : EMPTY,
-        ),
-      );
+
+    return this.http.delete(url).pipe(finalize(() => this.setIsManagerListLoaded(false)));
   }
 
   private createManagerApiBody(manager: Partial<Manager>) {

@@ -11,7 +11,7 @@ import { UserService } from '../services/user.service';
 import { CustomerService } from '../services/customer.service';
 
 import { FirebaseSigninResponse, FirebaseSignupResponse } from './auth-response.model';
-import { Customer, Manager } from '../models/user.model';
+import { Customer, Manager, User } from '../models/user.model';
 import { UserRole } from '../../shared/enums/user-roles.enum';
 import { ManagerService } from '../services/manager.service';
 import { TicketService } from '../services/ticket.service';
@@ -99,6 +99,51 @@ export class AuthService {
                     return this.customerService.createCustomer(newUser as Customer, id);
                   }),
                 )
+            : EMPTY,
+        ),
+      );
+  }
+
+  // This method is only for demonstration purposes. I know it's ugly e wrong in evry way possible :)
+  deleteUser(
+    userId: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    userRole: UserRole,
+  ) {
+    const ignoreInterceptorHttp = new HttpClient(this.httpBackend);
+
+    const password = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+
+    return this.dialogService
+      .confirmOperation('Delete user', 'Are you sure you want to detelete this user?')
+      .pipe(
+        switchMap((confirmed) =>
+          confirmed
+            ? this.login(email, password).pipe(
+                switchMap((res) => {
+                  const body = {
+                    idToken: res.idToken,
+                  };
+                  return ignoreInterceptorHttp
+                    .post(
+                      `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${this.APIKey}`,
+                      body,
+                    )
+                    .pipe(
+                      switchMap((res) => {
+                        const id = userId;
+
+                        if (userRole === UserRole.MANAGER) {
+                          return this.managerService.deleteManager(id);
+                        }
+
+                        return this.customerService.deleteCustomer(id);
+                      }),
+                    );
+                }),
+              )
             : EMPTY,
         ),
       );
