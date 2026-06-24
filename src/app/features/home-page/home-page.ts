@@ -15,6 +15,7 @@ import { Button } from '../../shared/components/button/button';
 import { Manager, User } from '../../core/models/user.model';
 import { Ticket } from '../../core/models/ticket.model';
 import { TicketNotification } from '../../core/models/ticket-notifications.model';
+import { QuickAction } from '../../core/models/home-page-interfaces.model';
 
 @Component({
   selector: 'app-home-page',
@@ -43,6 +44,24 @@ export class HomePage implements OnInit {
     const departments = [...new Set(this.ticketList().map((ticket) => ticket.department))];
 
     return departments;
+  });
+
+  dashboardCards = computed(() => {
+    const role = this.currentUser()?.role;
+
+    switch (role) {
+      case UserRole.ADMIN:
+        return this.adminCards();
+
+      case UserRole.MANAGER:
+        return this.managerCards();
+
+      case UserRole.CUSTOMER:
+        return this.customerCards();
+
+      default:
+        return [];
+    }
   });
 
   adminCards = computed(() => {
@@ -85,14 +104,14 @@ export class HomePage implements OnInit {
 
     if (this.isManager(user)) {
       notAssignedTickets = this.ticketList().filter(
-        (ticket) => ticket.assignedManagerId === '' && ticket.department === user.department,
+        (ticket) => ticket.assignedManagerId === undefined && ticket.department === user.department,
       ).length;
 
       highPriority = this.ticketList().filter(
         (ticket) =>
           ticket.department === user.department &&
           (ticket.priority === TicketPriority.HIGH || ticket.priority === TicketPriority.URGENT) &&
-          (ticket.assignedManagerId === '' || ticket.assignedManagerId === user.id),
+          (ticket.assignedManagerId === undefined || ticket.assignedManagerId === user.id),
       ).length;
     }
 
@@ -117,6 +136,41 @@ export class HomePage implements OnInit {
       { label: 'high priority', value: highPriority },
       { label: 'waiting customer', value: waitingCustomer },
       { label: 'overdue', value: overdueTickets },
+    ];
+
+    return cards;
+  });
+
+  customerCards = computed(() => {
+    const customerTicktes = this.ticketList().filter(
+      (ticket) => ticket.customerId === this.currentUser()?.id,
+    );
+
+    const openTickets = customerTicktes.filter(
+      (ticket) => ticket.status === TicketStatus.OPEN && ticket.assignedManagerId === undefined,
+    ).length;
+
+    const assignedTickets = customerTicktes.filter(
+      (ticket) => ticket.assignedManagerId !== undefined && ticket.status !== TicketStatus.CLOSED,
+    ).length;
+
+    const ongoingTickets = customerTicktes.filter(
+      (ticket) => ticket.status === TicketStatus.IN_PROGRESS,
+    ).length;
+    const resolvedTickets = customerTicktes.filter(
+      (ticket) => ticket.status === TicketStatus.RESOLVED,
+    ).length;
+
+    const closedTickets = customerTicktes.filter(
+      (ticket) => ticket.status === TicketStatus.CLOSED,
+    ).length;
+
+    const cards = [
+      { label: 'open tickets', value: openTickets },
+      { label: 'assigned tickets', value: assignedTickets },
+      { label: 'ongoing tickets', value: ongoingTickets },
+      { label: 'resolved tickets', value: resolvedTickets },
+      { label: 'closed tickets', value: closedTickets },
     ];
 
     return cards;
@@ -200,6 +254,68 @@ export class HomePage implements OnInit {
     });
 
     return notifications;
+  });
+
+  widgetTitle = computed(() => {
+    switch (this.currentUser()?.role) {
+      case UserRole.ADMIN:
+        return 'Tickets by Department';
+
+      case UserRole.MANAGER:
+        return 'Notifications';
+
+      default:
+        return null;
+    }
+  });
+
+  quickActions = computed<QuickAction[]>(() => {
+    switch (this.currentUser()?.role) {
+      case UserRole.ADMIN:
+        return [
+          {
+            label: 'New ticket',
+            icon: 'assignment',
+            action: () => this.navigateToCreateTicket(),
+          },
+          {
+            label: 'New manager',
+            icon: 'manage_accounts',
+            action: () => this.navigateToCreateManager(),
+          },
+          {
+            label: 'New customer',
+            icon: 'groups',
+            action: () => this.navigateToCreateCustomer(),
+          },
+        ];
+
+      case UserRole.MANAGER:
+        return [
+          {
+            label: 'View tickets',
+            icon: 'assignment',
+            action: () => this.navigateToTickets(),
+          },
+        ];
+
+      case UserRole.CUSTOMER:
+        return [
+          {
+            label: 'New ticket',
+            icon: 'assignment',
+            action: () => this.navigateToCreateTicket(),
+          },
+          {
+            label: 'View tickets',
+            icon: 'assignment',
+            action: () => this.navigateToTickets(),
+          },
+        ];
+
+      default:
+        return [];
+    }
   });
 
   ngOnInit(): void {

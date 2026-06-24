@@ -114,10 +114,7 @@ export class Tickets implements OnInit {
       .claimTicket(updatedTicket)
       .subscribe(
         (res) => (
-          this.snackbarService.showSnackbar(
-            'Ticket status closed succesfully!',
-            SnackbarMode.SUCCESS,
-          ),
+          this.snackbarService.showSnackbar('Ticket claimed succesfully!', SnackbarMode.SUCCESS),
           this.isTicketListLoaded.set(false),
           this.getTickets()
         ),
@@ -140,7 +137,7 @@ export class Tickets implements OnInit {
       .subscribe(
         (res) => (
           this.snackbarService.showSnackbar(
-            'Ticket status closed succesfully!',
+            'Ticket status changed succesfully!',
             SnackbarMode.SUCCESS,
           ),
           this.isTicketListLoaded.set(false),

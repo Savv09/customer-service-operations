@@ -9,138 +9,98 @@
     <table class="w-full h-full border-collapse">
       <tbody>
         <tr>
-          @if (currentUser()?.role === userRole.ADMIN) {
-            @for (card of adminCards(); track card) {
-              <td class="px-8 h-full border-r border-l border-[#78859c]">
-                <div class="flex items-center justify-between h-full">
-                  <h4 class="text-lg font-medium text-[#636872]">
-                    {{ card.label | titlecase }}
-                  </h4>
-                  <p class="text-xl font-semibold text-[#78859c]">
-                    {{ card.value }}
-                  </p>
-                </div>
-              </td>
-            }
-          }
-          @if (currentUser()?.role === userRole.MANAGER) {
-            @for (card of managerCards(); track card) {
-              <td class="px-8 h-full border-r border-l border-[#78859c]">
-                <div class="flex items-center justify-between h-full">
-                  <h4 class="text-lg font-medium text-[#636872]">
-                    {{ card.label | titlecase }}
-                  </h4>
-                  <p
-                    class="text-xl font-semibold text-[#78859c]"
-                    [ngClass]="{
-                      'text-[#c0392b]':
-                        card.value > 0 &&
-                        (card.label === 'high priority' || card.label === 'overdue'),
-                    }"
-                  >
-                    {{ card.value }}
-                  </p>
-                </div>
-              </td>
-            }
+          @for (card of dashboardCards(); track card) {
+            <td class="px-8 h-full border-r border-l border-[#78859c]">
+              <div class="flex items-center justify-between h-full">
+                <h4 class="text-lg font-medium text-[#636872]">
+                  {{ card.label | titlecase }}
+                </h4>
+                <p
+                  class="text-xl font-semibold text-[#78859c]"
+                  [ngClass]="{
+                    'text-[#c0392b]!':
+                      card.value > 0 &&
+                      (card.label === 'high priority' || card.label === 'overdue'),
+                    'text-[#30a21e]!': card.value > 0 && card.label === 'resolved tickets',
+                  }"
+                >
+                  {{ card.value }}
+                </p>
+              </div>
+            </td>
           }
         </tr>
       </tbody>
     </table>
   </section>
 
-  @if (currentUser()?.role === userRole.ADMIN) {
+  @if (widgetTitle()) {
     <section class="row-start-3 shadow-md">
-      <app-dashboard-card [title]="'Tickets by Department'">
-        @for (department of departmentList(); track department) {
-          <div class="w-full h-auto flex items-center justify-between">
-            <h4 class="text-base font-medium text-[#636872]">{{ department | titlecase }}</h4>
-            <p class="text-lg font-semibold text-[#78859c]">
-              {{ getTicketsByDepartment(department) }}
-            </p>
+      <app-dashboard-card [title]="widgetTitle()!">
+        @if (currentUser()?.role === userRole.ADMIN) {
+          @for (department of departmentList(); track department) {
+            <div class="flex items-center justify-between">
+              <h4 class="text-base font-medium text-[#636872]">
+                {{ department | titlecase }}
+              </h4>
+
+              <p class="text-lg font-semibold text-[#78859c]">
+                {{ getTicketsByDepartment(department) }}
+              </p>
+            </div>
+          }
+        }
+
+        @if (currentUser()?.role === userRole.MANAGER) {
+          <div class="w-full h-75 flex flex-col overflow-y-auto">
+            @if (notifications().length === 0) {
+              <p class="text-base font-medium text-[#78859c]">You have 0 notifications.</p>
+            }
+
+            @for (notification of notifications(); track notification) {
+              <button
+                class="w-full text-base my-1 py-2 px-2 font-medium flex items-center rounded-sm text-[#78859c] hover:bg-[#78859c2c] hover:cursor-pointer"
+                (click)="navigateToTicketDetails(notification.ticketId)"
+              >
+                <mat-icon
+                  [ngClass]="{
+                    'text-[#c0392b]!': notification.severity === 'danger',
+                    'text-[#d4ac0d]!': notification.severity === 'warning',
+                  }"
+                >
+                  {{ notification.severity === 'danger' ? 'error' : 'warning' }}
+                </mat-icon>
+
+                <span class="ml-2">
+                  {{ notification.message }}
+                </span>
+              </button>
+            }
           </div>
         }
       </app-dashboard-card>
     </section>
-
-    <section class="w-full h-full">
-      <header>
-        <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
-      </header>
-      <div class="flex items-center mt-4">
-        <app-button
-          label="New ticket"
-          icon="assignment"
-          variant="outline"
-          size="sm"
-          (buttonClicked)="navigateToCreateTicket()"
-        />
-        <span class="mx-2"></span>
-        <app-button
-          label="New manager"
-          icon="manage_accounts"
-          variant="outline"
-          size="sm"
-          (buttonClicked)="navigateToCreateManager()"
-        />
-        <span class="mx-2"></span>
-        <app-button
-          label="New customer"
-          icon="groups"
-          variant="outline"
-          size="sm"
-          (buttonClicked)="navigateToCreateCustomer()"
-        />
-      </div>
-    </section>
   }
 
-  @if (currentUser()?.role === userRole.MANAGER) {
-    <section class="row-start-3 shadow-md">
-      <app-dashboard-card [title]="'Notifications'">
-        <div class="w-full h-75 flex flex-col items-center overflow-y-scroll overflow-x-hidden">
-          @if (notifications().length === 0) {
-            <p class="text-base font-medium text-[#78859c]">You have 0 notifications.</p>
-          }
-          @for (notification of notifications(); track notification) {
-            <button
-              class="w-full text-base my-1 py-2 px-2 font-medium flex items-center rounded-sm text-[#78859c] hover:cursor-pointer hover:bg-[#78859c2c] hover:font-semibold hover:shadow-md"
-              (click)="navigateToTicketDetails(notification.ticketId)"
-            >
-              <span
-                class="pr-2 mt-1"
-                [ngClass]="{
-                  'text-[#c0392b]': notification.severity === 'danger',
-                  'text-[#d4ac0d]': notification.severity === 'warning',
-                }"
-                ><mat-icon>{{
-                  notification.severity === 'danger' ? 'error' : 'warning'
-                }}</mat-icon></span
-              >
-              {{ notification.message }}
-            </button>
-          }
-        </div>
-      </app-dashboard-card>
-    </section>
-
-    <section class="w-full h-full">
-      <header>
-        <h2 class="text-lg font-medium text-[#636872]">Quick Actions</h2>
-      </header>
-      <div class="flex items-center mt-4">
-        <app-button
-          label="View tickets"
-          icon="assignment"
-          variant="outline"
-          size="sm"
-          (buttonClicked)="navigateToTickets()"
-        />
-      </div>
-    </section>
-  }
-
-  <section class="row-start-3 col-start-2 shadow-md">
+  <section class="row-start-3 shadow-md">
     <app-dashboard-card [title]="'Recent Activities'"> </app-dashboard-card>
+  </section>
+
+  <section class="w-full h-full row-start-4">
+    <header>
+      <h2 class="text-lg font-medium text-[#636872']">Quick Actions</h2>
+    </header>
+
+    <div class="flex items-center gap-2 mt-4">
+      @for (action of quickActions(); track action.label) {
+        <app-button
+          [label]="action.label"
+          [icon]="action.icon"
+          variant="outline"
+          size="sm"
+          (buttonClicked)="action.action()"
+        />
+      }
+    </div>
   </section>
 </div>

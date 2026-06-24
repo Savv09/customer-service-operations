@@ -108,7 +108,7 @@ export class TicketService {
       )
       .pipe(
         switchMap((confirmed) =>
-          confirmed ? this.updateTicket(ticket, ticket.id as string) : of(null),
+          confirmed ? this.updateTicket(ticket, ticket.id as string) : EMPTY,
         ),
       );
   }
