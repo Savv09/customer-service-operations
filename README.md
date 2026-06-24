@@ -1,59 +1,157 @@
-# CustomerServiceOperations
+# Customer Service Operations
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+> **Portfolio Project**
+>
+> Customer Service Operations is a portfolio application designed and developed to showcase modern Angular development practices, including authentication, role-based access control, reactive forms, state management, and ticket workflow implementation.
+>
+> The project simulates a real-world customer support environment and serves as a demonstration of frontend architecture and application design skills.
 
-## Development server
+## Features
 
-To start a local development server, run:
+### Authentication & Authorization
+
+- Firebase Authentication
+- Role-based access control
+- Protected routes with Angular Guards
+- User session management
+
+### Ticket Management
+
+- Create support tickets
+- Update ticket information
+- Assign tickets to managers
+- Claim unassigned tickets
+- Track ticket lifecycle
+- Priority management
+- Department-based ticket routing
+
+### User Management
+
+- Create, edit and delete customers
+- Create, edit and delete managers
+- Department assignment for managers
+- User administration dashboard
+
+### Dashboards
+
+#### Customer Dashboard
+
+- Open tickets
+- Assigned tickets
+- Ongoing tickets
+- Resolved tickets
+- Closed tickets
+
+#### Manager Dashboard
+
+- Unassigned department tickets
+- Assigned tickets
+- High-priority tickets
+- Overdue ticket monitoring
+- Operational notifications
+
+#### Admin Dashboard
+
+- Ticket statistics
+- Customer overview
+- Manager overview
+- Department analytics
+
+### Notification System
+
+- In-app activity feed
+- Read / unread tracking
+- Archive functionality
+- Ticket-related system notifications
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- Angular 20
+- TypeScript
+- RxJS
+- Angular Signals
+- Angular Material
+- TailwindCSS
+
+### Backend & Services
+
+- Firebase Authentication
+- Cloud Firestore
+
+### Architecture & Design Patterns
+- Feature-based Architecture
+- Service-Oriented Design
+- Dependency Injection
+- Route Guards
+- Role-Based Access Control (RBAC)
+- Reactive Forms
+- Reusable Components
+- Data Mapping Layer
+
+### State Management
+
+- Angular Signals
+- RxJS Observables
+- Computed Signals
+
+### Security
+
+- Firebase Authentication
+- Role-Based Authorization
+- Route Protection
+- User Session Management
+---
+
+## Authorization
+
+Use the following credentials to access the application.
+
+### Admin
+
+Email: admin@admin.com
+Password: admin.
+
+### Manager
+
+Email: firstName.lastName@manager.com
+Password: firstName.lastName
+
+### Customer
+
+Email: firstName.lastName@companyName.com
+Password: firstName.lastName
+
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- Node.js
+- npm
+- Angular CLI
+
+### Installation
+
+Clone the repository and install the dependencies:
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Running the Application
 
 ```bash
-ng generate component component-name
+npm start
 ```
+## The Application wil be available at: 
+ 
+ http://localhost:4200
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
