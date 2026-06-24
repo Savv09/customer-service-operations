@@ -53,6 +53,9 @@ export class MessageService {
       map((messageListFromApi) =>
         messageListFromApi.documents.map((messageFromApi) => mapMessageFromApi(messageFromApi)),
       ),
+      map((messageList) =>
+        messageList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+      ),
       tap((res) => this.updateMessageList$(res)),
     );
   }

@@ -92,16 +92,19 @@
             <div
               class="w-full h-20 px-3 mb-4 flex items-center justify-between rounded-sm shadow-md"
               [ngClass]="{
-                'bg-[#5e8fea20]': message.severity === messageSeverity.INFO,
-                'bg-[#c03a2b20]': message.severity === messageSeverity.DANGER,
-                'bg-[#d4ac0d20]': message.severity === messageSeverity.WARNING,
+                'bg-[#5e8fea15]': message.severity === messageSeverity.INFO,
+                'bg-[#c03a2b15]': message.severity === messageSeverity.DANGER,
+                'bg-[#d4ac0d15]': message.severity === messageSeverity.WARNING,
               }"
             >
               <span class="flex items-center">
                 @if (!message.readBy.find(m => m === currentUser()?.id)) {
                   <div class="w-3 h-3 mr-2 bg-[#c03a2b] rounded-full"></div>
                 }
-                <p class="text-base font-medium text-[#78859c]">
+                <p
+                  class="text-base font-medium text-[#78859c]"
+                  [ngClass]="{'font-semibold!': !message.readBy.find(m => m === currentUser()?.id)}"
+                >
                   {{ message.message }}
                 </p>
               </span>

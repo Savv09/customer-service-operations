@@ -328,6 +328,7 @@
           icon="save"
           variant="success"
           size="md"
+          [disabled]="!detailsForm.valid"
           (buttonClicked)="onSaveTicketsForm()"
         />
       </section>

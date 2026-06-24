@@ -218,7 +218,7 @@ export class HomePage implements OnInit {
       ) {
         notifications.push({
           ticketId: ticket.id,
-          message: `Ticket ${ticket.code.toUpperCase()} HIGH priority`,
+          message: `Ticket ${ticket.code.toUpperCase()} has high priority`,
           severity: 'warning',
         });
       }
@@ -229,7 +229,7 @@ export class HomePage implements OnInit {
       ) {
         notifications.push({
           ticketId: ticket.id,
-          message: `Ticket ${ticket.code.toUpperCase()} URGENT priority`,
+          message: `Ticket ${ticket.code.toUpperCase()} has urgent priority`,
           severity: 'danger',
         });
       }
