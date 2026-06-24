@@ -36,6 +36,11 @@
               {{ element['firstName'] + ' ' + element['lastName'] | titlecase }}
             </span>
           }
+          @case ('email') {
+            <span>
+              {{ element['email'] }}
+            </span>
+          }
           @case ('code') {
             <span class="font-medium text-[#5e8fea]">
               {{ element[column] | uppercase }}
