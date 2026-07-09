@@ -1,10 +1,26 @@
 # Customer Service Operations
 
-> **Portfolio Project**
->
-> Customer Service Operations is a portfolio application designed and developed to showcase modern Angular development practices, including authentication, role-based access control, reactive forms, state management, and ticket workflow implementation.
->
-> The project simulates a real-world customer support environment and serves as a demonstration of frontend architecture and application design skills.
+**Portfolio Project**
+
+Customer Service Operations is a portfolio web application built to simulate a real-world customer support environment.
+
+The project focuses on the frontend architecture of a business application where different user roles — admin, manager and customer — interact with tickets, dashboards, notifications and user management workflows.
+
+It was developed to demonstrate modern Angular development practices, including role-based access control, protected routes, reactive forms, API-driven data handling, reusable UI > components and dashboard-oriented interfaces.
+
+ **Project Goals**
+ 
+The goal of this project is to demonstrate the ability to build a structured Angular business application with:
+
+- authentication and role-based authorization
+- protected routing and route guards
+- ticket lifecycle management
+- role-specific dashboards
+- CRUD operations for users and tickets
+- Firebase integration
+- maintainable frontend architecture
+- reusable components and services
+- Angular Signals and RxJS-based state handling
 
 ## Features
 
