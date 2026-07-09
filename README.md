@@ -70,7 +70,7 @@
 
 ### Frontend
 
-- Angular 20
+- Angular 21
 - TypeScript
 - RxJS
 - Angular Signals
